@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+  <meta name="apple-mobile-web-app-title" content="FitTrack"/>
+  <meta name="theme-color" content="#0a0a0f"/>
+  <title>FitTrack</title>
+  <link rel="manifest" href="manifest.json"/>
+  <!-- Apple touch icons -->
+  <link rel="apple-touch-icon" href="icon-192.png"/>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Bebas+Neue&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; background: #0a0a0f; color: #f0ede8; font-family: 'DM Mono', 'Courier New', monospace; -webkit-tap-highlight-color: transparent; }
+    body { padding-bottom: env(safe-area-inset-bottom); }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    input[type=number] { -moz-appearance: textfield; }
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: #0a0a0f; }
+    ::-webkit-scrollbar-thumb { background: #222; border-radius: 2px; }
+
+    #app { max-width: 480px; margin: 0 auto; padding: 0 16px 80px; min-height: 100vh; }
+
+    /* Nav */
+    .nav { display: flex; border-bottom: 1px solid #181818; margin-bottom: 28px; }
+    .nav-btn { background: none; border: none; cursor: pointer; font-family: inherit;
+      font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 10px 20px; color: #555; border-bottom: 2px solid transparent;
+      transition: color 0.2s, border-color 0.2s; }
+    .nav-btn.active { color: #f0ede8; border-bottom-color: #f0ede8; }
+
+    /* Exercise tabs */
+    .ex-tabs { display: flex; gap: 6px; margin-bottom: 28px; }
+    .ex-tab { flex: 1; padding: 10px 4px; border: 1px solid #1a1a1a; border-radius: 8px;
+      cursor: pointer; background: transparent; font-family: inherit; font-size: 10px;
+      letter-spacing: 0.1em; text-transform: uppercase; transition: all 0.2s;
+      display: flex; flex-direction: column; align-items: center; gap: 5px; color: #3a3a3a; }
+    .ex-tab .ex-icon { font-size: 20px; }
+    .ex-tab .ex-total { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.04em; color: #2a2a2a; }
+
+    /* Big counter */
+    .big-counter { text-align: center; margin-bottom: 32px; }
+    .big-num { font-family: 'Bebas Neue', sans-serif; font-size: 96px; line-height: 1; letter-spacing: 0.02em; transition: color 0.3s; }
+    .big-label { font-size: 10px; letter-spacing: 0.18em; color: #383838; text-transform: uppercase; }
+
+    /* Mode toggle */
+    .mode-toggle { display: flex; background: #0f0f0f; border-radius: 8px; padding: 3px;
+      margin-bottom: 24px; border: 1px solid #181818; }
+    .mode-btn { flex: 1; padding: 8px 0; border: none; border-radius: 6px; cursor: pointer;
+      font-family: inherit; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      transition: all 0.2s; background: transparent; color: #383838; }
+    .mode-btn.active { background: #1a1a1a; box-shadow: 0 1px 4px rgba(0,0,0,0.5); }
+
+    /* Mic */
+    .mic-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; margin-bottom: 36px; }
+    .mic-btn { width: 88px; height: 88px; border-radius: 50%; border: 2px solid var(--ex-color);
+      background: transparent; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; font-size: 32px; transition: all 0.2s; color: var(--ex-color); }
+    .mic-btn:hover { background: var(--ex-dim); }
+    .mic-btn.active { background: var(--ex-color); color: #0a0a0f; animation: pulse 1s infinite; }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 0 0 var(--ex-dim); }
+      50% { box-shadow: 0 0 0 18px transparent; }
+    }
+    .mic-hint { font-size: 10px; color: #383838; letter-spacing: 0.1em; text-align: center; }
+    .transcript-box { font-size: 11px; color: #606060; background: #111; padding: 7px 14px;
+      border-radius: 6px; max-width: 280px; text-align: center; display: none; }
+
+    /* Manual input */
+    .manual-wrap { margin-bottom: 36px; }
+    .section-label { font-size: 9px; letter-spacing: 0.18em; color: #383838;
+      text-transform: uppercase; margin-bottom: 10px; }
+    .quick-btns { display: flex; gap: 6px; margin-bottom: 18px; }
+    .quick-btn { flex: 1; padding: 11px 0; border: 1px solid #1e1e1e; background: transparent;
+      border-radius: 6px; cursor: pointer; font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px; letter-spacing: 0.04em; transition: all 0.15s; }
+    .custom-row { display: flex; gap: 8px; }
+    .custom-input { flex: 1; background: #0f0f0f; border: 1px solid #1e1e1e; border-radius: 6px;
+      padding: 12px; font-family: 'Bebas Neue', sans-serif; font-size: 30px;
+      color: var(--ex-color); outline: none; letter-spacing: 0.04em; text-align: center;
+      transition: border-color 0.2s; }
+    .log-btn { padding: 12px 18px; border: none; border-radius: 6px; cursor: pointer;
+      font-family: inherit; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      font-weight: 500; white-space: nowrap; transition: opacity 0.15s;
+      background: var(--ex-color); color: #0a0a0f; }
+    .log-btn:hover { opacity: 0.8; }
+    .input-hint { font-size: 9px; color: #282828; margin-top: 7px; letter-spacing: 0.06em; }
+
+    /* Sets today */
+    .sets-today { display: flex; flex-direction: column; gap: 16px; }
+    .sets-group-label { font-size: 9px; letter-spacing: 0.18em; color: #383838;
+      text-transform: uppercase; margin-bottom: 8px; }
+    .pills { display: flex; flex-wrap: wrap; gap: 6px; }
+    .pill { border-radius: 4px; padding: 5px 10px; font-size: 11px;
+      display: flex; gap: 8px; align-items: center; }
+    .pill-time { font-size: 10px; color: #383838; }
+    .del-btn { background: none; border: none; cursor: pointer; color: #333;
+      font-size: 13px; line-height: 1; transition: color 0.15s; }
+    .del-btn:hover { color: #ff4d4d; }
+
+    /* History chart */
+    .chart-wrap { margin-bottom: 36px; }
+    .legend { display: flex; gap: 16px; margin-bottom: 12px; }
+    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 9px;
+      color: #555; letter-spacing: 0.08em; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 2px; }
+    .bars { display: flex; align-items: flex-end; gap: 3px; height: 80px; }
+    .bar-col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; gap: 1px; }
+    .bar-seg { width: 100%; border-radius: 0; transition: height 0.4s ease; min-height: 0; }
+    .bar-seg.top { border-radius: 2px 2px 0 0; }
+    .chart-dates { display: flex; justify-content: space-between; margin-top: 5px;
+      font-size: 8px; color: #2a2a2a; }
+
+    /* Day list */
+    .day-row { border-bottom: 1px solid #111; padding: 14px 0; }
+    .day-label { font-size: 11px; color: #353535; margin-bottom: 8px; letter-spacing: 0.06em; }
+    .day-cards { display: flex; gap: 10px; }
+    .day-card { flex: 1; border-radius: 6px; padding: 8px 10px; text-align: center; }
+    .day-card-label { font-size: 9px; color: #404040; letter-spacing: 0.1em; margin-bottom: 3px; }
+    .day-card-num { font-family: 'Bebas Neue', sans-serif; font-size: 28px; line-height: 1; }
+    .day-card-sets { font-size: 9px; color: #383838; margin-top: 4px; }
+
+    /* Share button */
+    .share-btn { display: flex; align-items: center; gap: 8px; background: #141414;
+      border: 1px solid #222; border-radius: 8px; padding: 12px 16px; cursor: pointer;
+      font-family: inherit; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: #888; width: 100%; margin-bottom: 28px; transition: all 0.2s; }
+    .share-btn:hover { border-color: #444; color: #f0ede8; }
+
+    /* Modal overlay */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      display: flex; align-items: flex-end; justify-content: center; z-index: 200;
+      padding: 0; backdrop-filter: blur(4px); }
+    .modal { background: #111; border-radius: 16px 16px 0 0; padding: 24px 20px 40px;
+      width: 100%; max-width: 480px; border-top: 1px solid #222; }
+    .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px;
+      letter-spacing: 0.04em; margin-bottom: 4px; }
+    .modal-sub { font-size: 10px; color: #444; letter-spacing: 0.12em;
+      text-transform: uppercase; margin-bottom: 20px; }
+    .modal-close { float: right; background: none; border: none; color: #444;
+      font-size: 20px; cursor: pointer; line-height: 1; margin-top: -4px; }
+    .card-preview { border-radius: 12px; overflow: hidden; margin-bottom: 16px;
+      border: 1px solid #222; }
+    .modal-actions { display: flex; gap: 10px; }
+    .modal-action-btn { flex: 1; padding: 13px; border: none; border-radius: 8px;
+      cursor: pointer; font-family: inherit; font-size: 11px; letter-spacing: 0.1em;
+      text-transform: uppercase; transition: opacity 0.15s; }
+    .modal-action-btn:hover { opacity: 0.8; }
+
+    /* Period tabs in share modal */
+    .period-tabs { display: flex; gap: 6px; margin-bottom: 16px; }
+    .period-tab { flex: 1; padding: 8px; border: 1px solid #222; border-radius: 6px;
+      background: transparent; cursor: pointer; font-family: inherit; font-size: 10px;
+      letter-spacing: 0.1em; text-transform: uppercase; color: #555; transition: all 0.2s; }
+    .period-tab.active { border-color: #555; color: #f0ede8; background: #1a1a1a; }
+
+    /* Toast */
+    .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+      padding: 10px 20px; border-radius: 6px; font-size: 12px; font-family: inherit;
+      white-space: nowrap; z-index: 300; animation: slideUp 0.25s ease;
+      pointer-events: none; }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    /* Header */
+    .header { padding-top: 52px; margin-bottom: 6px; }
+    .header-eyebrow { font-size: 10px; letter-spacing: 0.22em; color: #282828;
+      text-transform: uppercase; margin-bottom: 2px; }
+    .header-title { font-family: 'Bebas Neue', sans-serif; font-size: 48px;
+      line-height: 1; letter-spacing: 0.04em; }
+
+    .hidden { display: none !important; }
+
+    /* Unsupported voice */
+    .voice-unsupported { color: #ff9999; font-size: 12px; text-align: center;
+      line-height: 1.8; padding: 20px 0 36px; }
+  </style>
+</head>
+<body>
+<div id="app">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-eyebrow">Personal Fitness Log</div>
+    <div class="header-title">DAILY <span id="header-accent">TRACKER</span></div>
+  </div>
+
+  <!-- Nav -->
+  <div class="nav">
+    <button class="nav-btn active" data-view="today" onclick="switchView('today')">Today</button>
+    <button class="nav-btn" data-view="history" onclick="switchView('history')">History</button>
+  </div>
+
+  <!-- TODAY VIEW -->
+  <div id="view-today">
+    <!-- Exercise tabs -->
+    <div class="ex-tabs" id="ex-tabs"></div>
+
+    <!-- Big counter -->
+    <div class="big-counter">
+      <div class="big-num" id="big-num">0</div>
+      <div class="big-label" id="big-label">Push-Ups Today</div>
+    </div>
+
+    <!-- Mode toggle -->
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="mode-voice" onclick="setMode('voice')">🎙 Voice</button>
+      <button class="mode-btn" id="mode-manual" onclick="setMode('manual')">⌨️ Manual</button>
+    </div>
+
+    <!-- Voice panel -->
+    <div class="mic-wrap" id="voice-panel">
+      <button class="mic-btn" id="mic-btn" onclick="toggleMic()">🎙</button>
+      <div class="mic-hint" id="mic-hint">Tap mic · say "did 20 push-ups"</div>
+      <div class="transcript-box" id="transcript-box"></div>
+    </div>
+
+    <!-- Voice unsupported -->
+    <div class="voice-unsupported hidden" id="voice-unsupported">
+      Voice input isn't supported in this browser.<br>
+      <span style="color:#383838">Switch to Manual input above.</span>
+    </div>
+
+    <!-- Manual panel -->
+    <div class="manual-wrap hidden" id="manual-panel">
+      <div class="section-label" id="quick-label">Quick Add — Push-Ups</div>
+      <div class="quick-btns" id="quick-btns"></div>
+      <div class="section-label">Custom Amount</div>
+      <div class="custom-row">
+        <input class="custom-input" id="custom-input" type="number" min="1" max="9999"
+          placeholder="0" oninput="" onkeydown="if(event.key==='Enter')logManual()"/>
+        <button class="log-btn" onclick="logManual()">Log Set</button>
+      </div>
+      <div class="input-hint">Press Enter or tap Log Set</div>
+    </div>
+
+    <!-- Sets today -->
+    <div class="sets-today hidden" id="sets-today"></div>
+  </div>
+
+  <!-- HISTORY VIEW -->
+  <div id="view-history" class="hidden">
+    <button class="share-btn" onclick="openShareModal()">
+      <span style="font-size:18px">📤</span>
+      <span>Share Progress Card</span>
+      <span style="margin-left:auto;font-size:16px">→</span>
+    </button>
+
+    <div class="chart-wrap">
+      <div class="section-label">Last 14 Days</div>
+      <div class="legend" id="legend"></div>
+      <div class="bars" id="bars"></div>
+      <div class="chart-dates">
+        <span id="chart-date-start"></span>
+        <span>Today</span>
+      </div>
+    </div>
+
+    <div id="day-list"></div>
+  </div>
+</div>
+
+<!-- Share Modal -->
+<div class="modal-overlay hidden" id="share-modal" onclick="if(event.target===this)closeShareModal()">
+  <div class="modal">
+    <button class="modal-close" onclick="closeShareModal()">✕</button>
+    <div class="modal-title">Progress Card</div>
+    <div class="modal-sub">Screenshot & share with friends</div>
+    <div class="period-tabs">
+      <button class="period-tab active" data-period="week" onclick="setPeriod('week')">This Week</button>
+      <button class="period-tab" data-period="month" onclick="setPeriod('month')">This Month</button>
+      <button class="period-tab" data-period="alltime" onclick="setPeriod('alltime')">All Time</button>
+    </div>
+    <div class="card-preview">
+      <canvas id="share-canvas" style="width:100%;display:block;"></canvas>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-action-btn" style="background:#1a1a1a;color:#888;border:1px solid #222;"
+        onclick="copyShareText()">📋 Copy Text</button>
+      <button class="modal-action-btn" style="background:#f0ede8;color:#0a0a0f;"
+        onclick="downloadCard()">⬇ Save Image</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast hidden" id="toast"></div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+const EXERCISES = {
+  pushups: { label:'Push-Ups', icon:'💪', color:'#ff4d4d', colorDim:'rgba(255,77,77,0.12)', colorBorder:'rgba(255,77,77,0.25)', colorToday:'#ff8080', quickAmounts:[5,10,15,20,25], voiceRx:[/(\d+)\s*push[\s-]?ups?/,/push[\s-]?ups?\s*[:\s]\s*(\d+)/] },
+  pullups: { label:'Pull-Ups', icon:'🏋️', color:'#4d9fff', colorDim:'rgba(77,159,255,0.12)', colorBorder:'rgba(77,159,255,0.25)', colorToday:'#80bfff', quickAmounts:[3,5,8,10,12], voiceRx:[/(\d+)\s*pull[\s-]?ups?/,/pull[\s-]?ups?\s*[:\s]\s*(\d+)/,/(\d+)\s*chin[\s-]?ups?/] },
+  situps:  { label:'Sit-Ups',  icon:'🧘', color:'#4dff9f', colorDim:'rgba(77,255,159,0.12)', colorBorder:'rgba(77,255,159,0.25)', colorToday:'#80ffbf', quickAmounts:[10,15,20,25,30], voiceRx:[/(\d+)\s*sit[\s-]?ups?/,/sit[\s-]?ups?\s*[:\s]\s*(\d+)/,/(\d+)\s*crunches?/] }
+};
+const EX_KEYS = Object.keys(EXERCISES);
+const STORAGE_KEY = 'fittrack-log-v1';
+const TODAY = new Date().toISOString().slice(0,10);
+
+let log = {};
+let activeExercise = 'pushups';
+let inputMode = 'voice';
+let currentView = 'today';
+let sharePeriod = 'week';
+let recognition = null;
+let isListening = false;
+let toastTimer = null;
+
+// Load data
+try { const s = localStorage.getItem(STORAGE_KEY); if(s) log = JSON.parse(s); } catch(e){}
+
+function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(log)); } catch(e){} }
+
+function todayTotal(k) {
+  return (log[TODAY]?.[k] || []).reduce((s,e) => s+e.count, 0);
+}
+
+function dateRange(period) {
+  const end = new Date(TODAY+'T00:00:00');
+  const start = new Date(end);
+  if (period === 'week') start.setDate(start.getDate() - 6);
+  else if (period === 'month') start.setDate(start.getDate() - 29);
+  else start.setFullYear(2000);
+  return { start: start.toISOString().slice(0,10), end: TODAY };
+}
+
+function periodTotal(k, period) {
+  const { start, end } = dateRange(period);
+  return Object.keys(log).filter(d => d >= start && d <= end)
+    .reduce((sum, d) => sum + (log[d]?.[k]||[]).reduce((s,e) => s+e.count, 0), 0);
+}
+
+function personalBest(k) {
+  let best = 0;
+  Object.values(log).forEach(day => (day[k]||[]).forEach(e => { if(e.count > best) best = e.count; }));
+  return best;
+}
+
+function streak() {
+  let s = 0, d = new Date(TODAY+'T00:00:00');
+  while(true) {
+    const key = d.toISOString().slice(0,10);
+    const hasActivity = EX_KEYS.some(k => (log[key]?.[k]||[]).length > 0);
+    if (!hasActivity) break;
+    s++; d.setDate(d.getDate()-1);
+  }
+  return s;
+}
+
+function addEntry(type, count) {
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+  if (!log[TODAY]) log[TODAY] = {};
+  if (!log[TODAY][type]) log[TODAY][type] = [];
+  log[TODAY][type].push({ count, time: timeStr });
+  save();
+  renderAll();
+}
+
+function deleteEntry(type, i) {
+  if (!log[TODAY]?.[type]) return;
+  log[TODAY][type].splice(i, 1);
+  save();
+  renderAll();
+}
+
+// ─── VOICE ───────────────────────────────────────────────────────────────────
+function parseVoice(text) {
+  const lower = text.toLowerCase();
+  for (const k of EX_KEYS) {
+    for (const rx of EXERCISES[k].voiceRx) {
+      const m = lower.match(rx);
+      if (m) return { type:k, count:parseInt(m[1]) };
+    }
+  }
+  return null;
+}
+
+function toggleMic() {
+  if (isListening) { recognition?.stop(); return; }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    document.getElementById('voice-panel').classList.add('hidden');
+    document.getElementById('voice-unsupported').classList.remove('hidden');
+    return;
+  }
+  recognition = new SR();
+  recognition.continuous = false;
+  recognition.interimResults = true;
+  recognition.lang = 'en-US';
+  recognition._last = '';
+  recognition.onstart = () => {
+    isListening = true;
+    const btn = document.getElementById('mic-btn');
+    btn.classList.add('active'); btn.textContent = '⏹';
+    document.getElementById('mic-hint').innerHTML = '<span style="color:var(--ex-color)">Listening… tap to stop</span>';
+  };
+  recognition.onresult = e => {
+    const t = Array.from(e.results).map(r=>r[0].transcript).join('');
+    recognition._last = t;
+    const box = document.getElementById('transcript-box');
+    box.textContent = '"'+t+'"'; box.style.display = 'block';
+  };
+  recognition.onend = () => {
+    isListening = false;
+    const btn = document.getElementById('mic-btn');
+    btn.classList.remove('active'); btn.textContent = '🎙';
+    document.getElementById('mic-hint').textContent = 'Tap mic · say "did 20 push-ups"';
+    const box = document.getElementById('transcript-box');
+    box.style.display = 'none'; box.textContent = '';
+    const t = recognition._last;
+    if (t) {
+      const act = parseVoice(t);
+      if (act) {
+        addEntry(act.type, act.count);
+        setActiveExercise(act.type);
+        showToast('Logged '+act.count+' '+EXERCISES[act.type].label+'! 🎉', true);
+      } else {
+        showToast('Couldn\'t detect exercise. Try: "10 push-ups"', false);
+      }
+    }
+  };
+  recognition.onerror = () => { isListening = false; };
+  recognition.start();
+}
+
+// ─── MANUAL ──────────────────────────────────────────────────────────────────
+function logManual() {
+  const inp = document.getElementById('custom-input');
+  const count = parseInt(inp.value);
+  if (!count || count <= 0 || count > 9999) { showToast('Enter a number between 1–9999', false); return; }
+  addEntry(activeExercise, count);
+  showToast('Logged '+count+' '+EXERCISES[activeExercise].label+'! 🎉', true);
+  inp.value = '';
+  inp.focus();
+}
+
+function quickAdd(n) {
+  addEntry(activeExercise, n);
+  showToast('Logged '+n+' '+EXERCISES[activeExercise].label+'! 🎉', true);
+}
+
+// ─── STATE SETTERS ────────────────────────────────────────────────────────────
+function setActiveExercise(k) {
+  activeExercise = k;
+  const ex = EXERCISES[k];
+  document.documentElement.style.setProperty('--ex-color', ex.color);
+  document.documentElement.style.setProperty('--ex-dim', ex.colorDim);
+  document.documentElement.style.setProperty('--ex-border', ex.colorBorder);
+  document.getElementById('header-accent').style.color = ex.color;
+  renderAll();
+}
+
+function setMode(m) {
+  inputMode = m;
+  document.getElementById('mode-voice').classList.toggle('active', m==='voice');
+  document.getElementById('mode-manual').classList.toggle('active', m==='manual');
+  document.getElementById('voice-panel').classList.toggle('hidden', m!=='voice');
+  document.getElementById('voice-unsupported').classList.add('hidden');
+  document.getElementById('manual-panel').classList.toggle('hidden', m!=='manual');
+  const modeVoiceBtn = document.getElementById('mode-voice');
+  const modeManuBtn  = document.getElementById('mode-manual');
+  modeVoiceBtn.style.color = m==='voice' ? EXERCISES[activeExercise].color : '#383838';
+  modeManuBtn.style.color  = m==='manual'? EXERCISES[activeExercise].color : '#383838';
+}
+
+function switchView(v) {
+  currentView = v;
+  document.getElementById('view-today').classList.toggle('hidden', v!=='today');
+  document.getElementById('view-history').classList.toggle('hidden', v!=='history');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view===v));
+  if (v==='history') renderHistory();
+}
+
+// ─── RENDER ───────────────────────────────────────────────────────────────────
+function renderAll() {
+  renderExTabs();
+  renderBigCounter();
+  renderQuickBtns();
+  renderSetsToday();
+  if (currentView==='history') renderHistory();
+}
+
+function renderExTabs() {
+  const wrap = document.getElementById('ex-tabs');
+  wrap.innerHTML = '';
+  EX_KEYS.forEach(k => {
+    const ex = EXERCISES[k];
+    const isActive = k===activeExercise;
+    const btn = document.createElement('button');
+    btn.className = 'ex-tab';
+    btn.style.borderColor = isActive ? ex.colorBorder : '#1a1a1a';
+    btn.style.background  = isActive ? ex.colorDim : 'transparent';
+    btn.style.color       = isActive ? ex.color : '#3a3a3a';
+    btn.innerHTML = `<span class="ex-icon">${ex.icon}</span><span>${ex.label}</span><span class="ex-total" style="color:${isActive?ex.color:'#2a2a2a'}">${todayTotal(k)}</span>`;
+    btn.onclick = () => setActiveExercise(k);
+    wrap.appendChild(btn);
+  });
+}
+
+function renderBigCounter() {
+  const ex = EXERCISES[activeExercise];
+  document.getElementById('big-num').textContent = todayTotal(activeExercise);
+  document.getElementById('big-num').style.color = ex.color;
+  const d = new Date(TODAY+'T00:00:00');
+  const dateStr = d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+  document.getElementById('big-label').textContent = ex.label+' Today · '+dateStr;
+}
+
+function renderQuickBtns() {
+  const ex = EXERCISES[activeExercise];
+  document.getElementById('quick-label').textContent = 'Quick Add — '+ex.label;
+  const wrap = document.getElementById('quick-btns');
+  wrap.innerHTML = '';
+  ex.quickAmounts.forEach(n => {
+    const btn = document.createElement('button');
+    btn.className = 'quick-btn';
+    btn.textContent = n;
+    btn.style.color = ex.color;
+    btn.onmouseenter = () => { btn.style.background=ex.colorDim; btn.style.borderColor=ex.colorBorder; };
+    btn.onmouseleave = () => { btn.style.background='transparent'; btn.style.borderColor='#1e1e1e'; };
+    btn.onclick = () => quickAdd(n);
+    wrap.appendChild(btn);
+  });
+  document.getElementById('custom-input').style.color = ex.color;
+  document.getElementById('log-btn-color') && (document.getElementById('log-btn-color').style.background=ex.color);
+  document.querySelectorAll('.log-btn').forEach(b => b.style.background=ex.color);
+  document.querySelectorAll('.mode-btn.active').forEach(b => b.style.color=ex.color);
+}
+
+function renderSetsToday() {
+  const wrap = document.getElementById('sets-today');
+  const hasAny = EX_KEYS.some(k => (log[TODAY]?.[k]||[]).length > 0);
+  wrap.classList.toggle('hidden', !hasAny);
+  wrap.innerHTML = '';
+  EX_KEYS.filter(k => (log[TODAY]?.[k]||[]).length > 0).forEach(k => {
+    const ex = EXERCISES[k];
+    const div = document.createElement('div');
+    div.innerHTML = `<div class="sets-group-label">${ex.icon} ${ex.label} sets</div><div class="pills" id="pills-${k}"></div>`;
+    wrap.appendChild(div);
+    const pillWrap = div.querySelector('.pills');
+    (log[TODAY][k]||[]).forEach((entry, i) => {
+      const p = document.createElement('div');
+      p.className = 'pill';
+      p.style.background = ex.colorDim;
+      p.style.border = '1px solid '+ex.colorBorder;
+      p.style.color = ex.colorToday;
+      p.innerHTML = `<span>${entry.count}</span><span class="pill-time">${entry.time}</span><button class="del-btn" onclick="deleteEntry('${k}',${i})">×</button>`;
+      pillWrap.appendChild(p);
+    });
+  });
+}
+
+function renderHistory() {
+  renderLegend();
+  renderBars();
+  renderDayList();
+}
+
+function renderLegend() {
+  const wrap = document.getElementById('legend');
+  wrap.innerHTML = '';
+  EX_KEYS.forEach(k => {
+    const div = document.createElement('div');
+    div.className = 'legend-item';
+    div.innerHTML = `<div class="legend-dot" style="background:${EXERCISES[k].color}"></div>${EXERCISES[k].label}`;
+    wrap.appendChild(div);
+  });
+}
+
+function renderBars() {
+  const last14 = Array.from({length:14},(_,i)=>{
+    const d=new Date(TODAY+'T00:00:00'); d.setDate(d.getDate()-(13-i)); return d.toISOString().slice(0,10);
+  });
+  const maxVal = Math.max(...last14.map(d=>EX_KEYS.reduce((s,k)=>s+(log[d]?.[k]||[]).reduce((a,e)=>a+e.count,0),0)),1);
+  const wrap = document.getElementById('bars');
+  wrap.innerHTML = '';
+  last14.forEach(d => {
+    const col = document.createElement('div');
+    col.className = 'bar-col';
+    col.title = EX_KEYS.map(k=>`${EXERCISES[k].label}: ${(log[d]?.[k]||[]).reduce((s,e)=>s+e.count,0)}`).join(', ');
+    const isToday = d===TODAY;
+    [...EX_KEYS].reverse().forEach((k,ri) => {
+      const v = (log[d]?.[k]||[]).reduce((s,e)=>s+e.count,0);
+      if (!v) return;
+      const seg = document.createElement('div');
+      seg.className = 'bar-seg'+(ri===0?' top':'');
+      seg.style.height = Math.max((v/maxVal)*72,3)+'px';
+      seg.style.background = EXERCISES[k].color;
+      seg.style.opacity = isToday?'1':'0.55';
+      col.appendChild(seg);
+    });
+    wrap.appendChild(col);
+  });
+  const start = new Date(TODAY+'T00:00:00'); start.setDate(start.getDate()-13);
+  document.getElementById('chart-date-start').textContent =
+    start.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+
+function renderDayList() {
+  const wrap = document.getElementById('day-list');
+  wrap.innerHTML = '';
+  const days = Object.keys(log).sort((a,b)=>b.localeCompare(a));
+  if (!days.length) {
+    wrap.innerHTML = '<div style="color:#2a2a2a;font-size:13px;text-align:center;padding:20px 0">No activity logged yet.</div>';
+    return;
+  }
+  days.forEach(day => {
+    const isToday = day===TODAY;
+    const hasAny = EX_KEYS.some(k=>(log[day]?.[k]||[]).length>0);
+    if (!hasAny) return;
+    const row = document.createElement('div');
+    row.className = 'day-row';
+    const d = new Date(day+'T00:00:00');
+    const dateStr = d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+    row.innerHTML = `<div class="day-label" style="color:${isToday?'#606060':'#353535'}">${isToday?'Today — ':''}${dateStr}</div><div class="day-cards" id="daycards-${day}"></div>`;
+    wrap.appendChild(row);
+    const cardsWrap = row.querySelector('.day-cards');
+    EX_KEYS.forEach(k => {
+      const total = (log[day]?.[k]||[]).reduce((s,e)=>s+e.count,0);
+      if (!total) return;
+      const ex = EXERCISES[k];
+      const card = document.createElement('div');
+      card.className = 'day-card';
+      card.style.background = ex.colorDim;
+      card.style.border = '1px solid '+ex.colorBorder;
+      const sets = log[day][k];
+      card.innerHTML = `<div class="day-card-label">${ex.icon} ${ex.label}</div><div class="day-card-num" style="color:${ex.color}">${total}</div>${sets.length>1?`<div class="day-card-sets">${sets.map(s=>s.count).join(' · ')}</div>`:''}`;
+      cardsWrap.appendChild(card);
+    });
+  });
+}
+
+// ─── SHARE CARD ───────────────────────────────────────────────────────────────
+function openShareModal() {
+  document.getElementById('share-modal').classList.remove('hidden');
+  renderShareCard();
+}
+function closeShareModal() {
+  document.getElementById('share-modal').classList.add('hidden');
+}
+function setPeriod(p) {
+  sharePeriod = p;
+  document.querySelectorAll('.period-tab').forEach(b => b.classList.toggle('active', b.dataset.period===p));
+  renderShareCard();
+}
+
+function periodLabel(p) {
+  return p==='week'?'This Week':p==='month'?'This Month':'All Time';
+}
+
+function renderShareCard() {
+  const canvas = document.getElementById('share-canvas');
+  const W = 800, H = 420;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  // Background
+  ctx.fillStyle = '#0d0d12';
+  ctx.fillRect(0, 0, W, H);
+
+  // Subtle grid lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+  ctx.lineWidth = 1;
+  for (let x=0; x<W; x+=40) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for (let y=0; y<H; y+=40) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+  // Top accent bar
+  const grad = ctx.createLinearGradient(0,0,W,0);
+  grad.addColorStop(0,'#ff4d4d');
+  grad.addColorStop(0.5,'#4d9fff');
+  grad.addColorStop(1,'#4dff9f');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, 3);
+
+  // App label
+  ctx.font = '500 13px "DM Mono", monospace';
+  ctx.fillStyle = 'rgba(255,255,255,0.2)';
+  ctx.fillText('FITTRACK', 40, 40);
+
+  // Period label
+  ctx.textAlign = 'right';
+  ctx.font = '500 13px "DM Mono", monospace';
+  ctx.fillStyle = 'rgba(255,255,255,0.2)';
+  ctx.fillText(periodLabel(sharePeriod).toUpperCase(), W-40, 40);
+  ctx.textAlign = 'left';
+
+  // Date line
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  ctx.font = '400 11px "DM Mono", monospace';
+  ctx.fillStyle = 'rgba(255,255,255,0.15)';
+  ctx.fillText(dateStr.toUpperCase(), 40, 60);
+
+  // Exercise stats — 3 boxes
+  const boxW = 200, boxH = 130, gap = 20;
+  const totalBoxW = 3*boxW + 2*gap;
+  const startX = (W - totalBoxW) / 2;
+  const startY = 90;
+
+  EX_KEYS.forEach((k, i) => {
+    const ex = EXERCISES[k];
+    const total = periodTotal(k, sharePeriod);
+    const pb = personalBest(k);
+    const bx = startX + i*(boxW+gap);
+    const by = startY;
+
+    // Box background
+    ctx.fillStyle = 'rgba(255,255,255,0.03)';
+    roundRect(ctx, bx, by, boxW, boxH, 10);
+    ctx.fill();
+
+    // Box border
+    ctx.strokeStyle = ex.color+'44';
+    ctx.lineWidth = 1;
+    roundRect(ctx, bx, by, boxW, boxH, 10);
+    ctx.stroke();
+
+    // Coloured top edge
+    ctx.fillStyle = ex.color;
+    roundRect(ctx, bx, by, boxW, 3, [10,10,0,0]);
+    ctx.fill();
+
+    // Icon + label
+    ctx.font = '22px serif';
+    ctx.fillText(ex.icon, bx+16, by+38);
+    ctx.font = '500 11px "DM Mono", monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+    ctx.fillText(ex.label.toUpperCase(), bx+46, by+34);
+
+    // Big number
+    ctx.font = 'bold 52px "Bebas Neue", sans-serif';
+    ctx.fillStyle = total > 0 ? ex.color : 'rgba(255,255,255,0.1)';
+    ctx.fillText(total.toString(), bx+16, by+100);
+
+    // PB line
+    if (pb > 0) {
+      ctx.font = '400 10px "DM Mono", monospace';
+      ctx.fillStyle = 'rgba(255,255,255,0.2)';
+      ctx.fillText('PB: '+pb+' in one set', bx+16, by+120);
+    }
+  });
+
+  // Streak + footer
+  const s = streak();
+  const barY = startY + boxH + 30;
+
+  if (s > 0) {
+    ctx.fillStyle = 'rgba(255,255,255,0.05)';
+    roundRect(ctx, startX, barY, totalBoxW, 52, 8);
+    ctx.fill();
+
+    ctx.font = '400 11px "DM Mono", monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.fillText('🔥 '+s+'-DAY STREAK', startX+16, barY+22);
+
+    const allTotal = EX_KEYS.reduce((sum,k)=>sum+periodTotal(k,sharePeriod),0);
+    ctx.textAlign='right';
+    ctx.fillText('TOTAL REPS: '+allTotal, startX+totalBoxW-16, barY+22);
+    ctx.textAlign='left';
+
+    // Totals breakdown
+    ctx.font = '400 10px "DM Mono", monospace';
+    ctx.fillStyle = 'rgba(255,255,255,0.18)';
+    const breakdown = EX_KEYS.map(k=>EXERCISES[k].icon+' '+periodTotal(k,sharePeriod)).join('   ');
+    ctx.fillText(breakdown, startX+16, barY+42);
+  }
+
+  // Bottom tagline
+  ctx.font = '400 10px "DM Mono", monospace';
+  ctx.fillStyle = 'rgba(255,255,255,0.1)';
+  ctx.textAlign = 'center';
+  ctx.fillText('Tracked with FitTrack PWA', W/2, H-16);
+  ctx.textAlign = 'left';
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  if (typeof r === 'number') r = [r,r,r,r];
+  ctx.beginPath();
+  ctx.moveTo(x+r[0], y);
+  ctx.lineTo(x+w-r[1], y); ctx.arcTo(x+w,y, x+w,y+r[1], r[1]);
+  ctx.lineTo(x+w, y+h-r[2]); ctx.arcTo(x+w,y+h, x+w-r[2],y+h, r[2]);
+  ctx.lineTo(x+r[3], y+h); ctx.arcTo(x,y+h, x,y+h-r[3], r[3]);
+  ctx.lineTo(x, y+r[0]); ctx.arcTo(x,y, x+r[0],y, r[0]);
+  ctx.closePath();
+}
+
+function downloadCard() {
+  renderShareCard();
+  const canvas = document.getElementById('share-canvas');
+  const a = document.createElement('a');
+  a.download = 'fittrack-progress.png';
+  a.href = canvas.toDataURL('image/png');
+  a.click();
+  showToast('Image saved! 📸', true);
+}
+
+function copyShareText() {
+  const s = streak();
+  const lines = [
+    '💪 My FitTrack Progress — '+periodLabel(sharePeriod),
+    '',
+    ...EX_KEYS.map(k => EXERCISES[k].icon+' '+EXERCISES[k].label+': '+periodTotal(k,sharePeriod)+' reps (PB: '+personalBest(k)+')'),
+    '',
+    s>0 ? '🔥 '+s+'-day streak!' : '',
+    'Total reps: '+EX_KEYS.reduce((sum,k)=>sum+periodTotal(k,sharePeriod),0),
+  ].filter(l=>l!==undefined);
+  navigator.clipboard?.writeText(lines.join('\n'))
+    .then(()=>showToast('Copied to clipboard! 📋', true))
+    .catch(()=>showToast('Copy not available in this browser', false));
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+function showToast(msg, success) {
+  if (toastTimer) clearTimeout(toastTimer);
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = success ? '#0f1f0f' : '#1f0f0f';
+  t.style.border = '1px solid '+(success?'#1a4a1a':'#4a1a1a');
+  t.style.color = success ? '#7dff9f' : '#ff9999';
+  t.classList.remove('hidden');
+  toastTimer = setTimeout(() => t.classList.add('hidden'), 3000);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+setActiveExercise('pushups');
+renderAll();
+
+// Register service worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
