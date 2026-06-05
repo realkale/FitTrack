@@ -300,7 +300,22 @@ const EXERCISES = {
 };
 const EX_KEYS = Object.keys(EXERCISES);
 const STORAGE_KEY = 'fittrack-log-v1';
-const TODAY = new Date().toISOString().slice(0,10);
+function getLocalToday() {
+  const d = new Date();
+  return d.getFullYear() + '-' +
+    String(d.getMonth() + 1).padStart(2, '0') + '-' +
+    String(d.getDate()).padStart(2, '0');
+}
+let TODAY = getLocalToday();
+
+// Midnight rollover: re-check the date every minute; if the day has changed, reload
+setInterval(() => {
+  const newDate = getLocalToday();
+  if (newDate !== TODAY) {
+    TODAY = newDate;
+    renderAll();
+  }
+}, 60000);
 
 let log = {};
 let activeExercise = 'pushups';
@@ -320,13 +335,18 @@ function todayTotal(k) {
   return (log[TODAY]?.[k] || []).reduce((s,e) => s+e.count, 0);
 }
 
+function localDateStr(d) {
+  return d.getFullYear() + '-' +
+    String(d.getMonth() + 1).padStart(2, '0') + '-' +
+    String(d.getDate()).padStart(2, '0');
+}
+
 function dateRange(period) {
-  const end = new Date(TODAY+'T00:00:00');
-  const start = new Date(end);
+  const start = new Date(TODAY + 'T00:00:00');
   if (period === 'week') start.setDate(start.getDate() - 6);
   else if (period === 'month') start.setDate(start.getDate() - 29);
   else start.setFullYear(2000);
-  return { start: start.toISOString().slice(0,10), end: TODAY };
+  return { start: localDateStr(start), end: TODAY };
 }
 
 function periodTotal(k, period) {
@@ -342,12 +362,12 @@ function personalBest(k) {
 }
 
 function streak() {
-  let s = 0, d = new Date(TODAY+'T00:00:00');
+  let s = 0, d = new Date(TODAY + 'T00:00:00');
   while(true) {
-    const key = d.toISOString().slice(0,10);
+    const key = localDateStr(d);
     const hasActivity = EX_KEYS.some(k => (log[key]?.[k]||[]).length > 0);
     if (!hasActivity) break;
-    s++; d.setDate(d.getDate()-1);
+    s++; d.setDate(d.getDate() - 1);
   }
   return s;
 }
@@ -575,7 +595,7 @@ function renderLegend() {
 
 function renderBars() {
   const last14 = Array.from({length:14},(_,i)=>{
-    const d=new Date(TODAY+'T00:00:00'); d.setDate(d.getDate()-(13-i)); return d.toISOString().slice(0,10);
+    const d=new Date(TODAY+'T00:00:00'); d.setDate(d.getDate()-(13-i)); return localDateStr(d);
   });
   const maxVal = Math.max(...last14.map(d=>EX_KEYS.reduce((s,k)=>s+(log[d]?.[k]||[]).reduce((a,e)=>a+e.count,0),0)),1);
   const wrap = document.getElementById('bars');
