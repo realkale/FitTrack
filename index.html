@@ -11,6 +11,7 @@
   <link rel="manifest" href="manifest.json"/>
   <!-- Apple touch icons -->
   <link rel="apple-touch-icon" href="icon-192.png"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Bebas+Neue&display=swap');
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -183,17 +184,87 @@
   </style>
 </head>
 <body>
-<div id="app">
+
+<!-- LOGIN / SIGN-UP SCREEN -->
+<div id="login-screen" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;">
+  <div style="max-width:340px;width:100%;">
+    <div style="text-align:center;margin-bottom:32px;">
+      <div style="font-size:10px;letter-spacing:0.22em;color:#282828;text-transform:uppercase;margin-bottom:4px;">Personal Fitness Log</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:44px;line-height:1;letter-spacing:0.04em;">FIT<span style="color:#ff4d4d;">TRACK</span></div>
+    </div>
+
+    <!-- Sign In / Sign Up toggle -->
+    <div class="mode-toggle" style="margin-bottom:20px;">
+      <button class="mode-btn active" id="auth-tab-signin" onclick="setAuthMode('signin')">Sign In</button>
+      <button class="mode-btn" id="auth-tab-signup" onclick="setAuthMode('signup')">Sign Up</button>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <!-- Display name — signup only -->
+      <div id="auth-name-field" class="hidden">
+        <div class="section-label">Display Name</div>
+        <input id="auth-name" type="text" placeholder="e.g. Kale" autocomplete="off"
+          style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:13px 14px;font-family:inherit;font-size:15px;color:#f0ede8;outline:none;box-sizing:border-box;"/>
+      </div>
+      <div>
+        <div class="section-label">Email</div>
+        <input id="auth-email" type="email" placeholder="you@example.com" autocomplete="off"
+          style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:13px 14px;font-family:inherit;font-size:15px;color:#f0ede8;outline:none;box-sizing:border-box;"/>
+      </div>
+      <div>
+        <div class="section-label">Password</div>
+        <input id="auth-password" type="password" placeholder="At least 6 characters" autocomplete="off"
+          style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:13px 14px;font-family:inherit;font-size:15px;color:#f0ede8;outline:none;box-sizing:border-box;"/>
+      </div>
+      <button id="auth-submit-btn" onclick="handleAuthSubmit()"
+        style="margin-top:8px;padding:14px;border:none;border-radius:6px;cursor:pointer;background:#ff4d4d;color:#0a0a0f;font-family:inherit;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;font-weight:600;">
+        Sign In
+      </button>
+      <div id="auth-error" style="color:#ff9999;font-size:12px;text-align:center;display:none;"></div>
+      <div id="auth-info" style="color:#7dff9f;font-size:12px;text-align:center;display:none;line-height:1.6;"></div>
+    </div>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+
+<!-- Claim Legacy Data Modal -->
+<div class="modal-overlay hidden" id="import-modal">
+  <div class="modal">
+    <div class="modal-title">📦 Import Old History?</div>
+    <div class="modal-sub">One-time step for returning users</div>
+    <div style="font-size:12px;color:#888;line-height:1.7;margin-bottom:16px;">
+      If you used FitTrack before with just a name and access code, enter that old display name below
+      to pull your workout history into this new account. If you're brand new, just tap Skip.
+    </div>
+    <div style="margin-bottom:16px;">
+      <div class="section-label">Old Display Name</div>
+      <input id="claim-old-name" type="text" placeholder="e.g. Kale" autocomplete="off"
+        style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:12px 14px;font-family:inherit;font-size:15px;color:#f0ede8;outline:none;box-sizing:border-box;"/>
+    </div>
+    <div id="claim-error" style="color:#ff9999;font-size:12px;margin-bottom:12px;display:none;"></div>
+    <div class="modal-actions">
+      <button class="modal-action-btn" style="background:#1a1a1a;color:#888;border:1px solid #222;"
+        onclick="dismissImport()">Skip</button>
+      <button class="modal-action-btn" id="import-btn" style="background:#f0ede8;color:#0a0a0f;"
+        onclick="runImport()">Import My History</button>
+    </div>
+  </div>
+</div>
   <!-- Header -->
-  <div class="header">
-    <div class="header-eyebrow">Personal Fitness Log</div>
-    <div class="header-title">DAILY <span id="header-accent">TRACKER</span></div>
+  <div class="header" style="display:flex;justify-content:space-between;align-items:flex-end;">
+    <div>
+      <div class="header-eyebrow" id="welcome-label">Personal Fitness Log</div>
+      <div class="header-title">DAILY <span id="header-accent">TRACKER</span></div>
+    </div>
+    <button onclick="handleLogout()" style="background:none;border:none;color:#333;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;padding-bottom:8px;">Log Out</button>
   </div>
 
   <!-- Nav -->
   <div class="nav">
     <button class="nav-btn active" data-view="today" onclick="switchView('today')">Today</button>
     <button class="nav-btn" data-view="history" onclick="switchView('history')">History</button>
+    <button class="nav-btn" data-view="friends" onclick="switchView('friends')">Friends</button>
   </div>
 
   <!-- TODAY VIEW -->
@@ -263,6 +334,81 @@
 
     <div id="day-list"></div>
   </div>
+
+  <!-- FRIENDS VIEW -->
+  <div id="view-friends" class="hidden">
+    <!-- Group switcher -->
+    <div class="section-label">Group</div>
+    <div style="display:flex;gap:6px;margin-bottom:20px;overflow-x:auto;padding-bottom:2px;" id="group-switcher"></div>
+
+    <!-- Create / Join group -->
+    <div style="display:flex;gap:8px;margin-bottom:24px;">
+      <button class="share-btn" style="margin-bottom:0;" onclick="openCreateGroupModal()">
+        <span style="font-size:16px;">➕</span><span>Create Group</span>
+      </button>
+      <button class="share-btn" style="margin-bottom:0;" onclick="openJoinGroupModal()">
+        <span style="font-size:16px;">🔑</span><span>Join Group</span>
+      </button>
+    </div>
+
+    <div class="section-label" id="leaderboard-title">This Week's Leaderboard — Global</div>
+    <div id="leaderboard-list" style="display:flex;flex-direction:column;gap:8px;margin-top:12px;"></div>
+    <div id="leaderboard-empty" class="hidden" style="color:#2a2a2a;font-size:13px;text-align:center;padding:40px 0;">
+      No one's logged anything this week yet.<br/>
+      <span style="font-size:11px;">Be the first!</span>
+    </div>
+  </div>
+</div>
+
+<!-- Create Group Modal -->
+<div class="modal-overlay hidden" id="create-group-modal" onclick="if(event.target===this)closeModal('create-group-modal')">
+  <div class="modal">
+    <div class="modal-title">Create a Group</div>
+    <div class="modal-sub">Get a shareable code for your friends</div>
+    <div style="margin-bottom:16px;">
+      <div class="section-label">Group Name</div>
+      <input id="new-group-name" type="text" placeholder="e.g. College Friends" autocomplete="off"
+        style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:12px 14px;font-family:inherit;font-size:15px;color:#f0ede8;outline:none;box-sizing:border-box;"/>
+    </div>
+    <div id="create-group-error" style="color:#ff9999;font-size:12px;margin-bottom:12px;display:none;"></div>
+    <div class="modal-actions">
+      <button class="modal-action-btn" style="background:#1a1a1a;color:#888;border:1px solid #222;" onclick="closeModal('create-group-modal')">Cancel</button>
+      <button class="modal-action-btn" id="create-group-btn" style="background:#f0ede8;color:#0a0a0f;" onclick="handleCreateGroup()">Create</button>
+    </div>
+  </div>
+</div>
+
+<!-- Join Group Modal -->
+<div class="modal-overlay hidden" id="join-group-modal" onclick="if(event.target===this)closeModal('join-group-modal')">
+  <div class="modal">
+    <div class="modal-title">Join a Group</div>
+    <div class="modal-sub">Enter the code a friend shared with you</div>
+    <div style="margin-bottom:16px;">
+      <div class="section-label">Join Code</div>
+      <input id="join-group-code" type="text" placeholder="e.g. SWOLE4F2A" autocomplete="off" style="text-transform:uppercase;"
+        style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:12px 14px;font-family:inherit;font-size:15px;color:#f0ede8;outline:none;box-sizing:border-box;text-transform:uppercase;"/>
+    </div>
+    <div id="join-group-error" style="color:#ff9999;font-size:12px;margin-bottom:12px;display:none;"></div>
+    <div class="modal-actions">
+      <button class="modal-action-btn" style="background:#1a1a1a;color:#888;border:1px solid #222;" onclick="closeModal('join-group-modal')">Cancel</button>
+      <button class="modal-action-btn" id="join-group-btn" style="background:#f0ede8;color:#0a0a0f;" onclick="handleJoinGroup()">Join</button>
+    </div>
+  </div>
+</div>
+
+<!-- Group Created Success Modal -->
+<div class="modal-overlay hidden" id="group-created-modal">
+  <div class="modal">
+    <div class="modal-title">🎉 Group Created!</div>
+    <div class="modal-sub">Share this code with friends</div>
+    <div style="background:#0f0f0f;border:1px solid #222;border-radius:8px;padding:20px;text-align:center;margin-bottom:16px;">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:0.1em;color:#ff4d4d;" id="created-group-code"></div>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-action-btn" style="background:#1a1a1a;color:#888;border:1px solid #222;" onclick="copyGroupCode()">📋 Copy Code</button>
+      <button class="modal-action-btn" style="background:#f0ede8;color:#0a0a0f;" onclick="closeModal('group-created-modal')">Done</button>
+    </div>
+  </div>
 </div>
 
 <!-- Share Modal -->
@@ -299,7 +445,19 @@ const EXERCISES = {
   situps:  { label:'Sit-Ups',  icon:'🧘', color:'#4dff9f', colorDim:'rgba(77,255,159,0.12)', colorBorder:'rgba(77,255,159,0.25)', colorToday:'#80ffbf', quickAmounts:[10,15,20,25,30], voiceRx:[/(\d+)\s*sit[\s-]?ups?/,/sit[\s-]?ups?\s*[:\s]\s*(\d+)/,/(\d+)\s*crunches?/] }
 };
 const EX_KEYS = Object.keys(EXERCISES);
-const STORAGE_KEY = 'fittrack-log-v1';
+
+// ─── SUPABASE SETUP ─────────────────────────────────────────────────────────
+const SUPABASE_URL = 'https://kljejjngnqwayteprhea.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_jozDdfkXCaUVd95Vf0zB6Q_g0xWKAF0';
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const SESSION_KEY = 'fittrack-session-v1'; // caches {id, display_name} locally for fast reload; real auth lives in Supabase
+let currentUser = null; // { id, display_name } — id is the Supabase Auth user id (== profiles.id)
+let authMode = 'signin'; // 'signin' | 'signup'
+let activeGroupId = null; // null = Global
+let myGroups = []; // [{id, name, join_code}]
+let pendingGroupCode = null;
+
 function getLocalToday() {
   const d = new Date();
   return d.getFullYear() + '-' +
@@ -313,11 +471,11 @@ setInterval(() => {
   const newDate = getLocalToday();
   if (newDate !== TODAY) {
     TODAY = newDate;
-    renderAll();
+    loadLogsFromServer().then(renderAll);
   }
 }, 60000);
 
-let log = {};
+let log = {}; // { '2026-07-04': { pushups: [{count, time}] } } — built from Supabase rows, keyed by local_date
 let activeExercise = 'pushups';
 let inputMode = 'voice';
 let currentView = 'today';
@@ -326,10 +484,458 @@ let recognition = null;
 let isListening = false;
 let toastTimer = null;
 
-// Load data
-try { const s = localStorage.getItem(STORAGE_KEY); if(s) log = JSON.parse(s); } catch(e){}
+// ─── AUTH ───────────────────────────────────────────────────────────────────
+function setAuthMode(mode) {
+  authMode = mode;
+  document.getElementById('auth-tab-signin').classList.toggle('active', mode === 'signin');
+  document.getElementById('auth-tab-signup').classList.toggle('active', mode === 'signup');
+  document.getElementById('auth-name-field').classList.toggle('hidden', mode !== 'signup');
+  document.getElementById('auth-submit-btn').textContent = mode === 'signin' ? 'Sign In' : 'Create Account';
+  document.getElementById('auth-error').style.display = 'none';
+  document.getElementById('auth-info').style.display = 'none';
+}
 
-function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(log)); } catch(e){} }
+async function handleAuthSubmit() {
+  const email = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const name = document.getElementById('auth-name').value.trim();
+  const errEl = document.getElementById('auth-error');
+  const infoEl = document.getElementById('auth-info');
+  const btn = document.getElementById('auth-submit-btn');
+  errEl.style.display = 'none';
+  infoEl.style.display = 'none';
+
+  if (!email || !password) {
+    errEl.textContent = 'Enter both email and password.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (authMode === 'signup' && !name) {
+    errEl.textContent = 'Enter a display name.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (password.length < 6) {
+    errEl.textContent = 'Password must be at least 6 characters.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = authMode === 'signin' ? 'Signing in…' : 'Creating account…';
+
+  try {
+    if (authMode === 'signup') {
+      const { data, error } = await sb.auth.signUp({ email, password });
+      if (error) throw error;
+
+      if (data.user && !data.session) {
+        // Email confirmation required — profile gets created after they confirm and sign in
+        infoEl.textContent = `Check ${email} for a confirmation link, then come back and sign in.`;
+        infoEl.style.display = 'block';
+        // Stash the chosen display name so we can create the profile after confirmation
+        localStorage.setItem('fittrack-pending-name', name);
+        btn.disabled = false;
+        btn.textContent = 'Create Account';
+        return;
+      }
+      // If email confirmation is off, we get a session immediately — create the profile now
+      await ensureProfile(data.user.id, name);
+      currentUser = { id: data.user.id, display_name: name };
+      localStorage.setItem(SESSION_KEY, JSON.stringify(currentUser));
+      await enterApp();
+    } else {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+
+      // Ensure a profile row exists (covers the case where they confirmed email after signup)
+      const pendingName = localStorage.getItem('fittrack-pending-name');
+      const profile = await ensureProfile(data.user.id, pendingName || email.split('@')[0]);
+      localStorage.removeItem('fittrack-pending-name');
+
+      currentUser = { id: data.user.id, display_name: profile.display_name };
+      localStorage.setItem(SESSION_KEY, JSON.stringify(currentUser));
+      await enterApp();
+    }
+  } catch (e) {
+    console.error(e);
+    errEl.textContent = e.message || 'Something went wrong. Please try again.';
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = authMode === 'signin' ? 'Sign In' : 'Create Account';
+  }
+}
+
+async function ensureProfile(userId, displayName) {
+  const { data: existing } = await sb.from('profiles').select('*').eq('id', userId).maybeSingle();
+  if (existing) return existing;
+  const { data: created, error } = await sb
+    .from('profiles')
+    .insert({ id: userId, display_name: displayName })
+    .select('*')
+    .single();
+  if (error) throw error;
+  return created;
+}
+
+function handleLogout() {
+  sb.auth.signOut();
+  localStorage.removeItem(SESSION_KEY);
+  currentUser = null;
+  log = {};
+  myGroups = [];
+  activeGroupId = null;
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('auth-email').value = '';
+  document.getElementById('auth-password').value = '';
+  document.getElementById('auth-name').value = '';
+}
+
+async function enterApp() {
+  document.getElementById('login-screen').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+  document.getElementById('welcome-label').textContent = currentUser.display_name + "'s Fitness Log";
+  showToast('Loading your data…', true);
+  await loadLogsFromServer();
+  await loadMyGroups();
+  setActiveExercise('pushups');
+  renderAll();
+  checkForLegacyClaim();
+}
+
+// Try auto-login from a saved Supabase session
+async function tryAutoLogin() {
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) return;
+
+    const saved = localStorage.getItem(SESSION_KEY);
+    let displayName = saved ? JSON.parse(saved).display_name : null;
+
+    if (!displayName) {
+      const { data: profile } = await sb.from('profiles').select('display_name').eq('id', session.user.id).maybeSingle();
+      displayName = profile?.display_name || session.user.email.split('@')[0];
+    }
+
+    currentUser = { id: session.user.id, display_name: displayName };
+    localStorage.setItem(SESSION_KEY, JSON.stringify(currentUser));
+    await enterApp();
+  } catch (e) {
+    console.error('Auto-login failed', e);
+  }
+}
+
+// ─── CLAIM LEGACY DATA (old name+code accounts → new email account) ─────────
+async function checkForLegacyClaim() {
+  try {
+    const { data: profile } = await sb.from('profiles').select('claimed_legacy').eq('id', currentUser.id).maybeSingle();
+    if (profile?.claimed_legacy) return; // already claimed or dismissed via claim, don't ask again
+    document.getElementById('import-modal').classList.remove('hidden');
+  } catch (e) {
+    console.error('Legacy claim check failed', e);
+  }
+}
+
+function dismissImport() {
+  document.getElementById('import-modal').classList.add('hidden');
+}
+
+async function runImport() {
+  const oldName = document.getElementById('claim-old-name').value.trim();
+  const errEl = document.getElementById('claim-error');
+  const btn = document.getElementById('import-btn');
+  errEl.style.display = 'none';
+
+  if (!oldName) {
+    errEl.textContent = 'Enter the old display name, or tap Skip.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Importing…';
+
+  try {
+    const { data, error } = await sb.rpc('claim_legacy_logs', { old_display_name: oldName });
+    if (error) throw error;
+
+    document.getElementById('import-modal').classList.add('hidden');
+    if (data > 0) {
+      showToast(`Imported ${data} sets! 🎉`, true);
+      await loadLogsFromServer();
+      renderAll();
+    } else {
+      showToast(`No history found for "${oldName}"`, false);
+    }
+  } catch (e) {
+    console.error('Claim failed', e);
+    errEl.textContent = e.message || 'Import failed — check the name and try again.';
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Import My History';
+  }
+}
+
+// ─── GROUPS ─────────────────────────────────────────────────────────────────
+function generateJoinCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // no ambiguous chars (0/O, 1/I)
+  let code = '';
+  for (let i = 0; i < 8; i++) code += chars[Math.floor(Math.random() * chars.length)];
+  return code;
+}
+
+async function loadMyGroups() {
+  try {
+    const { data, error } = await sb
+      .from('group_members')
+      .select('groups(id, name, join_code)')
+      .eq('user_id', currentUser.id);
+    if (error) throw error;
+    myGroups = (data || []).map(row => row.groups).filter(Boolean);
+    renderGroupSwitcher();
+  } catch (e) {
+    console.error('Failed to load groups', e);
+  }
+}
+
+function renderGroupSwitcher() {
+  const wrap = document.getElementById('group-switcher');
+  wrap.innerHTML = '';
+
+  const makeChip = (id, label) => {
+    const isActive = activeGroupId === id;
+    const btn = document.createElement('button');
+    btn.textContent = label;
+    btn.style.cssText = `flex-shrink:0;padding:8px 16px;border-radius:20px;cursor:pointer;font-family:inherit;font-size:11px;letter-spacing:0.06em;white-space:nowrap;transition:all 0.2s;border:1px solid ${isActive ? '#ff4d4d' : '#222'};background:${isActive ? 'rgba(255,77,77,0.1)' : 'transparent'};color:${isActive ? '#ff8080' : '#666'};`;
+    btn.onclick = () => { activeGroupId = id; renderGroupSwitcher(); loadLeaderboard(); };
+    return btn;
+  };
+
+  wrap.appendChild(makeChip(null, '🌍 Global'));
+  myGroups.forEach(g => wrap.appendChild(makeChip(g.id, g.name)));
+}
+
+function openCreateGroupModal() {
+  document.getElementById('new-group-name').value = '';
+  document.getElementById('create-group-error').style.display = 'none';
+  document.getElementById('create-group-modal').classList.remove('hidden');
+}
+
+function openJoinGroupModal() {
+  document.getElementById('join-group-code').value = '';
+  document.getElementById('join-group-error').style.display = 'none';
+  document.getElementById('join-group-modal').classList.remove('hidden');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.add('hidden');
+}
+
+async function handleCreateGroup() {
+  const name = document.getElementById('new-group-name').value.trim();
+  const errEl = document.getElementById('create-group-error');
+  const btn = document.getElementById('create-group-btn');
+  errEl.style.display = 'none';
+
+  if (!name) {
+    errEl.textContent = 'Enter a group name.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Creating…';
+
+  try {
+    const joinCode = generateJoinCode();
+    const { data: group, error } = await sb
+      .from('groups')
+      .insert({ name, join_code: joinCode, created_by: currentUser.id })
+      .select('id, name, join_code')
+      .single();
+    if (error) throw error;
+
+    const { error: memberErr } = await sb.from('group_members').insert({ group_id: group.id, user_id: currentUser.id });
+    if (memberErr) throw memberErr;
+
+    myGroups.push(group);
+    activeGroupId = group.id;
+    renderGroupSwitcher();
+    loadLeaderboard();
+
+    closeModal('create-group-modal');
+    document.getElementById('created-group-code').textContent = joinCode;
+    document.getElementById('group-created-modal').classList.remove('hidden');
+  } catch (e) {
+    console.error(e);
+    errEl.textContent = e.message || 'Could not create group. Try again.';
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Create';
+  }
+}
+
+async function handleJoinGroup() {
+  const code = document.getElementById('join-group-code').value.trim().toUpperCase();
+  const errEl = document.getElementById('join-group-error');
+  const btn = document.getElementById('join-group-btn');
+  errEl.style.display = 'none';
+
+  if (!code) {
+    errEl.textContent = 'Enter a join code.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Joining…';
+
+  try {
+    const { data: group, error } = await sb.from('groups').select('id, name, join_code').eq('join_code', code).maybeSingle();
+    if (error) throw error;
+    if (!group) {
+      errEl.textContent = 'No group found with that code.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Join';
+      return;
+    }
+
+    if (myGroups.some(g => g.id === group.id)) {
+      errEl.textContent = "You're already in this group.";
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Join';
+      return;
+    }
+
+    const { error: joinErr } = await sb.from('group_members').insert({ group_id: group.id, user_id: currentUser.id });
+    if (joinErr) throw joinErr;
+
+    myGroups.push(group);
+    activeGroupId = group.id;
+    renderGroupSwitcher();
+    loadLeaderboard();
+    closeModal('join-group-modal');
+    showToast(`Joined ${group.name}! 🎉`, true);
+  } catch (e) {
+    console.error(e);
+    errEl.textContent = e.message || 'Could not join group. Try again.';
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Join';
+  }
+}
+
+function copyGroupCode() {
+  const code = document.getElementById('created-group-code').textContent;
+  navigator.clipboard?.writeText(code)
+    .then(() => showToast('Code copied! 📋', true))
+    .catch(() => showToast('Copy not available', false));
+}
+
+// ─── DATA LOADING (Supabase) ────────────────────────────────────────────────
+async function loadLogsFromServer() {
+  if (!currentUser) return;
+  try {
+    const { data, error } = await sb
+      .from('logs')
+      .select('id, exercise, count, local_date, logged_at')
+      .eq('profile_id', currentUser.id)
+      .order('logged_at', { ascending: true });
+    if (error) throw error;
+
+    const rebuilt = {};
+    (data || []).forEach(row => {
+      if (!rebuilt[row.local_date]) rebuilt[row.local_date] = {};
+      if (!rebuilt[row.local_date][row.exercise]) rebuilt[row.local_date][row.exercise] = [];
+      const timeStr = new Date(row.logged_at).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+      rebuilt[row.local_date][row.exercise].push({ count: row.count, time: timeStr, id: row.id });
+    });
+    log = rebuilt;
+  } catch (e) {
+    console.error('Failed to load logs', e);
+    showToast('Could not reach server — showing cached data', false);
+  }
+}
+
+async function loadLeaderboard() {
+  const { start, end } = dateRange('week');
+  const listEl = document.getElementById('leaderboard-list');
+  const emptyEl = document.getElementById('leaderboard-empty');
+  const titleEl = document.getElementById('leaderboard-title');
+  listEl.innerHTML = '<div style="color:#333;font-size:12px;text-align:center;padding:20px 0;">Loading…</div>';
+
+  const groupLabel = activeGroupId ? (myGroups.find(g => g.id === activeGroupId)?.name || 'Group') : 'Global';
+  titleEl.textContent = `This Week's Leaderboard — ${groupLabel}`;
+
+  try {
+    let allowedIds = null; // null = no restriction (Global)
+    if (activeGroupId) {
+      const { data: members, error: memberErr } = await sb
+        .from('group_members')
+        .select('user_id')
+        .eq('group_id', activeGroupId);
+      if (memberErr) throw memberErr;
+      allowedIds = (members || []).map(m => m.user_id);
+      if (allowedIds.length === 0) {
+        listEl.innerHTML = '';
+        emptyEl.classList.remove('hidden');
+        return;
+      }
+    }
+
+    let query = sb
+      .from('logs')
+      .select('profile_id, exercise, count, profiles(display_name)')
+      .gte('local_date', start)
+      .lte('local_date', end)
+      .not('profile_id', 'is', null);
+
+    if (allowedIds) query = query.in('profile_id', allowedIds);
+
+    const { data, error } = await query;
+    if (error) throw error;
+
+    const totals = {}; // { profile_id: { name, pushups, pullups, situps, total } }
+    (data || []).forEach(row => {
+      const pid = row.profile_id;
+      if (!totals[pid]) totals[pid] = { name: row.profiles?.display_name || 'Unknown', pushups: 0, pullups: 0, situps: 0 };
+      totals[pid][row.exercise] += row.count;
+    });
+
+    const ranked = Object.values(totals)
+      .map(u => ({ ...u, total: u.pushups + u.pullups + u.situps }))
+      .sort((a, b) => b.total - a.total);
+
+    listEl.innerHTML = '';
+    if (!ranked.length) {
+      emptyEl.classList.remove('hidden');
+      return;
+    }
+    emptyEl.classList.add('hidden');
+
+    ranked.forEach((u, i) => {
+      const isMe = u.name === currentUser.display_name;
+      const row = document.createElement('div');
+      row.style.cssText = `display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:8px;background:${isMe ? 'rgba(255,77,77,0.08)' : '#0f0f0f'};border:1px solid ${isMe ? 'rgba(255,77,77,0.25)' : '#1a1a1a'};`;
+      row.innerHTML = `
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:${i===0?'#ffd700':i===1?'#c0c0c0':i===2?'#cd7f32':'#444'};width:28px;">#${i+1}</div>
+        <div style="flex:1;">
+          <div style="font-size:13px;color:${isMe?'#ff8080':'#ccc'};">${u.name}${isMe ? ' (you)' : ''}</div>
+          <div style="font-size:9px;color:#444;letter-spacing:0.05em;margin-top:2px;">💪 ${u.pushups} · 🏋️ ${u.pullups} · 🧘 ${u.situps}</div>
+        </div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:#f0ede8;">${u.total}</div>
+      `;
+      listEl.appendChild(row);
+    });
+  } catch (e) {
+    console.error(e);
+    listEl.innerHTML = '<div style="color:#ff9999;font-size:12px;text-align:center;padding:20px 0;">Could not load leaderboard.</div>';
+  }
+}
 
 function todayTotal(k) {
   return (log[TODAY]?.[k] || []).reduce((s,e) => s+e.count, 0);
@@ -372,21 +978,46 @@ function streak() {
   return s;
 }
 
-function addEntry(type, count) {
+async function addEntry(type, count) {
   const now = new Date();
   const timeStr = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
+
+  // Optimistic UI update
   if (!log[TODAY]) log[TODAY] = {};
   if (!log[TODAY][type]) log[TODAY][type] = [];
-  log[TODAY][type].push({ count, time: timeStr });
-  save();
+  const tempEntry = { count, time: timeStr, id: 'temp-' + Date.now() };
+  log[TODAY][type].push(tempEntry);
   renderAll();
+
+  try {
+    const { data, error } = await sb
+      .from('logs')
+      .insert({ profile_id: currentUser.id, exercise: type, count, local_date: TODAY })
+      .select('id')
+      .single();
+    if (error) throw error;
+    tempEntry.id = data.id; // reconcile temp id with real id
+  } catch (e) {
+    console.error('Failed to save entry', e);
+    showToast('Saved locally — will retry when back online', false);
+  }
 }
 
-function deleteEntry(type, i) {
+async function deleteEntry(type, i) {
   if (!log[TODAY]?.[type]) return;
+  const entry = log[TODAY][type][i];
   log[TODAY][type].splice(i, 1);
-  save();
   renderAll();
+
+  if (entry?.id && !String(entry.id).startsWith('temp-')) {
+    try {
+      const { error } = await sb.from('logs').delete().eq('id', entry.id);
+      if (error) throw error;
+    } catch (e) {
+      console.error('Failed to delete entry', e);
+      showToast('Could not delete on server', false);
+    }
+  }
 }
 
 // ─── VOICE ───────────────────────────────────────────────────────────────────
@@ -493,8 +1124,10 @@ function switchView(v) {
   currentView = v;
   document.getElementById('view-today').classList.toggle('hidden', v!=='today');
   document.getElementById('view-history').classList.toggle('hidden', v!=='history');
+  document.getElementById('view-friends').classList.toggle('hidden', v!=='friends');
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view===v));
   if (v==='history') renderHistory();
+  if (v==='friends') loadLeaderboard();
 }
 
 // ─── RENDER ───────────────────────────────────────────────────────────────────
@@ -848,8 +1481,12 @@ function showToast(msg, success) {
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────────
-setActiveExercise('pushups');
-renderAll();
+// Allow Enter key to submit login from either field
+document.getElementById('auth-name').addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('auth-email').focus(); });
+document.getElementById('auth-email').addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('auth-password').focus(); });
+document.getElementById('auth-password').addEventListener('keydown', e => { if (e.key==='Enter') handleAuthSubmit(); });
+
+tryAutoLogin();
 
 // Register service worker
 if ('serviceWorker' in navigator) {
