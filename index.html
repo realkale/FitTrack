@@ -346,10 +346,17 @@
       </button>
     </div>
 
-    <div class="section-label" id="leaderboard-title">This Week's Leaderboard — Global</div>
-    <div id="leaderboard-list" style="display:flex;flex-direction:column;gap:8px;margin-top:12px;"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div class="section-label" id="leaderboard-title" style="margin-bottom:0;">Last 7 Days — Global</div>
+    </div>
+    <div class="period-tabs" style="margin-bottom:16px;">
+      <button class="period-tab active" data-lb-period="week" onclick="setLeaderboardPeriod('week')">Last 7 Days</button>
+      <button class="period-tab" data-lb-period="month" onclick="setLeaderboardPeriod('month')">Last 30 Days</button>
+      <button class="period-tab" data-lb-period="alltime" onclick="setLeaderboardPeriod('alltime')">All Time</button>
+    </div>
+    <div id="leaderboard-list" style="display:flex;flex-direction:column;gap:8px;margin-top:0;"></div>
     <div id="leaderboard-empty" class="hidden" style="color:#2a2a2a;font-size:13px;text-align:center;padding:40px 0;">
-      No one's logged anything this week yet.<br/>
+      No one's logged anything in this period yet.<br/>
       <span style="font-size:11px;">Be the first!</span>
     </div>
   </div>
@@ -925,15 +932,27 @@ async function loadLogsFromServer() {
   }
 }
 
+let leaderboardPeriod = 'week';
+
+function setLeaderboardPeriod(period) {
+  leaderboardPeriod = period;
+  document.querySelectorAll('[data-lb-period]').forEach(b => b.classList.toggle('active', b.dataset.lbPeriod === period));
+  loadLeaderboard();
+}
+
+function leaderboardPeriodLabel(period) {
+  return period === 'week' ? 'Last 7 Days' : period === 'month' ? 'Last 30 Days' : 'All Time';
+}
+
 async function loadLeaderboard() {
-  const { start, end } = dateRange('week');
+  const { start, end } = dateRange(leaderboardPeriod);
   const listEl = document.getElementById('leaderboard-list');
   const emptyEl = document.getElementById('leaderboard-empty');
   const titleEl = document.getElementById('leaderboard-title');
   listEl.innerHTML = '<div style="color:#333;font-size:12px;text-align:center;padding:20px 0;">Loading…</div>';
 
   const groupLabel = activeGroupId ? (myGroups.find(g => g.id === activeGroupId)?.name || 'Group') : 'Global';
-  titleEl.textContent = `This Week's Leaderboard — ${groupLabel}`;
+  titleEl.textContent = `${leaderboardPeriodLabel(leaderboardPeriod)} — ${groupLabel}`;
 
   try {
     let allowedIds = null; // null = no restriction (Global)
