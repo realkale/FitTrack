@@ -228,19 +228,14 @@
 
 <div id="app" class="hidden">
 
-<!-- Claim Legacy Data Modal -->
+<!-- Import Local History Modal -->
 <div class="modal-overlay hidden" id="import-modal">
   <div class="modal">
-    <div class="modal-title">📦 Import Old History?</div>
-    <div class="modal-sub">One-time step for returning users</div>
-    <div style="font-size:12px;color:#888;line-height:1.7;margin-bottom:16px;">
-      If you used FitTrack before with just a name and access code, enter that old display name below
-      to pull your workout history into this new account. If you're brand new, just tap Skip.
-    </div>
-    <div style="margin-bottom:16px;">
-      <div class="section-label">Old Display Name</div>
-      <input id="claim-old-name" type="text" placeholder="e.g. Kale" autocomplete="off"
-        style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:12px 14px;font-family:inherit;font-size:15px;color:#f0ede8;outline:none;box-sizing:border-box;"/>
+    <div class="modal-title">📦 Old Workout History Found</div>
+    <div class="modal-sub" id="import-count-label">Found entries on this device</div>
+    <div style="font-size:12px;color:#888;line-height:1.7;margin-bottom:20px;">
+      This device has workout history saved locally from before the app started syncing to a shared
+      account. Import it now so it counts toward your totals, streaks, and the leaderboard.
     </div>
     <div id="claim-error" style="color:#ff9999;font-size:12px;margin-bottom:12px;display:none;"></div>
     <div class="modal-actions">
@@ -626,51 +621,120 @@ async function tryAutoLogin() {
   }
 }
 
-// ─── CLAIM LEGACY DATA (old name+code accounts → new email account) ─────────
+// ─── IMPORT LOCAL HISTORY (localStorage from the original version → Supabase) ─
+const LEGACY_STORAGE_KEY = 'fittrack-log-v1'; // key used by the original localStorage-only version
+let legacyDataToImport = null;
+
+function countLegacyEntries(legacyLog) {
+  let count = 0;
+  Object.values(legacyLog).forEach(day => {
+    EX_KEYS.forEach(k => { count += (day[k] || []).length; });
+  });
+  return count;
+}
+
 async function checkForLegacyClaim() {
   try {
+    // Don't ask again if this account has already claimed (or been marked as skipped)
     const { data: profile } = await sb.from('profiles').select('claimed_legacy').eq('id', currentUser.id).maybeSingle();
-    if (profile?.claimed_legacy) return; // already claimed or dismissed via claim, don't ask again
+    if (profile?.claimed_legacy) return;
+
+    // Don't ask if this account already has server-side logs (avoids double-import)
+    const hasServerData = Object.keys(log).length > 0;
+    if (hasServerData) return;
+
+    const raw = localStorage.getItem(LEGACY_STORAGE_KEY);
+    if (!raw) return;
+
+    const legacyLog = JSON.parse(raw);
+    const entryCount = countLegacyEntries(legacyLog);
+    if (entryCount === 0) return;
+
+    legacyDataToImport = legacyLog;
+    document.getElementById('import-count-label').textContent =
+      `Found ${entryCount} logged set${entryCount === 1 ? '' : 's'} on this device`;
     document.getElementById('import-modal').classList.remove('hidden');
   } catch (e) {
     console.error('Legacy claim check failed', e);
   }
 }
 
-function dismissImport() {
+async function dismissImport() {
   document.getElementById('import-modal').classList.add('hidden');
+  // Mark as claimed so we don't ask again on this account, even if they skip
+  try {
+    await sb.from('profiles').update({ claimed_legacy: true }).eq('id', currentUser.id);
+  } catch (e) {
+    console.error('Failed to mark claimed_legacy after skip', e);
+  }
+}
+
+function reconstructTimestamp(dateStr, timeStr) {
+  // timeStr looks like "3:45 PM" — best-effort reconstruction; falls back to noon if unparseable
+  try {
+    const m = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if (!m) return new Date(dateStr + 'T12:00:00').toISOString();
+    let [, h, min, ampm] = m;
+    h = parseInt(h);
+    if (/pm/i.test(ampm) && h !== 12) h += 12;
+    if (/am/i.test(ampm) && h === 12) h = 0;
+    return new Date(`${dateStr}T${String(h).padStart(2,'0')}:${min}:00`).toISOString();
+  } catch (e) {
+    return new Date(dateStr + 'T12:00:00').toISOString();
+  }
 }
 
 async function runImport() {
-  const oldName = document.getElementById('claim-old-name').value.trim();
+  if (!legacyDataToImport || !currentUser) return;
   const errEl = document.getElementById('claim-error');
   const btn = document.getElementById('import-btn');
   errEl.style.display = 'none';
-
-  if (!oldName) {
-    errEl.textContent = 'Enter the old display name, or tap Skip.';
-    errEl.style.display = 'block';
-    return;
-  }
-
   btn.disabled = true;
   btn.textContent = 'Importing…';
 
   try {
-    const { data, error } = await sb.rpc('claim_legacy_logs', { old_display_name: oldName });
-    if (error) throw error;
+    const rows = [];
+    Object.entries(legacyDataToImport).forEach(([dateStr, dayData]) => {
+      EX_KEYS.forEach(k => {
+        (dayData[k] || []).forEach(entry => {
+          rows.push({
+            profile_id: currentUser.id,
+            exercise: k,
+            count: entry.count,
+            local_date: dateStr,
+            logged_at: reconstructTimestamp(dateStr, entry.time),
+          });
+        });
+      });
+    });
+
+    if (rows.length === 0) {
+      await dismissImport();
+      return;
+    }
+
+    // Insert in batches of 200 to stay well within request size limits
+    const BATCH_SIZE = 200;
+    for (let i = 0; i < rows.length; i += BATCH_SIZE) {
+      const batch = rows.slice(i, i + BATCH_SIZE);
+      const { error } = await sb.from('logs').insert(batch);
+      if (error) throw error;
+    }
+
+    await sb.from('profiles').update({ claimed_legacy: true }).eq('id', currentUser.id);
+
+    // Clear the legacy key now that it's safely migrated
+    localStorage.removeItem(LEGACY_STORAGE_KEY);
+    legacyDataToImport = null;
 
     document.getElementById('import-modal').classList.add('hidden');
-    if (data > 0) {
-      showToast(`Imported ${data} sets! 🎉`, true);
-      await loadLogsFromServer();
-      renderAll();
-    } else {
-      showToast(`No history found for "${oldName}"`, false);
-    }
+    showToast(`Imported ${rows.length} sets! 🎉`, true);
+
+    await loadLogsFromServer();
+    renderAll();
   } catch (e) {
-    console.error('Claim failed', e);
-    errEl.textContent = e.message || 'Import failed — check the name and try again.';
+    console.error('Import failed', e);
+    errEl.textContent = e.message || 'Import failed — check connection and try again.';
     errEl.style.display = 'block';
     btn.disabled = false;
     btn.textContent = 'Import My History';
