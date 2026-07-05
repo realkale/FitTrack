@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FitTrack — Test Data Injector</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; background: #0a0a0f; color: #f0ede8; padding: 24px; }
+    h1 { font-size: 20px; }
+    p { color: #999; font-size: 14px; line-height: 1.6; }
+    button { width: 100%; padding: 16px; margin-top: 16px; border: none; border-radius: 8px;
+      background: #ff4d4d; color: #0a0a0f; font-size: 15px; font-weight: 600; cursor: pointer; }
+    button.danger { background: #333; color: #ff9999; }
+    #status { margin-top: 20px; padding: 14px; border-radius: 8px; background: #111; font-size: 13px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>⚠️ FitTrack Test Data Injector</h1>
+  <p>
+    This page writes <strong>fake</strong> workout history into this browser's localStorage
+    under the same key the original FitTrack app used (<code>fittrack-log-v1</code>).
+    Use this to test the "Import Old History" flow safely, without touching your real data.
+  </p>
+  <p>
+    <strong>Important:</strong> this only works if you open THIS exact page on the SAME domain
+    (same URL prefix) as the FitTrack version you're testing — localStorage is scoped per-domain.
+    Upload this file to your preview branch temporarily, or open it via the same Vercel preview URL.
+  </p>
+
+  <button onclick="injectFakeData()">Inject Fake Test Data</button>
+  <button class="danger" onclick="clearFakeData()">Clear Test Data</button>
+  <button class="danger" onclick="checkData()">Check What's Currently Stored</button>
+
+  <div id="status"></div>
+
+  <script>
+    const KEY = 'fittrack-log-v1';
+
+    function injectFakeData() {
+      const today = new Date();
+      const fmt = (d) => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+
+      const fakeLog = {};
+      // Today
+      fakeLog[fmt(today)] = {
+        pushups: [{ count: 20, time: '9:15 AM' }, { count: 15, time: '4:30 PM' }],
+        situps: [{ count: 30, time: '9:20 AM' }]
+      };
+      // Yesterday
+      const yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
+      fakeLog[fmt(yesterday)] = {
+        pullups: [{ count: 8, time: '7:00 AM' }],
+        pushups: [{ count: 25, time: '7:05 AM' }]
+      };
+      // 3 days ago
+      const threeDaysAgo = new Date(today); threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+      fakeLog[fmt(threeDaysAgo)] = {
+        situps: [{ count: 40, time: '6:00 PM' }]
+      };
+
+      localStorage.setItem(KEY, JSON.stringify(fakeLog));
+      document.getElementById('status').textContent =
+        'Injected fake data for 3 days (today, yesterday, 3 days ago).\n\n' +
+        'Now go to the FitTrack app on THIS SAME domain and sign in — ' +
+        'the Import Old History modal should appear.\n\n' +
+        JSON.stringify(fakeLog, null, 2);
+    }
+
+    function clearFakeData() {
+      localStorage.removeItem(KEY);
+      document.getElementById('status').textContent = 'Cleared. localStorage key "' + KEY + '" removed.';
+    }
+
+    function checkData() {
+      const raw = localStorage.getItem(KEY);
+      document.getElementById('status').textContent = raw
+        ? 'Found data:\n\n' + JSON.stringify(JSON.parse(raw), null, 2)
+        : 'No data found under key "' + KEY + '" on this domain.';
+    }
+  </script>
+</body>
+</html>
