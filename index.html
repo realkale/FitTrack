@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -25,172 +24,168 @@
     ::-webkit-scrollbar-track { background: #0a0a0f; }
     ::-webkit-scrollbar-thumb { background: #222; border-radius: 2px; }
 
-```
-#app { max-width: 480px; margin: 0 auto; padding: 0 16px 80px; min-height: 100vh; }
+    #app { max-width: 480px; margin: 0 auto; padding: 0 16px 80px; min-height: 100vh; }
 
-/* Nav */
-.nav { display: flex; border-bottom: 1px solid #181818; margin-bottom: 28px; }
-.nav-btn { background: none; border: none; cursor: pointer; font-family: inherit;
-  font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
-  padding: 10px 20px; color: #555; border-bottom: 2px solid transparent;
-  transition: color 0.2s, border-color 0.2s; }
-.nav-btn.active { color: #f0ede8; border-bottom-color: #f0ede8; }
+    /* Nav */
+    .nav { display: flex; border-bottom: 1px solid #181818; margin-bottom: 28px; }
+    .nav-btn { background: none; border: none; cursor: pointer; font-family: inherit;
+      font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+      padding: 10px 20px; color: #555; border-bottom: 2px solid transparent;
+      transition: color 0.2s, border-color 0.2s; }
+    .nav-btn.active { color: #f0ede8; border-bottom-color: #f0ede8; }
 
-/* Exercise tabs */
-.ex-tabs { display: flex; gap: 6px; margin-bottom: 28px; }
-.ex-tab { flex: 1; padding: 10px 4px; border: 1px solid #1a1a1a; border-radius: 8px;
-  cursor: pointer; background: transparent; font-family: inherit; font-size: 10px;
-  letter-spacing: 0.1em; text-transform: uppercase; transition: all 0.2s;
-  display: flex; flex-direction: column; align-items: center; gap: 5px; color: #3a3a3a; }
-.ex-tab .ex-icon { font-size: 20px; }
-.ex-tab .ex-total { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.04em; color: #2a2a2a; }
+    /* Exercise tabs */
+    .ex-tabs { display: flex; gap: 6px; margin-bottom: 28px; }
+    .ex-tab { flex: 1; padding: 10px 4px; border: 1px solid #1a1a1a; border-radius: 8px;
+      cursor: pointer; background: transparent; font-family: inherit; font-size: 10px;
+      letter-spacing: 0.1em; text-transform: uppercase; transition: all 0.2s;
+      display: flex; flex-direction: column; align-items: center; gap: 5px; color: #3a3a3a; }
+    .ex-tab .ex-icon { font-size: 20px; }
+    .ex-tab .ex-total { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.04em; color: #2a2a2a; }
 
-/* Big counter */
-.big-counter { text-align: center; margin-bottom: 32px; }
-.big-num { font-family: 'Bebas Neue', sans-serif; font-size: 96px; line-height: 1; letter-spacing: 0.02em; transition: color 0.3s; }
-.big-label { font-size: 10px; letter-spacing: 0.18em; color: #383838; text-transform: uppercase; }
+    /* Big counter */
+    .big-counter { text-align: center; margin-bottom: 32px; }
+    .big-num { font-family: 'Bebas Neue', sans-serif; font-size: 96px; line-height: 1; letter-spacing: 0.02em; transition: color 0.3s; }
+    .big-label { font-size: 10px; letter-spacing: 0.18em; color: #383838; text-transform: uppercase; }
 
-/* Mode toggle */
-.mode-toggle { display: flex; background: #0f0f0f; border-radius: 8px; padding: 3px;
-  margin-bottom: 24px; border: 1px solid #181818; }
-.mode-btn { flex: 1; padding: 8px 0; border: none; border-radius: 6px; cursor: pointer;
-  font-family: inherit; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
-  transition: all 0.2s; background: transparent; color: #383838; }
-.mode-btn.active { background: #1a1a1a; box-shadow: 0 1px 4px rgba(0,0,0,0.5); }
+    /* Mode toggle */
+    .mode-toggle { display: flex; background: #0f0f0f; border-radius: 8px; padding: 3px;
+      margin-bottom: 24px; border: 1px solid #181818; }
+    .mode-btn { flex: 1; padding: 8px 0; border: none; border-radius: 6px; cursor: pointer;
+      font-family: inherit; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      transition: all 0.2s; background: transparent; color: #383838; }
+    .mode-btn.active { background: #1a1a1a; box-shadow: 0 1px 4px rgba(0,0,0,0.5); }
 
-/* Mic */
-.mic-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; margin-bottom: 36px; }
-.mic-btn { width: 88px; height: 88px; border-radius: 50%; border: 2px solid var(--ex-color);
-  background: transparent; cursor: pointer; display: flex; align-items: center;
-  justify-content: center; font-size: 32px; transition: all 0.2s; color: var(--ex-color); }
-.mic-btn:hover { background: var(--ex-dim); }
-.mic-btn.active { background: var(--ex-color); color: #0a0a0f; animation: pulse 1s infinite; }
-@keyframes pulse {
-  0%,100% { box-shadow: 0 0 0 0 var(--ex-dim); }
-  50% { box-shadow: 0 0 0 18px transparent; }
-}
-.mic-hint { font-size: 10px; color: #383838; letter-spacing: 0.1em; text-align: center; }
-.transcript-box { font-size: 11px; color: #606060; background: #111; padding: 7px 14px;
-  border-radius: 6px; max-width: 280px; text-align: center; display: none; }
+    /* Mic */
+    .mic-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; margin-bottom: 36px; }
+    .mic-btn { width: 88px; height: 88px; border-radius: 50%; border: 2px solid var(--ex-color);
+      background: transparent; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; font-size: 32px; transition: all 0.2s; color: var(--ex-color); }
+    .mic-btn:hover { background: var(--ex-dim); }
+    .mic-btn.active { background: var(--ex-color); color: #0a0a0f; animation: pulse 1s infinite; }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 0 0 var(--ex-dim); }
+      50% { box-shadow: 0 0 0 18px transparent; }
+    }
+    .mic-hint { font-size: 10px; color: #383838; letter-spacing: 0.1em; text-align: center; }
+    .transcript-box { font-size: 11px; color: #606060; background: #111; padding: 7px 14px;
+      border-radius: 6px; max-width: 280px; text-align: center; display: none; }
 
-/* Manual input */
-.manual-wrap { margin-bottom: 36px; }
-.section-label { font-size: 9px; letter-spacing: 0.18em; color: #383838;
-  text-transform: uppercase; margin-bottom: 10px; }
-.quick-btns { display: flex; gap: 6px; margin-bottom: 18px; }
-.quick-btn { flex: 1; padding: 11px 0; border: 1px solid #1e1e1e; background: transparent;
-  border-radius: 6px; cursor: pointer; font-family: 'Bebas Neue', sans-serif;
-  font-size: 22px; letter-spacing: 0.04em; transition: all 0.15s; }
-.custom-row { display: flex; gap: 8px; }
-.custom-input { flex: 1; background: #0f0f0f; border: 1px solid #1e1e1e; border-radius: 6px;
-  padding: 12px; font-family: 'Bebas Neue', sans-serif; font-size: 30px;
-  color: var(--ex-color); outline: none; letter-spacing: 0.04em; text-align: center;
-  transition: border-color 0.2s; }
-.log-btn { padding: 12px 18px; border: none; border-radius: 6px; cursor: pointer;
-  font-family: inherit; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
-  font-weight: 500; white-space: nowrap; transition: opacity 0.15s;
-  background: var(--ex-color); color: #0a0a0f; }
-.log-btn:hover { opacity: 0.8; }
-.input-hint { font-size: 9px; color: #282828; margin-top: 7px; letter-spacing: 0.06em; }
+    /* Manual input */
+    .manual-wrap { margin-bottom: 36px; }
+    .section-label { font-size: 9px; letter-spacing: 0.18em; color: #383838;
+      text-transform: uppercase; margin-bottom: 10px; }
+    .quick-btns { display: flex; gap: 6px; margin-bottom: 18px; }
+    .quick-btn { flex: 1; padding: 11px 0; border: 1px solid #1e1e1e; background: transparent;
+      border-radius: 6px; cursor: pointer; font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px; letter-spacing: 0.04em; transition: all 0.15s; }
+    .custom-row { display: flex; gap: 8px; }
+    .custom-input { flex: 1; background: #0f0f0f; border: 1px solid #1e1e1e; border-radius: 6px;
+      padding: 12px; font-family: 'Bebas Neue', sans-serif; font-size: 30px;
+      color: var(--ex-color); outline: none; letter-spacing: 0.04em; text-align: center;
+      transition: border-color 0.2s; }
+    .log-btn { padding: 12px 18px; border: none; border-radius: 6px; cursor: pointer;
+      font-family: inherit; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      font-weight: 500; white-space: nowrap; transition: opacity 0.15s;
+      background: var(--ex-color); color: #0a0a0f; }
+    .log-btn:hover { opacity: 0.8; }
+    .input-hint { font-size: 9px; color: #282828; margin-top: 7px; letter-spacing: 0.06em; }
 
-/* Sets today */
-.sets-today { display: flex; flex-direction: column; gap: 16px; }
-.sets-group-label { font-size: 9px; letter-spacing: 0.18em; color: #383838;
-  text-transform: uppercase; margin-bottom: 8px; }
-.pills { display: flex; flex-wrap: wrap; gap: 6px; }
-.pill { border-radius: 4px; padding: 5px 10px; font-size: 11px;
-  display: flex; gap: 8px; align-items: center; }
-.pill-time { font-size: 10px; color: #383838; }
-.del-btn { background: none; border: none; cursor: pointer; color: #333;
-  font-size: 13px; line-height: 1; transition: color 0.15s; }
-.del-btn:hover { color: #ff4d4d; }
+    /* Sets today */
+    .sets-today { display: flex; flex-direction: column; gap: 16px; }
+    .sets-group-label { font-size: 9px; letter-spacing: 0.18em; color: #383838;
+      text-transform: uppercase; margin-bottom: 8px; }
+    .pills { display: flex; flex-wrap: wrap; gap: 6px; }
+    .pill { border-radius: 4px; padding: 5px 10px; font-size: 11px;
+      display: flex; gap: 8px; align-items: center; }
+    .pill-time { font-size: 10px; color: #383838; }
+    .del-btn { background: none; border: none; cursor: pointer; color: #333;
+      font-size: 13px; line-height: 1; transition: color 0.15s; }
+    .del-btn:hover { color: #ff4d4d; }
 
-/* History chart */
-.chart-wrap { margin-bottom: 36px; }
-.legend { display: flex; gap: 16px; margin-bottom: 12px; }
-.legend-item { display: flex; align-items: center; gap: 5px; font-size: 9px;
-  color: #555; letter-spacing: 0.08em; }
-.legend-dot { width: 8px; height: 8px; border-radius: 2px; }
-.bars { display: flex; align-items: flex-end; gap: 3px; height: 80px; }
-.bar-col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; gap: 1px; }
-.bar-seg { width: 100%; border-radius: 0; transition: height 0.4s ease; min-height: 0; }
-.bar-seg.top { border-radius: 2px 2px 0 0; }
-.chart-dates { display: flex; justify-content: space-between; margin-top: 5px;
-  font-size: 8px; color: #2a2a2a; }
+    /* History chart */
+    .chart-wrap { margin-bottom: 36px; }
+    .legend { display: flex; gap: 16px; margin-bottom: 12px; }
+    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 9px;
+      color: #555; letter-spacing: 0.08em; }
+    .legend-dot { width: 8px; height: 8px; border-radius: 2px; }
+    .bars { display: flex; align-items: flex-end; gap: 3px; height: 80px; }
+    .bar-col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; gap: 1px; }
+    .bar-seg { width: 100%; border-radius: 0; transition: height 0.4s ease; min-height: 0; }
+    .bar-seg.top { border-radius: 2px 2px 0 0; }
+    .chart-dates { display: flex; justify-content: space-between; margin-top: 5px;
+      font-size: 8px; color: #2a2a2a; }
 
-/* Day list */
-.day-row { border-bottom: 1px solid #111; padding: 14px 0; }
-.day-label { font-size: 11px; color: #353535; margin-bottom: 8px; letter-spacing: 0.06em; }
-.day-cards { display: flex; gap: 10px; }
-.day-card { flex: 1; border-radius: 6px; padding: 8px 10px; text-align: center; }
-.day-card-label { font-size: 9px; color: #404040; letter-spacing: 0.1em; margin-bottom: 3px; }
-.day-card-num { font-family: 'Bebas Neue', sans-serif; font-size: 28px; line-height: 1; }
-.day-card-sets { font-size: 9px; color: #383838; margin-top: 4px; }
+    /* Day list */
+    .day-row { border-bottom: 1px solid #111; padding: 14px 0; }
+    .day-label { font-size: 11px; color: #353535; margin-bottom: 8px; letter-spacing: 0.06em; }
+    .day-cards { display: flex; gap: 10px; }
+    .day-card { flex: 1; border-radius: 6px; padding: 8px 10px; text-align: center; }
+    .day-card-label { font-size: 9px; color: #404040; letter-spacing: 0.1em; margin-bottom: 3px; }
+    .day-card-num { font-family: 'Bebas Neue', sans-serif; font-size: 28px; line-height: 1; }
+    .day-card-sets { font-size: 9px; color: #383838; margin-top: 4px; }
 
-/* Share button */
-.share-btn { display: flex; align-items: center; gap: 8px; background: #141414;
-  border: 1px solid #222; border-radius: 8px; padding: 12px 16px; cursor: pointer;
-  font-family: inherit; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
-  color: #888; width: 100%; margin-bottom: 28px; transition: all 0.2s; }
-.share-btn:hover { border-color: #444; color: #f0ede8; }
+    /* Share button */
+    .share-btn { display: flex; align-items: center; gap: 8px; background: #141414;
+      border: 1px solid #222; border-radius: 8px; padding: 12px 16px; cursor: pointer;
+      font-family: inherit; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: #888; width: 100%; margin-bottom: 28px; transition: all 0.2s; }
+    .share-btn:hover { border-color: #444; color: #f0ede8; }
 
-/* Modal overlay */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85);
-  display: flex; align-items: flex-end; justify-content: center; z-index: 200;
-  padding: 0; backdrop-filter: blur(4px); }
-.modal { background: #111; border-radius: 16px 16px 0 0; padding: 24px 20px 40px;
-  width: 100%; max-width: 480px; border-top: 1px solid #222; }
-.modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px;
-  letter-spacing: 0.04em; margin-bottom: 4px; }
-.modal-sub { font-size: 10px; color: #444; letter-spacing: 0.12em;
-  text-transform: uppercase; margin-bottom: 20px; }
-.modal-close { float: right; background: none; border: none; color: #444;
-  font-size: 20px; cursor: pointer; line-height: 1; margin-top: -4px; }
-.card-preview { border-radius: 12px; overflow: hidden; margin-bottom: 16px;
-  border: 1px solid #222; }
-.modal-actions { display: flex; gap: 10px; }
-.modal-action-btn { flex: 1; padding: 13px; border: none; border-radius: 8px;
-  cursor: pointer; font-family: inherit; font-size: 11px; letter-spacing: 0.1em;
-  text-transform: uppercase; transition: opacity 0.15s; }
-.modal-action-btn:hover { opacity: 0.8; }
+    /* Modal overlay */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+      display: flex; align-items: flex-end; justify-content: center; z-index: 200;
+      padding: 0; backdrop-filter: blur(4px); }
+    .modal { background: #111; border-radius: 16px 16px 0 0; padding: 24px 20px 40px;
+      width: 100%; max-width: 480px; border-top: 1px solid #222; }
+    .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px;
+      letter-spacing: 0.04em; margin-bottom: 4px; }
+    .modal-sub { font-size: 10px; color: #444; letter-spacing: 0.12em;
+      text-transform: uppercase; margin-bottom: 20px; }
+    .modal-close { float: right; background: none; border: none; color: #444;
+      font-size: 20px; cursor: pointer; line-height: 1; margin-top: -4px; }
+    .card-preview { border-radius: 12px; overflow: hidden; margin-bottom: 16px;
+      border: 1px solid #222; }
+    .modal-actions { display: flex; gap: 10px; }
+    .modal-action-btn { flex: 1; padding: 13px; border: none; border-radius: 8px;
+      cursor: pointer; font-family: inherit; font-size: 11px; letter-spacing: 0.1em;
+      text-transform: uppercase; transition: opacity 0.15s; }
+    .modal-action-btn:hover { opacity: 0.8; }
 
-/* Period tabs in share modal */
-.period-tabs { display: flex; gap: 6px; margin-bottom: 16px; }
-.period-tab { flex: 1; padding: 8px; border: 1px solid #222; border-radius: 6px;
-  background: transparent; cursor: pointer; font-family: inherit; font-size: 10px;
-  letter-spacing: 0.1em; text-transform: uppercase; color: #555; transition: all 0.2s; }
-.period-tab.active { border-color: #555; color: #f0ede8; background: #1a1a1a; }
+    /* Period tabs in share modal */
+    .period-tabs { display: flex; gap: 6px; margin-bottom: 16px; }
+    .period-tab { flex: 1; padding: 8px; border: 1px solid #222; border-radius: 6px;
+      background: transparent; cursor: pointer; font-family: inherit; font-size: 10px;
+      letter-spacing: 0.1em; text-transform: uppercase; color: #555; transition: all 0.2s; }
+    .period-tab.active { border-color: #555; color: #f0ede8; background: #1a1a1a; }
 
-/* Toast */
-.toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
-  padding: 10px 20px; border-radius: 6px; font-size: 12px; font-family: inherit;
-  white-space: nowrap; z-index: 300; animation: slideUp 0.25s ease;
-  pointer-events: none; }
-@keyframes slideUp {
-  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
-  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
+    /* Toast */
+    .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+      padding: 10px 20px; border-radius: 6px; font-size: 12px; font-family: inherit;
+      white-space: nowrap; z-index: 300; animation: slideUp 0.25s ease;
+      pointer-events: none; }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+      to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
 
-/* Header */
-.header { padding-top: 52px; margin-bottom: 6px; }
-.header-eyebrow { font-size: 10px; letter-spacing: 0.22em; color: #282828;
-  text-transform: uppercase; margin-bottom: 2px; }
-.header-title { font-family: 'Bebas Neue', sans-serif; font-size: 48px;
-  line-height: 1; letter-spacing: 0.04em; }
+    /* Header */
+    .header { padding-top: 52px; margin-bottom: 6px; }
+    .header-eyebrow { font-size: 10px; letter-spacing: 0.22em; color: #282828;
+      text-transform: uppercase; margin-bottom: 2px; }
+    .header-title { font-family: 'Bebas Neue', sans-serif; font-size: 48px;
+      line-height: 1; letter-spacing: 0.04em; }
 
-.hidden { display: none !important; }
+    .hidden { display: none !important; }
 
-/* Unsupported voice */
-.voice-unsupported { color: #ff9999; font-size: 12px; text-align: center;
-  line-height: 1.8; padding: 20px 0 36px; }
-```
-
+    /* Unsupported voice */
+    .voice-unsupported { color: #ff9999; font-size: 12px; text-align: center;
+      line-height: 1.8; padding: 20px 0 36px; }
   </style>
 </head>
 <body>
 
 <!-- LOGIN / SIGN-UP SCREEN -->
-
 <div id="login-screen" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;">
   <div style="max-width:340px;width:100%;">
     <div style="text-align:center;margin-bottom:32px;">
@@ -198,46 +193,42 @@
       <div style="font-family:'Bebas Neue',sans-serif;font-size:44px;line-height:1;letter-spacing:0.04em;">FIT<span style="color:#ff4d4d;">TRACK</span></div>
     </div>
 
-```
-<!-- Sign In / Sign Up toggle -->
-<div class="mode-toggle" style="margin-bottom:20px;">
-  <button class="mode-btn active" id="auth-tab-signin" onclick="setAuthMode('signin')">Sign In</button>
-  <button class="mode-btn" id="auth-tab-signup" onclick="setAuthMode('signup')">Sign Up</button>
-</div>
+    <!-- Sign In / Sign Up toggle -->
+    <div class="mode-toggle" style="margin-bottom:20px;">
+      <button class="mode-btn active" id="auth-tab-signin" onclick="setAuthMode('signin')">Sign In</button>
+      <button class="mode-btn" id="auth-tab-signup" onclick="setAuthMode('signup')">Sign Up</button>
+    </div>
 
-<div style="display:flex;flex-direction:column;gap:12px;">
-  <!-- Display name — signup only -->
-  <div id="auth-name-field" class="hidden">
-    <div class="section-label">Display Name</div>
-    <input id="auth-name" type="text" placeholder="e.g. Kale" autocomplete="off"
-      style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:13px 14px;font-family:inherit;font-size:15px;color:#f0ede8;outline:none;box-sizing:border-box;"/>
-  </div>
-  <div>
-    <div class="section-label">Email</div>
-    <input id="auth-email" type="email" placeholder="you@example.com" autocomplete="off"
-      style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:13px 14px;font-family:inherit;font-size:15px;color:#f0ede8;outline:none;box-sizing:border-box;"/>
-  </div>
-  <div>
-    <div class="section-label">Password</div>
-    <input id="auth-password" type="password" placeholder="At least 6 characters" autocomplete="off"
-      style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:13px 14px;font-family:inherit;font-size:15px;color:#f0ede8;outline:none;box-sizing:border-box;"/>
-  </div>
-  <button id="auth-submit-btn" onclick="handleAuthSubmit()"
-    style="margin-top:8px;padding:14px;border:none;border-radius:6px;cursor:pointer;background:#ff4d4d;color:#0a0a0f;font-family:inherit;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;font-weight:600;">
-    Sign In
-  </button>
-  <div id="auth-error" style="color:#ff9999;font-size:12px;text-align:center;display:none;"></div>
-  <div id="auth-info" style="color:#7dff9f;font-size:12px;text-align:center;display:none;line-height:1.6;"></div>
-</div>
-```
-
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <!-- Display name — signup only -->
+      <div id="auth-name-field" class="hidden">
+        <div class="section-label">Display Name</div>
+        <input id="auth-name" type="text" placeholder="e.g. Kale" autocomplete="off"
+          style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:13px 14px;font-family:inherit;font-size:15px;color:#f0ede8;outline:none;box-sizing:border-box;"/>
+      </div>
+      <div>
+        <div class="section-label">Email</div>
+        <input id="auth-email" type="email" placeholder="you@example.com" autocomplete="off"
+          style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:13px 14px;font-family:inherit;font-size:15px;color:#f0ede8;outline:none;box-sizing:border-box;"/>
+      </div>
+      <div>
+        <div class="section-label">Password</div>
+        <input id="auth-password" type="password" placeholder="At least 6 characters" autocomplete="off"
+          style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:13px 14px;font-family:inherit;font-size:15px;color:#f0ede8;outline:none;box-sizing:border-box;"/>
+      </div>
+      <button id="auth-submit-btn" onclick="handleAuthSubmit()"
+        style="margin-top:8px;padding:14px;border:none;border-radius:6px;cursor:pointer;background:#ff4d4d;color:#0a0a0f;font-family:inherit;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;font-weight:600;">
+        Sign In
+      </button>
+      <div id="auth-error" style="color:#ff9999;font-size:12px;text-align:center;display:none;"></div>
+      <div id="auth-info" style="color:#7dff9f;font-size:12px;text-align:center;display:none;line-height:1.6;"></div>
+    </div>
   </div>
 </div>
 
 <div id="app" class="hidden">
 
 <!-- Import Local History Modal -->
-
 <div class="modal-overlay hidden" id="import-modal">
   <div class="modal">
     <div class="modal-title">📦 Old Workout History Found</div>
@@ -265,7 +256,6 @@
   </div>
 
   <!-- Nav -->
-
   <div class="nav">
     <button class="nav-btn active" data-view="today" onclick="switchView('today')">Today</button>
     <button class="nav-btn" data-view="history" onclick="switchView('history')">History</button>
@@ -276,58 +266,53 @@
   </div>
 
   <!-- TODAY VIEW -->
-
   <div id="view-today">
     <!-- Exercise tabs -->
     <div class="ex-tabs" id="ex-tabs"></div>
 
-```
-<!-- Big counter -->
-<div class="big-counter">
-  <div class="big-num" id="big-num">0</div>
-  <div class="big-label" id="big-label">Push-Ups Today</div>
-</div>
+    <!-- Big counter -->
+    <div class="big-counter">
+      <div class="big-num" id="big-num">0</div>
+      <div class="big-label" id="big-label">Push-Ups Today</div>
+    </div>
 
-<!-- Mode toggle -->
-<div class="mode-toggle">
-  <button class="mode-btn active" id="mode-voice" onclick="setMode('voice')">🎙 Voice</button>
-  <button class="mode-btn" id="mode-manual" onclick="setMode('manual')">⌨️ Manual</button>
-</div>
+    <!-- Mode toggle -->
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="mode-voice" onclick="setMode('voice')">🎙 Voice</button>
+      <button class="mode-btn" id="mode-manual" onclick="setMode('manual')">⌨️ Manual</button>
+    </div>
 
-<!-- Voice panel -->
-<div class="mic-wrap" id="voice-panel">
-  <button class="mic-btn" id="mic-btn" onclick="toggleMic()">🎙</button>
-  <div class="mic-hint" id="mic-hint">Tap mic · say "did 20 push-ups"</div>
-  <div class="transcript-box" id="transcript-box"></div>
-</div>
+    <!-- Voice panel -->
+    <div class="mic-wrap" id="voice-panel">
+      <button class="mic-btn" id="mic-btn" onclick="toggleMic()">🎙</button>
+      <div class="mic-hint" id="mic-hint">Tap mic · say "did 20 push-ups"</div>
+      <div class="transcript-box" id="transcript-box"></div>
+    </div>
 
-<!-- Voice unsupported -->
-<div class="voice-unsupported hidden" id="voice-unsupported">
-  Voice input isn't supported in this browser.<br>
-  <span style="color:#383838">Switch to Manual input above.</span>
-</div>
+    <!-- Voice unsupported -->
+    <div class="voice-unsupported hidden" id="voice-unsupported">
+      Voice input isn't supported in this browser.<br>
+      <span style="color:#383838">Switch to Manual input above.</span>
+    </div>
 
-<!-- Manual panel -->
-<div class="manual-wrap hidden" id="manual-panel">
-  <div class="section-label" id="quick-label">Quick Add — Push-Ups</div>
-  <div class="quick-btns" id="quick-btns"></div>
-  <div class="section-label">Custom Amount</div>
-  <div class="custom-row">
-    <input class="custom-input" id="custom-input" type="number" min="1" max="9999"
-      placeholder="0" oninput="" onkeydown="if(event.key==='Enter')logManual()"/>
-    <button class="log-btn" onclick="logManual()">Log Set</button>
-  </div>
-  <div class="input-hint">Press Enter or tap Log Set</div>
-</div>
+    <!-- Manual panel -->
+    <div class="manual-wrap hidden" id="manual-panel">
+      <div class="section-label" id="quick-label">Quick Add — Push-Ups</div>
+      <div class="quick-btns" id="quick-btns"></div>
+      <div class="section-label">Custom Amount</div>
+      <div class="custom-row">
+        <input class="custom-input" id="custom-input" type="number" min="1" max="9999"
+          placeholder="0" oninput="" onkeydown="if(event.key==='Enter')logManual()"/>
+        <button class="log-btn" onclick="logManual()">Log Set</button>
+      </div>
+      <div class="input-hint">Press Enter or tap Log Set</div>
+    </div>
 
-<!-- Sets today -->
-<div class="sets-today hidden" id="sets-today"></div>
-```
-
+    <!-- Sets today -->
+    <div class="sets-today hidden" id="sets-today"></div>
   </div>
 
   <!-- HISTORY VIEW -->
-
   <div id="view-history" class="hidden">
     <button class="share-btn" onclick="openShareModal()">
       <span style="font-size:18px">📤</span>
@@ -335,122 +320,117 @@
       <span style="margin-left:auto;font-size:16px">→</span>
     </button>
 
-```
-<div class="chart-wrap">
-  <div class="section-label">Last 14 Days</div>
-  <div class="legend" id="legend"></div>
-  <div class="bars" id="bars"></div>
-  <div class="chart-dates">
-    <span id="chart-date-start"></span>
-    <span>Today</span>
-  </div>
-</div>
+    <div class="chart-wrap">
+      <div class="section-label">Last 14 Days</div>
+      <div class="legend" id="legend"></div>
+      <div class="bars" id="bars"></div>
+      <div class="chart-dates">
+        <span id="chart-date-start"></span>
+        <span>Today</span>
+      </div>
+    </div>
 
-<div id="day-list"></div>
-```
-
+    <div id="day-list"></div>
   </div>
 
   <!-- FRIENDS VIEW -->
-
   <div id="view-friends" class="hidden">
     <!-- Group switcher -->
     <div class="section-label">Group</div>
     <div style="display:flex;gap:6px;margin-bottom:20px;overflow-x:auto;padding-bottom:2px;" id="group-switcher"></div>
 
-```
-<!-- Create / Join group -->
-<div style="display:flex;gap:8px;margin-bottom:24px;">
-  <button class="share-btn" style="margin-bottom:0;" onclick="openCreateGroupModal()">
-    <span style="font-size:16px;">➕</span><span>Create Group</span>
-  </button>
-  <button class="share-btn" style="margin-bottom:0;" onclick="openJoinGroupModal()">
-    <span style="font-size:16px;">🔑</span><span>Join Group</span>
-  </button>
-</div>
+    <!-- Create / Join group -->
+    <div style="display:flex;gap:8px;margin-bottom:16px;">
+      <button class="share-btn" style="margin-bottom:0;" onclick="openCreateGroupModal()">
+        <span style="font-size:16px;">➕</span><span>Create Group</span>
+      </button>
+      <button class="share-btn" style="margin-bottom:0;" onclick="openJoinGroupModal()">
+        <span style="font-size:16px;">🔑</span><span>Join Group</span>
+      </button>
+    </div>
 
-<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-  <div class="section-label" id="leaderboard-title" style="margin-bottom:0;">Last 7 Days — Global</div>
-</div>
-<div class="period-tabs" style="margin-bottom:16px;">
-  <button class="period-tab active" data-lb-period="week" onclick="setLeaderboardPeriod('week')">Last 7 Days</button>
-  <button class="period-tab" data-lb-period="month" onclick="setLeaderboardPeriod('month')">Last 30 Days</button>
-  <button class="period-tab" data-lb-period="alltime" onclick="setLeaderboardPeriod('alltime')">All Time</button>
-</div>
-<div id="leaderboard-list" style="display:flex;flex-direction:column;gap:8px;margin-top:0;"></div>
-<div id="leaderboard-empty" class="hidden" style="color:#2a2a2a;font-size:13px;text-align:center;padding:40px 0;">
-  No one's logged anything in this period yet.<br/>
-  <span style="font-size:11px;">Be the first!</span>
-</div>
-```
+    <!-- Invite someone to the active group -->
+    <button class="share-btn hidden" id="invite-to-group-btn" style="margin-bottom:20px;" onclick="openInviteModal()">
+      <span style="font-size:16px;">👋</span><span>Invite Someone to This Group</span>
+    </button>
 
+    <!-- Pending group invites (received) -->
+    <div id="pending-group-invites-section" class="hidden" style="margin-bottom:24px;">
+      <div class="section-label" style="margin-bottom:10px;">Group Invites</div>
+      <div id="pending-group-invites-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div class="section-label" id="leaderboard-title" style="margin-bottom:0;">Last 7 Days — Global</div>
+    </div>
+    <div class="period-tabs" style="margin-bottom:16px;">
+      <button class="period-tab active" data-lb-period="week" onclick="setLeaderboardPeriod('week')">Last 7 Days</button>
+      <button class="period-tab" data-lb-period="month" onclick="setLeaderboardPeriod('month')">Last 30 Days</button>
+      <button class="period-tab" data-lb-period="alltime" onclick="setLeaderboardPeriod('alltime')">All Time</button>
+    </div>
+    <div id="leaderboard-list" style="display:flex;flex-direction:column;gap:8px;margin-top:0;"></div>
+    <div id="leaderboard-empty" class="hidden" style="color:#2a2a2a;font-size:13px;text-align:center;padding:40px 0;">
+      No one's logged anything in this period yet.<br/>
+      <span style="font-size:11px;">Be the first!</span>
+    </div>
   </div>
 
   <!-- CHALLENGES VIEW -->
-
   <div id="view-challenges" class="hidden">
     <button class="share-btn" style="margin-bottom:24px;" onclick="openChallengeModal()">
       <span style="font-size:16px;">⚔️</span><span>Challenge a Friend</span>
     </button>
 
-```
-<div id="pending-challenges-section" class="hidden">
-  <div class="section-label" style="margin-bottom:10px;">Pending Invites</div>
-  <div id="pending-challenges-list" style="display:flex;flex-direction:column;gap:10px;margin-bottom:28px;"></div>
-</div>
+    <div id="pending-challenges-section" class="hidden">
+      <div class="section-label" style="margin-bottom:10px;">Pending Invites</div>
+      <div id="pending-challenges-list" style="display:flex;flex-direction:column;gap:10px;margin-bottom:28px;"></div>
+    </div>
 
-<div class="section-label" style="margin-bottom:10px;">Active Challenges</div>
-<div id="active-challenges-list" style="display:flex;flex-direction:column;gap:12px;"></div>
-<div id="challenges-empty" class="hidden" style="color:#2a2a2a;font-size:13px;text-align:center;padding:40px 0;">
-  No active challenges yet.<br/>
-  <span style="font-size:11px;">Challenge a friend from a shared group to get started!</span>
-</div>
+    <div class="section-label" style="margin-bottom:10px;">Active Challenges</div>
+    <div id="active-challenges-list" style="display:flex;flex-direction:column;gap:12px;"></div>
+    <div id="challenges-empty" class="hidden" style="color:#2a2a2a;font-size:13px;text-align:center;padding:40px 0;">
+      No active challenges yet.<br/>
+      <span style="font-size:11px;">Challenge a friend from a shared group to get started!</span>
+    </div>
 
-<div class="section-label" style="margin:28px 0 10px;">Past Challenges</div>
-<div id="past-challenges-list" style="display:flex;flex-direction:column;gap:8px;"></div>
-```
-
+    <div class="section-label" style="margin:28px 0 10px;">Past Challenges</div>
+    <div id="past-challenges-list" style="display:flex;flex-direction:column;gap:8px;"></div>
   </div>
 </div>
 
 <!-- Challenge a Friend Modal -->
-
 <div class="modal-overlay hidden" id="challenge-modal" onclick="if(event.target===this)closeModal('challenge-modal')">
   <div class="modal">
     <div class="modal-title">⚔️ Challenge a Friend</div>
     <div class="modal-sub">First to hit the target wins</div>
 
-```
-<div style="margin-bottom:16px;">
-  <div class="section-label">Opponent</div>
-  <select id="challenge-opponent" style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:12px 14px;font-family:inherit;font-size:14px;color:#f0ede8;outline:none;box-sizing:border-box;">
-    <option value="">Select a friend from a shared group…</option>
-  </select>
-</div>
+    <div style="margin-bottom:16px;">
+      <div class="section-label">Opponent</div>
+      <select id="challenge-opponent" style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:12px 14px;font-family:inherit;font-size:14px;color:#f0ede8;outline:none;box-sizing:border-box;">
+        <option value="">Select a friend from a shared group…</option>
+      </select>
+    </div>
 
-<div style="margin-bottom:16px;">
-  <div class="section-label">Exercise</div>
-  <div style="display:flex;gap:6px;" id="challenge-exercise-picker"></div>
-</div>
+    <div style="margin-bottom:16px;">
+      <div class="section-label">Exercise</div>
+      <div style="display:flex;gap:6px;" id="challenge-exercise-picker"></div>
+    </div>
 
-<div style="margin-bottom:16px;">
-  <div class="section-label">Target Count</div>
-  <input id="challenge-target" type="number" min="1" max="99999" placeholder="e.g. 200" autocomplete="off"
-    style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:12px 14px;font-family:'Bebas Neue',sans-serif;font-size:24px;color:#f0ede8;outline:none;box-sizing:border-box;text-align:center;"/>
-</div>
+    <div style="margin-bottom:16px;">
+      <div class="section-label">Target Count</div>
+      <input id="challenge-target" type="number" min="1" max="99999" placeholder="e.g. 200" autocomplete="off"
+        style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:12px 14px;font-family:'Bebas Neue',sans-serif;font-size:24px;color:#f0ede8;outline:none;box-sizing:border-box;text-align:center;"/>
+    </div>
 
-<div id="challenge-error" style="color:#ff9999;font-size:12px;margin-bottom:12px;display:none;"></div>
-<div class="modal-actions">
-  <button class="modal-action-btn" style="background:#1a1a1a;color:#888;border:1px solid #222;" onclick="closeModal('challenge-modal')">Cancel</button>
-  <button class="modal-action-btn" id="send-challenge-btn" style="background:#f0ede8;color:#0a0a0f;" onclick="handleSendChallenge()">Send Challenge</button>
-</div>
-```
-
+    <div id="challenge-error" style="color:#ff9999;font-size:12px;margin-bottom:12px;display:none;"></div>
+    <div class="modal-actions">
+      <button class="modal-action-btn" style="background:#1a1a1a;color:#888;border:1px solid #222;" onclick="closeModal('challenge-modal')">Cancel</button>
+      <button class="modal-action-btn" id="send-challenge-btn" style="background:#f0ede8;color:#0a0a0f;" onclick="handleSendChallenge()">Send Challenge</button>
+    </div>
   </div>
 </div>
 
 <!-- Create Group Modal -->
-
 <div class="modal-overlay hidden" id="create-group-modal" onclick="if(event.target===this)closeModal('create-group-modal')">
   <div class="modal">
     <div class="modal-title">Create a Group</div>
@@ -469,7 +449,6 @@
 </div>
 
 <!-- Join Group Modal -->
-
 <div class="modal-overlay hidden" id="join-group-modal" onclick="if(event.target===this)closeModal('join-group-modal')">
   <div class="modal">
     <div class="modal-title">Join a Group</div>
@@ -488,7 +467,6 @@
 </div>
 
 <!-- Group Created Success Modal -->
-
 <div class="modal-overlay hidden" id="group-created-modal">
   <div class="modal">
     <div class="modal-title">🎉 Group Created!</div>
@@ -503,8 +481,28 @@
   </div>
 </div>
 
-<!-- Share Modal -->
+<!-- Invite Someone to Group Modal -->
+<div class="modal-overlay hidden" id="invite-modal" onclick="if(event.target===this)closeModal('invite-modal')">
+  <div class="modal">
+    <div class="modal-title">👋 Invite to Group</div>
+    <div class="modal-sub" id="invite-modal-group-name">Search for anyone in FitTrack</div>
 
+    <div style="margin-bottom:12px;">
+      <input id="invite-search-input" type="text" placeholder="Search by display name…" autocomplete="off"
+        oninput="handleInviteSearch()"
+        style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:12px 14px;font-family:inherit;font-size:15px;color:#f0ede8;outline:none;box-sizing:border-box;"/>
+    </div>
+
+    <div id="invite-search-results" style="max-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin-bottom:12px;"></div>
+    <div id="invite-error" style="color:#ff9999;font-size:12px;margin-bottom:8px;display:none;"></div>
+
+    <div class="modal-actions">
+      <button class="modal-action-btn" style="background:#1a1a1a;color:#888;border:1px solid #222;" onclick="closeModal('invite-modal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Share Modal -->
 <div class="modal-overlay hidden" id="share-modal" onclick="if(event.target===this)closeShareModal()">
   <div class="modal">
     <button class="modal-close" onclick="closeShareModal()">✕</button>
@@ -528,7 +526,6 @@
 </div>
 
 <!-- Toast -->
-
 <div class="toast hidden" id="toast"></div>
 
 <script>
@@ -620,6 +617,22 @@ async function handleAuthSubmit() {
 
   try {
     if (authMode === 'signup') {
+      // Check name availability BEFORE creating the auth account, so we never
+      // end up with an orphaned auth user if the name turns out to be taken.
+      const { data: existingName, error: nameCheckErr } = await sb
+        .from('profiles')
+        .select('id')
+        .eq('display_name', name)
+        .maybeSingle();
+      if (nameCheckErr) throw nameCheckErr;
+      if (existingName) {
+        errEl.textContent = `"${name}" is already taken. Try a different display name.`;
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Create Account';
+        return;
+      }
+
       const { data, error } = await sb.auth.signUp({ email, password });
       if (error) throw error;
 
@@ -653,7 +666,14 @@ async function handleAuthSubmit() {
     }
   } catch (e) {
     console.error(e);
-    errEl.textContent = e.message || 'Something went wrong. Please try again.';
+    // Friendly message for the unique display_name constraint, in case a race
+    // condition slips past the pre-check above (e.g. two people signing up
+    // with the same name at almost the same moment).
+    if (e.message && e.message.includes('profiles_display_name_unique')) {
+      errEl.textContent = `That display name was just taken by someone else. Try a different one.`;
+    } else {
+      errEl.textContent = e.message || 'Something went wrong. Please try again.';
+    }
     errEl.style.display = 'block';
     btn.disabled = false;
     btn.textContent = authMode === 'signin' ? 'Sign In' : 'Create Account';
@@ -663,13 +683,27 @@ async function handleAuthSubmit() {
 async function ensureProfile(userId, displayName) {
   const { data: existing } = await sb.from('profiles').select('*').eq('id', userId).maybeSingle();
   if (existing) return existing;
-  const { data: created, error } = await sb
-    .from('profiles')
-    .insert({ id: userId, display_name: displayName })
-    .select('*')
-    .single();
-  if (error) throw error;
-  return created;
+
+  // If the stashed/derived name collides with someone else by the time we get
+  // here (e.g. email confirmation took a while), fall back to a suffixed
+  // version rather than hard-failing and locking the person out of their own app.
+  let nameToUse = displayName;
+  let attempt = 0;
+  while (attempt < 5) {
+    const { data: created, error } = await sb
+      .from('profiles')
+      .insert({ id: userId, display_name: nameToUse })
+      .select('*')
+      .single();
+    if (!error) return created;
+    if (error.message && error.message.includes('profiles_display_name_unique')) {
+      attempt++;
+      nameToUse = `${displayName}${attempt + 1}`; // e.g. "Kale2", "Kale3"
+      continue;
+    }
+    throw error;
+  }
+  throw new Error('Could not create a profile — please try signing up again with a different name.');
 }
 
 function handleLogout() {
@@ -697,6 +731,7 @@ async function enterApp() {
   renderAll();
   checkForLegacyClaim();
   loadChallenges(); // populates the pending-invite badge on the nav tab
+  loadPendingGroupInvites();
 
   // Lightweight periodic refresh so the challenge badge/progress stay current
   // without requiring the person to manually switch tabs
@@ -884,6 +919,9 @@ function renderGroupSwitcher() {
 
   wrap.appendChild(makeChip(null, '🌍 Global'));
   myGroups.forEach(g => wrap.appendChild(makeChip(g.id, g.name)));
+
+  // The invite button only makes sense for a real group, not the virtual Global group
+  document.getElementById('invite-to-group-btn').classList.toggle('hidden', !activeGroupId);
 }
 
 function openCreateGroupModal() {
@@ -1004,6 +1042,172 @@ function copyGroupCode() {
   navigator.clipboard?.writeText(code)
     .then(() => showToast('Code copied! 📋', true))
     .catch(() => showToast('Copy not available', false));
+}
+
+// ─── GROUP INVITES ──────────────────────────────────────────────────────────
+let inviteSearchTimeout = null;
+let existingMemberIdsForActiveGroup = new Set();
+
+function openInviteModal() {
+  if (!activeGroupId) return;
+  const group = myGroups.find(g => g.id === activeGroupId);
+  document.getElementById('invite-modal-group-name').textContent = group ? `Invite someone to ${group.name}` : 'Invite someone';
+  document.getElementById('invite-search-input').value = '';
+  document.getElementById('invite-search-results').innerHTML = '<div style="color:#333;font-size:12px;padding:10px 0;">Type a name to search…</div>';
+  document.getElementById('invite-error').style.display = 'none';
+  document.getElementById('invite-modal').classList.remove('hidden');
+
+  // Preload existing members so we can exclude them from search results
+  loadExistingMembersForActiveGroup();
+}
+
+async function loadExistingMembersForActiveGroup() {
+  try {
+    const { data, error } = await sb.from('group_members').select('user_id').eq('group_id', activeGroupId);
+    if (error) throw error;
+    existingMemberIdsForActiveGroup = new Set((data || []).map(r => r.user_id));
+  } catch (e) {
+    console.error('Failed to load existing members', e);
+    existingMemberIdsForActiveGroup = new Set();
+  }
+}
+
+function handleInviteSearch() {
+  clearTimeout(inviteSearchTimeout);
+  const query = document.getElementById('invite-search-input').value.trim();
+  const resultsEl = document.getElementById('invite-search-results');
+
+  if (!query) {
+    resultsEl.innerHTML = '<div style="color:#333;font-size:12px;padding:10px 0;">Type a name to search…</div>';
+    return;
+  }
+
+  resultsEl.innerHTML = '<div style="color:#333;font-size:12px;padding:10px 0;">Searching…</div>';
+  inviteSearchTimeout = setTimeout(() => runInviteSearch(query), 300); // debounce
+}
+
+async function runInviteSearch(query) {
+  const resultsEl = document.getElementById('invite-search-results');
+  try {
+    const { data, error } = await sb
+      .from('public_user_directory')
+      .select('id, display_name')
+      .ilike('display_name', `%${query}%`)
+      .neq('id', currentUser.id)
+      .limit(15);
+    if (error) throw error;
+
+    const results = data || [];
+    resultsEl.innerHTML = '';
+
+    if (results.length === 0) {
+      resultsEl.innerHTML = '<div style="color:#333;font-size:12px;padding:10px 0;">No one found with that name.</div>';
+      return;
+    }
+
+    results.forEach(person => {
+      const isAlreadyMember = existingMemberIdsForActiveGroup.has(person.id);
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#0f0f0f;border:1px solid #1a1a1a;border-radius:6px;';
+      row.innerHTML = `
+        <span style="font-size:13px;color:#ccc;">${person.display_name}</span>
+        ${isAlreadyMember
+          ? '<span style="font-size:10px;color:#444;">Already in group</span>'
+          : `<button style="padding:6px 14px;border:none;border-radius:6px;background:#ff4d4d;color:#0a0a0f;font-family:inherit;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;" onclick="sendGroupInvite('${person.id}', this)">Invite</button>`
+        }
+      `;
+      resultsEl.appendChild(row);
+    });
+  } catch (e) {
+    console.error('Invite search failed', e);
+    resultsEl.innerHTML = '<div style="color:#ff9999;font-size:12px;padding:10px 0;">Search failed — try again.</div>';
+  }
+}
+
+async function sendGroupInvite(inviteeId, btnEl) {
+  btnEl.disabled = true;
+  btnEl.textContent = 'Sending…';
+  try {
+    const { error } = await sb.from('group_invites').insert({
+      group_id: activeGroupId,
+      invited_by: currentUser.id,
+      invitee_id: inviteeId,
+    });
+    if (error) throw error;
+    btnEl.textContent = 'Invited ✓';
+    btnEl.style.background = '#1a1a1a';
+    btnEl.style.color = '#7dff9f';
+    showToast('Invite sent! 🎉', true);
+  } catch (e) {
+    console.error('Failed to send invite', e);
+    btnEl.disabled = false;
+    btnEl.textContent = 'Invite';
+    if (e.message && e.message.includes('duplicate')) {
+      showToast('Already invited that person', false);
+    } else {
+      showToast('Could not send invite', false);
+    }
+  }
+}
+
+async function loadPendingGroupInvites() {
+  const section = document.getElementById('pending-group-invites-section');
+  const wrap = document.getElementById('pending-group-invites-list');
+  try {
+    const { data, error } = await sb
+      .from('group_invites')
+      .select('id, group_id, invited_by, groups(name), inviter:invited_by(display_name)')
+      .eq('invitee_id', currentUser.id)
+      .eq('status', 'pending');
+    if (error) throw error;
+
+    const invites = data || [];
+    section.classList.toggle('hidden', invites.length === 0);
+    wrap.innerHTML = '';
+
+    invites.forEach(inv => {
+      const card = document.createElement('div');
+      card.style.cssText = 'background:#0f0f0f;border:1px solid #1e1e1e;border-radius:10px;padding:14px 16px;';
+      card.innerHTML = `
+        <div style="font-size:13px;color:#eee;margin-bottom:12px;"><strong>${inv.inviter?.display_name || 'Someone'}</strong> invited you to <strong>${inv.groups?.name || 'a group'}</strong></div>
+        <div style="display:flex;gap:8px;">
+          <button onclick="respondToGroupInvite('${inv.id}','declined')" style="flex:1;padding:9px;border:1px solid #333;background:transparent;border-radius:6px;color:#888;font-family:inherit;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;">Decline</button>
+          <button onclick="respondToGroupInvite('${inv.id}','accepted')" style="flex:1;padding:9px;border:none;background:#ff4d4d;border-radius:6px;color:#0a0a0f;font-family:inherit;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;font-weight:600;cursor:pointer;">Accept</button>
+        </div>
+      `;
+      wrap.appendChild(card);
+    });
+  } catch (e) {
+    console.error('Failed to load group invites', e);
+  }
+}
+
+async function respondToGroupInvite(inviteId, newStatus) {
+  try {
+    const { data: invite, error: fetchErr } = await sb
+      .from('group_invites')
+      .select('group_id, groups(name)')
+      .eq('id', inviteId)
+      .single();
+    if (fetchErr) throw fetchErr;
+
+    const { error: updateErr } = await sb.from('group_invites').update({ status: newStatus }).eq('id', inviteId);
+    if (updateErr) throw updateErr;
+
+    if (newStatus === 'accepted') {
+      const { error: joinErr } = await sb.from('group_members').insert({ group_id: invite.group_id, user_id: currentUser.id });
+      if (joinErr) throw joinErr;
+      showToast(`Joined ${invite.groups?.name || 'the group'}! 🎉`, true);
+      await loadMyGroups();
+    } else {
+      showToast('Invite declined', false);
+    }
+
+    loadPendingGroupInvites();
+  } catch (e) {
+    console.error('Failed to respond to group invite', e);
+    showToast('Could not respond to invite', false);
+  }
 }
 
 // ─── CHALLENGES ──────────────────────────────────────────────────────────────
@@ -1597,7 +1801,7 @@ function switchView(v) {
   document.getElementById('view-challenges').classList.toggle('hidden', v!=='challenges');
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view===v));
   if (v==='history') renderHistory();
-  if (v==='friends') loadLeaderboard();
+  if (v==='friends') { loadLeaderboard(); loadPendingGroupInvites(); }
   if (v==='challenges') loadChallenges();
 }
 
@@ -1966,6 +2170,5 @@ if ('serviceWorker' in navigator) {
   });
 }
 </script>
-
 </body>
 </html>
