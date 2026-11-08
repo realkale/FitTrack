@@ -194,7 +194,7 @@
     </div>
 
     <!-- Sign In / Sign Up toggle -->
-    <div class="mode-toggle" style="margin-bottom:20px;">
+    <div class="mode-toggle" id="auth-mode-toggle" style="margin-bottom:20px;">
       <button class="mode-btn active" id="auth-tab-signin" onclick="setAuthMode('signin')">Sign In</button>
       <button class="mode-btn" id="auth-tab-signup" onclick="setAuthMode('signup')">Sign Up</button>
     </div>
@@ -206,15 +206,17 @@
         <input id="auth-name" type="text" placeholder="e.g. Kale" autocomplete="off"
           style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:13px 14px;font-family:inherit;font-size:15px;color:#f0ede8;outline:none;box-sizing:border-box;"/>
       </div>
-      <div>
+      <div id="auth-email-field">
         <div class="section-label">Email</div>
         <input id="auth-email" type="email" placeholder="you@example.com" autocomplete="off"
           style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:13px 14px;font-family:inherit;font-size:15px;color:#f0ede8;outline:none;box-sizing:border-box;"/>
       </div>
-      <div>
-        <div class="section-label">Password</div>
+      <div id="auth-password-field">
+        <div class="section-label" id="auth-password-label">Password</div>
         <input id="auth-password" type="password" placeholder="At least 6 characters" autocomplete="off"
           style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:13px 14px;font-family:inherit;font-size:15px;color:#f0ede8;outline:none;box-sizing:border-box;"/>
+        <div id="auth-forgot-link" onclick="setAuthMode('reset')"
+          style="margin-top:8px;text-align:right;font-size:11px;color:#383838;cursor:pointer;letter-spacing:0.05em;">Forgot password?</div>
       </div>
       <button id="auth-submit-btn" onclick="handleAuthSubmit()"
         style="margin-top:8px;padding:14px;border:none;border-radius:6px;cursor:pointer;background:#ff4d4d;color:#0a0a0f;font-family:inherit;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;font-weight:600;">
@@ -222,6 +224,8 @@
       </button>
       <div id="auth-error" style="color:#ff9999;font-size:12px;text-align:center;display:none;"></div>
       <div id="auth-info" style="color:#7dff9f;font-size:12px;text-align:center;display:none;line-height:1.6;"></div>
+      <div id="auth-back-link" class="hidden" onclick="setAuthMode('signin')"
+        style="text-align:center;font-size:11px;color:#383838;cursor:pointer;letter-spacing:0.05em;">← Back to sign in</div>
     </div>
   </div>
 </div>
@@ -540,11 +544,18 @@ const EX_KEYS = Object.keys(EXERCISES);
 // ─── SUPABASE SETUP ─────────────────────────────────────────────────────────
 const SUPABASE_URL = 'https://kljejjngnqwayteprhea.supabase.co';
 const SUPABASE_KEY = 'sb_publishable_jozDdfkXCaUVd95Vf0zB6Q_g0xWKAF0';
+
+// Password-reset links land back here with type=recovery in the URL hash (or an
+// error if the link expired). Read it before createClient, which clears the hash.
+const authRedirectParams = new URLSearchParams(window.location.hash.slice(1) || window.location.search.slice(1));
+let isPasswordRecovery = authRedirectParams.get('type') === 'recovery';
+
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const SESSION_KEY = 'fittrack-session-v1'; // caches {id, display_name} locally for fast reload; real auth lives in Supabase
 let currentUser = null; // { id, display_name } — id is the Supabase Auth user id (== profiles.id)
-let authMode = 'signin'; // 'signin' | 'signup'
+let authMode = 'signin'; // 'signin' | 'signup' | 'reset' (request reset email) | 'recover' (set new password from email link)
+const AUTH_BUTTON_LABELS = { signin: 'Sign In', signup: 'Create Account', reset: 'Send Reset Link', recover: 'Update Password' };
 let activeGroupId = null; // null = Global
 let myGroups = []; // [{id, name, join_code}]
 let pendingGroupCode = null;
@@ -580,8 +591,14 @@ function setAuthMode(mode) {
   authMode = mode;
   document.getElementById('auth-tab-signin').classList.toggle('active', mode === 'signin');
   document.getElementById('auth-tab-signup').classList.toggle('active', mode === 'signup');
+  document.getElementById('auth-mode-toggle').classList.toggle('hidden', mode === 'recover');
   document.getElementById('auth-name-field').classList.toggle('hidden', mode !== 'signup');
-  document.getElementById('auth-submit-btn').textContent = mode === 'signin' ? 'Sign In' : 'Create Account';
+  document.getElementById('auth-email-field').classList.toggle('hidden', mode === 'recover');
+  document.getElementById('auth-password-field').classList.toggle('hidden', mode === 'reset');
+  document.getElementById('auth-password-label').textContent = mode === 'recover' ? 'New Password' : 'Password';
+  document.getElementById('auth-forgot-link').classList.toggle('hidden', mode !== 'signin');
+  document.getElementById('auth-back-link').classList.toggle('hidden', mode !== 'reset');
+  document.getElementById('auth-submit-btn').textContent = AUTH_BUTTON_LABELS[mode];
   document.getElementById('auth-error').style.display = 'none';
   document.getElementById('auth-info').style.display = 'none';
 }
@@ -595,6 +612,9 @@ async function handleAuthSubmit() {
   const btn = document.getElementById('auth-submit-btn');
   errEl.style.display = 'none';
   infoEl.style.display = 'none';
+
+  if (authMode === 'reset') return handlePasswordResetRequest(email);
+  if (authMode === 'recover') return handleNewPassword(password);
 
   if (!email || !password) {
     errEl.textContent = 'Enter both email and password.';
@@ -676,9 +696,89 @@ async function handleAuthSubmit() {
     }
     errEl.style.display = 'block';
     btn.disabled = false;
-    btn.textContent = authMode === 'signin' ? 'Sign In' : 'Create Account';
+    btn.textContent = AUTH_BUTTON_LABELS[authMode];
   }
 }
+
+// Step 1 of forgot-password: email a reset link that comes back to this page
+async function handlePasswordResetRequest(email) {
+  const errEl = document.getElementById('auth-error');
+  const infoEl = document.getElementById('auth-info');
+  const btn = document.getElementById('auth-submit-btn');
+
+  if (!email) {
+    errEl.textContent = 'Enter the email you signed up with.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  const { error } = await sb.auth.resetPasswordForEmail(email, {
+    redirectTo: window.location.origin + window.location.pathname,
+  });
+  btn.disabled = false;
+  btn.textContent = AUTH_BUTTON_LABELS.reset;
+
+  if (error) {
+    console.error(error);
+    errEl.textContent = error.message || 'Could not send the reset email. Please try again.';
+    errEl.style.display = 'block';
+    return;
+  }
+  infoEl.textContent = `If ${email} has an account, a reset link is on its way. Open it to choose a new password.`;
+  infoEl.style.display = 'block';
+}
+
+// Step 2 of forgot-password: the reset link signed them in with a recovery session
+function showPasswordRecoveryForm() {
+  isPasswordRecovery = true;
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('auth-password').value = '';
+  setAuthMode('recover');
+  document.getElementById('auth-password').focus();
+}
+
+async function handleNewPassword(password) {
+  const errEl = document.getElementById('auth-error');
+  const btn = document.getElementById('auth-submit-btn');
+
+  if (password.length < 6) {
+    errEl.textContent = 'Password must be at least 6 characters.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Updating…';
+  try {
+    const { data, error } = await sb.auth.updateUser({ password });
+    if (error) throw error;
+
+    isPasswordRecovery = false;
+    history.replaceState(null, '', window.location.pathname);
+    document.getElementById('auth-password').value = '';
+    setAuthMode('signin');
+
+    const profile = await ensureProfile(data.user.id, data.user.email.split('@')[0]);
+    currentUser = { id: data.user.id, display_name: profile.display_name };
+    localStorage.setItem(SESSION_KEY, JSON.stringify(currentUser));
+    await enterApp();
+    showToast('Password updated', true);
+  } catch (e) {
+    console.error(e);
+    errEl.textContent = e.message || 'Could not update your password. Please try again.';
+    errEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = AUTH_BUTTON_LABELS.recover;
+  }
+}
+
+// Catches the recovery sign-in if it arrives via an auth event rather than the URL hash
+sb.auth.onAuthStateChange(event => {
+  if (event === 'PASSWORD_RECOVERY') showPasswordRecoveryForm();
+});
 
 async function ensureProfile(userId, displayName) {
   const { data: existing } = await sb.from('profiles').select('*').eq('id', userId).maybeSingle();
@@ -742,9 +842,25 @@ async function enterApp() {
 
 // Try auto-login from a saved Supabase session
 async function tryAutoLogin() {
+  // An expired or already-used reset link comes back with an error instead of a session
+  const linkError = authRedirectParams.get('error_description');
+  if (linkError) {
+    history.replaceState(null, '', window.location.pathname);
+    setAuthMode('reset');
+    const errEl = document.getElementById('auth-error');
+    errEl.textContent = `${linkError.replace(/\+/g, ' ')}. Enter your email to get a new link.`;
+    errEl.style.display = 'block';
+    return;
+  }
+
   try {
     const { data: { session } } = await sb.auth.getSession();
     if (!session) return;
+    // A reset link creates a session, but they need to set a new password before entering the app
+    if (isPasswordRecovery) {
+      showPasswordRecoveryForm();
+      return;
+    }
 
     const saved = localStorage.getItem(SESSION_KEY);
     let displayName = saved ? JSON.parse(saved).display_name : null;
@@ -2158,7 +2274,11 @@ function showToast(msg, success) {
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 // Allow Enter key to submit login from either field
 document.getElementById('auth-name').addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('auth-email').focus(); });
-document.getElementById('auth-email').addEventListener('keydown', e => { if (e.key==='Enter') document.getElementById('auth-password').focus(); });
+document.getElementById('auth-email').addEventListener('keydown', e => {
+  if (e.key !== 'Enter') return;
+  if (authMode === 'reset') handleAuthSubmit();
+  else document.getElementById('auth-password').focus();
+});
 document.getElementById('auth-password').addEventListener('keydown', e => { if (e.key==='Enter') handleAuthSubmit(); });
 
 tryAutoLogin();
