@@ -24,16 +24,55 @@
     ::-webkit-scrollbar-track { background: #0a0a0f; }
     ::-webkit-scrollbar-thumb { background: #222; border-radius: 2px; }
 
-    #app { max-width: 480px; margin: 0 auto; padding: 0 16px 80px; min-height: 100vh; }
+    #app { max-width: 480px; margin: 0 auto; padding: 0 16px calc(110px + env(safe-area-inset-bottom)); min-height: 100vh; }
 
-    /* Nav */
-    .nav { display: flex; border-bottom: 1px solid #181818; margin-bottom: 28px; overflow-x: auto; scrollbar-width: none; }
-    .nav::-webkit-scrollbar { display: none; }
-    .nav-btn { background: none; border: none; cursor: pointer; font-family: inherit;
-      font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; flex: 1 0 auto;
-      padding: 10px 8px; color: #555; border-bottom: 2px solid transparent; white-space: nowrap;
-      transition: color 0.2s, border-color 0.2s; }
-    .nav-btn.active { color: #f0ede8; border-bottom-color: #f0ede8; }
+    /* Bottom nav */
+    .bottom-nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+      background: rgba(13,13,18,0.96); border-top: 1px solid #1c1c22;
+      padding-bottom: env(safe-area-inset-bottom); }
+    .bottom-nav-inner { max-width: 480px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .nav-btn { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 5px; min-height: 64px; background: none; border: none; cursor: pointer; font-family: inherit;
+      font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #8a8a90; transition: color 0.2s; }
+    .nav-btn svg { width: 22px; height: 22px; }
+    .nav-btn.active { color: #f0ede8; }
+    .nav-dot { position: absolute; top: 12px; left: calc(50% + 10px); width: 7px; height: 7px; border-radius: 50%; background: #ff4d4d; }
+
+    /* Segmented control (Social) */
+    .seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 4px;
+      border-radius: 10px; background: #14141b; margin-bottom: 22px; }
+    .seg-btn { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 40px;
+      border: none; border-radius: 7px; background: transparent; color: #a8a8ae; cursor: pointer;
+      font-family: inherit; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
+    .seg-btn.active { background: #f0ede8; color: #0a0a0f; font-weight: 500; }
+    .seg-count { min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; background: #ff4d4d;
+      color: #0a0a0f; font-size: 9px; line-height: 16px; letter-spacing: 0; font-weight: 500; }
+
+    /* Train hub */
+    .prog-card { display: flex; flex-direction: column; gap: 14px; width: 100%; padding: 18px; margin-bottom: 14px;
+      border-radius: 14px; border: 1px solid; text-align: left; font-family: inherit; color: #f0ede8; cursor: pointer; }
+    .prog-card:disabled { cursor: default; }
+    .prog-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .prog-name { font-family: 'Bebas Neue', sans-serif; font-size: 34px; line-height: 0.9; letter-spacing: 0.04em; }
+    .prog-sub { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #a8a8ae; margin-top: 4px; }
+    .prog-count { font-family: 'Bebas Neue', sans-serif; font-size: 40px; line-height: 0.9; text-align: right; }
+    .prog-count-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #a8a8ae; text-align: right; }
+    .prog-foot { display: flex; justify-content: space-between; align-items: center; font-size: 11px; letter-spacing: 0.06em; color: #a8a8ae; }
+    .murph-parts { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+    .murph-part { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0; border-radius: 8px; background: #14141b; }
+    .murph-part b { font-family: 'Bebas Neue', sans-serif; font-weight: 400; font-size: 20px; line-height: 1; }
+    .murph-part span { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: #a8a8ae; }
+    .back-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; margin-bottom: 14px; padding: 0;
+      background: none; border: none; cursor: pointer; font-family: inherit; font-size: 11px;
+      letter-spacing: 0.12em; text-transform: uppercase; color: #a8a8ae; }
+
+    /* Groups list (Social › Groups) */
+    .group-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid #1e1e26;
+      border-radius: 10px; background: #0f0f14; }
+    .group-row-name { flex: 1; min-width: 0; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .group-row-code { font-size: 10px; letter-spacing: 0.12em; color: #8a8a90; margin-top: 2px; }
+    .group-row-btn { min-height: 36px; padding: 0 14px; border: none; border-radius: 6px; background: #ff4d4d; color: #0a0a0f;
+      font-family: inherit; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; cursor: pointer; }
 
     /* Exercise tabs */
     .ex-tabs { display: flex; gap: 6px; margin-bottom: 28px; }
@@ -303,21 +342,29 @@
   <div class="header" style="display:flex;justify-content:space-between;align-items:flex-end;">
     <div>
       <div class="header-eyebrow" id="welcome-label">Personal Fitness Log</div>
-      <div class="header-title">DAILY <span id="header-accent">TRACKER</span></div>
+      <div class="header-title"><span id="header-main">DAILY</span> <span id="header-accent">TRACKER</span></div>
     </div>
-    <button onclick="handleLogout()" style="background:none;border:none;color:#333;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;padding-bottom:8px;">Log Out</button>
   </div>
+  <div style="height:22px;"></div>
 
-  <!-- Nav -->
-  <div class="nav">
-    <button class="nav-btn active" data-view="today" onclick="switchView('today')">Today</button>
-    <button class="nav-btn" data-view="history" onclick="switchView('history')">History</button>
-    <button class="nav-btn" data-view="friends" onclick="switchView('friends')">Friends</button>
-    <button class="nav-btn" data-view="challenges" onclick="switchView('challenges')">
-      Challenges<span id="challenge-badge" class="hidden" style="display:inline-block;margin-left:5px;width:6px;height:6px;border-radius:50%;background:#ff4d4d;"></span>
-    </button>
-    <button class="nav-btn" data-view="hyrox" onclick="switchView('hyrox')">HYROX</button>
-  </div>
+  <!-- Bottom nav -->
+  <nav class="bottom-nav" aria-label="Primary">
+    <div class="bottom-nav-inner">
+      <button class="nav-btn active" data-tab="today" onclick="switchView('today')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Log
+      </button>
+      <button class="nav-btn" data-tab="train" onclick="switchView('train')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg>Train
+      </button>
+      <button class="nav-btn" data-tab="social" onclick="switchView('social')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14.5c2.3 0 4 1.4 4.5 4"/></svg>Social
+        <span id="social-dot" class="nav-dot hidden" aria-label="Something needs your response"></span>
+      </button>
+      <button class="nav-btn" data-tab="me" onclick="switchView('me')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>Me
+      </button>
+    </div>
+  </nav>
 
   <!-- TODAY VIEW -->
   <div id="view-today">
@@ -385,34 +432,23 @@
     </div>
 
     <div id="day-list"></div>
+
+    <button class="share-btn" style="margin-top:28px;color:#ff8080;border-color:rgba(255,77,77,0.3);justify-content:center;" onclick="handleLogout()">Log Out</button>
   </div>
 
-  <!-- FRIENDS VIEW -->
-  <div id="view-friends" class="hidden">
+  <!-- SOCIAL VIEW -->
+  <div id="view-social" class="hidden">
+    <div class="seg" role="tablist" aria-label="Social sections">
+      <button class="seg-btn active" role="tab" data-seg="leaderboard" onclick="setSocialSeg('leaderboard')">Leaderboard</button>
+      <button class="seg-btn" role="tab" data-seg="challenges" onclick="setSocialSeg('challenges')">Challenges<span id="challenge-badge" class="seg-count hidden">0</span></button>
+      <button class="seg-btn" role="tab" data-seg="groups" onclick="setSocialSeg('groups')">Groups<span id="group-invite-badge" class="seg-count hidden">0</span></button>
+    </div>
+
+  <!-- SOCIAL › LEADERBOARD -->
+  <div id="view-friends">
     <!-- Group switcher -->
-    <div class="section-label">Group</div>
+    <div class="section-label">Leaderboard for</div>
     <div style="display:flex;gap:6px;margin-bottom:20px;overflow-x:auto;padding-bottom:2px;" id="group-switcher"></div>
-
-    <!-- Create / Join group -->
-    <div style="display:flex;gap:8px;margin-bottom:16px;">
-      <button class="share-btn" style="margin-bottom:0;" onclick="openCreateGroupModal()">
-        <span style="font-size:16px;">➕</span><span>Create Group</span>
-      </button>
-      <button class="share-btn" style="margin-bottom:0;" onclick="openJoinGroupModal()">
-        <span style="font-size:16px;">🔑</span><span>Join Group</span>
-      </button>
-    </div>
-
-    <!-- Invite someone to the active group -->
-    <button class="share-btn hidden" id="invite-to-group-btn" style="margin-bottom:20px;" onclick="openInviteModal()">
-      <span style="font-size:16px;">👋</span><span>Invite Someone to This Group</span>
-    </button>
-
-    <!-- Pending group invites (received) -->
-    <div id="pending-group-invites-section" class="hidden" style="margin-bottom:24px;">
-      <div class="section-label" style="margin-bottom:10px;">Group Invites</div>
-      <div id="pending-group-invites-list" style="display:flex;flex-direction:column;gap:10px;"></div>
-    </div>
 
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
       <div class="section-label" id="leaderboard-title" style="margin-bottom:0;">Last 7 Days — Global</div>
@@ -427,6 +463,29 @@
       No one's logged anything in this period yet.<br/>
       <span style="font-size:11px;">Be the first!</span>
     </div>
+  </div>
+
+  <!-- SOCIAL › GROUPS -->
+  <div id="view-groups" class="hidden">
+    <!-- Pending group invites (received) -->
+    <div id="pending-group-invites-section" class="hidden" style="margin-bottom:24px;">
+      <div class="section-label" style="margin-bottom:10px;">Group Invites</div>
+      <div id="pending-group-invites-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+    </div>
+
+    <div class="section-label">Your groups</div>
+    <div id="my-groups-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;"></div>
+
+    <!-- Create / Join group -->
+    <div style="display:flex;gap:8px;margin-bottom:16px;">
+      <button class="share-btn" style="margin-bottom:0;" onclick="openCreateGroupModal()">
+        <span style="font-size:16px;">➕</span><span>Create Group</span>
+      </button>
+      <button class="share-btn" style="margin-bottom:0;" onclick="openJoinGroupModal()">
+        <span style="font-size:16px;">🔑</span><span>Join Group</span>
+      </button>
+    </div>
+
   </div>
 
   <!-- CHALLENGES VIEW -->
@@ -450,9 +509,49 @@
     <div class="section-label" style="margin:28px 0 10px;">Past Challenges</div>
     <div id="past-challenges-list" style="display:flex;flex-direction:column;gap:8px;"></div>
   </div>
+  </div><!-- /view-social -->
+
+  <!-- TRAIN VIEW (program hub) -->
+  <div id="view-train" class="hidden">
+    <button class="prog-card" id="murph-card" disabled style="border-color:rgba(180,140,255,0.4);background:rgba(180,140,255,0.08);">
+      <div class="prog-top">
+        <div>
+          <div class="prog-name" style="color:#c7a8ff;">MURPH</div>
+          <div class="prog-sub" id="murph-date">Memorial Day</div>
+        </div>
+        <div>
+          <div class="prog-count" id="murph-days">—</div>
+          <div class="prog-count-label">days out</div>
+        </div>
+      </div>
+      <div class="murph-parts">
+        <div class="murph-part"><b>1 MI</b><span>Run</span></div>
+        <div class="murph-part"><b style="color:#80bfff;">100</b><span>Pull</span></div>
+        <div class="murph-part"><b style="color:#ff8080;">200</b><span>Push</span></div>
+        <div class="murph-part"><b>300</b><span>Squat</span></div>
+        <div class="murph-part"><b>1 MI</b><span>Run</span></div>
+      </div>
+      <div class="prog-foot"><span>Training tracker</span><span style="color:#c7a8ff;letter-spacing:0.12em;text-transform:uppercase;">Coming soon</span></div>
+    </button>
+
+    <button class="prog-card" onclick="openProgram('hyrox')" style="border-color:rgba(255,201,61,0.32);background:rgba(255,201,61,0.07);">
+      <div class="prog-top">
+        <div>
+          <div class="prog-name" style="color:#ffc93d;">HYROX</div>
+          <div class="prog-sub" id="hx-card-sub">8 stations · gear swaps built in</div>
+        </div>
+        <div>
+          <div class="prog-count" id="hx-card-days">—</div>
+          <div class="prog-count-label">days out</div>
+        </div>
+      </div>
+      <div class="prog-foot"><span>Station PBs · projected finish</span><span style="color:#ffc93d;letter-spacing:0.12em;text-transform:uppercase;">Open ›</span></div>
+    </button>
+  </div>
 
   <!-- HYROX VIEW -->
   <div id="view-hyrox" class="hidden">
+    <button class="back-btn" onclick="switchView('train')">‹ Train</button>
     <div id="hx-setup-banner" class="hx-banner hidden"></div>
 
     <div class="hx-race" id="hx-race" onclick="openHyroxSettings()" role="button" tabindex="0">
@@ -967,6 +1066,7 @@ function handleLogout() {
   log = {};
   myGroups = [];
   activeGroupId = null;
+  pendingChallengeCount = 0; pendingGroupInviteCount = 0; updateSocialBadges();
   hxLogs = []; hxSettings = { division: 'open_m', race_date: null, race_name: null }; hxLoaded = false;
   document.getElementById('app').classList.add('hidden');
   document.getElementById('login-screen').classList.remove('hidden');
@@ -979,6 +1079,7 @@ async function enterApp() {
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
   document.getElementById('welcome-label').textContent = currentUser.display_name + "'s Fitness Log";
+  switchView('today');
   showToast('Loading your data…', true);
   await loadLogsFromServer();
   await loadMyGroups();
@@ -1191,8 +1292,38 @@ function renderGroupSwitcher() {
   wrap.appendChild(makeChip(null, '🌍 Global'));
   myGroups.forEach(g => wrap.appendChild(makeChip(g.id, g.name)));
 
-  // The invite button only makes sense for a real group, not the virtual Global group
-  document.getElementById('invite-to-group-btn').classList.toggle('hidden', !activeGroupId);
+  renderMyGroupsList();
+}
+
+function renderMyGroupsList() {
+  const list = document.getElementById('my-groups-list');
+  list.innerHTML = '';
+  if (myGroups.length === 0) {
+    const empty = document.createElement('div');
+    empty.style.cssText = 'color:#8a8a90;font-size:12px;padding:6px 0 4px;';
+    empty.textContent = 'You are not in any private groups yet.';
+    list.appendChild(empty);
+    return;
+  }
+  myGroups.forEach(g => {
+    const row = document.createElement('div');
+    row.className = 'group-row';
+    const info = document.createElement('div');
+    info.style.cssText = 'flex:1;min-width:0;';
+    const name = document.createElement('div');
+    name.className = 'group-row-name';
+    name.textContent = g.name;
+    const code = document.createElement('div');
+    code.className = 'group-row-code';
+    code.textContent = g.join_code ? 'CODE ' + g.join_code : '';
+    info.append(name, code);
+    const btn = document.createElement('button');
+    btn.className = 'group-row-btn';
+    btn.textContent = 'Invite';
+    btn.onclick = () => { activeGroupId = g.id; renderGroupSwitcher(); openInviteModal(); };
+    row.append(info, btn);
+    list.appendChild(row);
+  });
 }
 
 function openCreateGroupModal() {
@@ -1433,6 +1564,8 @@ async function loadPendingGroupInvites() {
     if (error) throw error;
 
     const invites = data || [];
+    pendingGroupInviteCount = invites.length;
+    updateSocialBadges();
     section.classList.toggle('hidden', invites.length === 0);
     wrap.innerHTML = '';
 
@@ -1604,8 +1737,9 @@ async function loadChallenges() {
     const past = all.filter(c => c.status === 'completed' || c.status === 'declined' ||
       (c.status === 'pending' && c.creator_id === currentUser.id));
 
-    // Update nav badge if there are pending invites for me
-    document.getElementById('challenge-badge').classList.toggle('hidden', pending.length === 0);
+    // Update Social badges if there are pending challenge invites for me
+    pendingChallengeCount = pending.length;
+    updateSocialBadges();
 
     await renderPendingChallenges(pending);
     await renderActiveChallenges(active);
@@ -2064,18 +2198,104 @@ function setMode(m) {
   modeManuBtn.style.color  = m==='manual'? EXERCISES[activeExercise].color : '#383838';
 }
 
+// Four top-level tabs. Sub-screens (HYROX inside Train; Leaderboard / Challenges /
+// Groups inside Social) map onto their parent tab so the nav highlight stays right.
+const TAB_TITLES = { today: null, train: 'TRAIN', social: 'SOCIAL', me: 'MY HISTORY' };
+const LEGACY_VIEWS = { history: 'me', friends: 'social', challenges: 'social' };
+let socialSeg = 'leaderboard';
+
 function switchView(v) {
+  if (LEGACY_VIEWS[v]) {
+    if (v === 'friends') socialSeg = 'leaderboard';
+    if (v === 'challenges') socialSeg = 'challenges';
+    v = LEGACY_VIEWS[v];
+  }
   currentView = v;
+  const tab = v === 'hyrox' ? 'train' : v;
+
   document.getElementById('view-today').classList.toggle('hidden', v!=='today');
-  document.getElementById('view-history').classList.toggle('hidden', v!=='history');
-  document.getElementById('view-friends').classList.toggle('hidden', v!=='friends');
-  document.getElementById('view-challenges').classList.toggle('hidden', v!=='challenges');
+  document.getElementById('view-history').classList.toggle('hidden', v!=='me');
+  document.getElementById('view-social').classList.toggle('hidden', v!=='social');
+  document.getElementById('view-train').classList.toggle('hidden', v!=='train');
   document.getElementById('view-hyrox').classList.toggle('hidden', v!=='hyrox');
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view===v));
-  if (v==='history') renderHistory();
-  if (v==='friends') { loadLeaderboard(); loadPendingGroupInvites(); }
-  if (v==='challenges') loadChallenges();
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab===tab));
+
+  // Header: the Log tab keeps the colored DAILY TRACKER title; other tabs show their name
+  const title = v === 'hyrox' ? 'HYROX' : TAB_TITLES[tab];
+  document.getElementById('header-main').textContent = title || 'DAILY';
+  document.getElementById('header-accent').classList.toggle('hidden', !!title);
+
+  window.scrollTo(0, 0);
+  if (v==='me') renderHistory();
+  if (v==='social') setSocialSeg(socialSeg);
+  if (v==='train') renderTrainHub();
   if (v==='hyrox') loadHyrox();
+}
+
+function setSocialSeg(seg) {
+  socialSeg = seg;
+  document.getElementById('view-friends').classList.toggle('hidden', seg!=='leaderboard');
+  document.getElementById('view-challenges').classList.toggle('hidden', seg!=='challenges');
+  document.getElementById('view-groups').classList.toggle('hidden', seg!=='groups');
+  document.querySelectorAll('.seg-btn').forEach(b => {
+    const on = b.dataset.seg === seg;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
+  if (seg==='leaderboard') loadLeaderboard();
+  if (seg==='challenges') loadChallenges();
+  if (seg==='groups') { renderGroupSwitcher(); loadPendingGroupInvites(); }
+}
+
+// Red dot on the Social tab when a challenge or group invite is waiting on me
+let pendingChallengeCount = 0, pendingGroupInviteCount = 0;
+function updateSocialBadges() {
+  const setCount = (id, n) => {
+    const el = document.getElementById(id);
+    el.textContent = n;
+    el.classList.toggle('hidden', n === 0);
+  };
+  setCount('challenge-badge', pendingChallengeCount);
+  setCount('group-invite-badge', pendingGroupInviteCount);
+  document.getElementById('social-dot').classList.toggle('hidden', pendingChallengeCount + pendingGroupInviteCount === 0);
+}
+
+// ─── TRAIN HUB ────────────────────────────────────────────────────────────────
+// Memorial Day = last Monday of May. If this year's has passed, count to next year's.
+function nextMemorialDay() {
+  const forYear = y => {
+    const d = new Date(y, 4, 31);
+    while (d.getDay() !== 1) d.setDate(d.getDate() - 1);
+    return localDateStr(d);
+  };
+  const y = Number(TODAY.slice(0, 4));
+  const thisYear = forYear(y);
+  return hxDaysBetween(TODAY, thisYear) >= 0 ? thisYear : forYear(y + 1);
+}
+
+function renderTrainHub() {
+  const md = nextMemorialDay();
+  const mdDays = hxDaysBetween(TODAY, md);
+  document.getElementById('murph-days').textContent = mdDays === 0 ? 'TODAY' : mdDays;
+  document.getElementById('murph-date').textContent = 'Memorial Day · ' +
+    new Date(md + 'T00:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+
+  const daysEl = document.getElementById('hx-card-days');
+  const subEl = document.getElementById('hx-card-sub');
+  if (hxSettings.race_date) {
+    const d = hxDaysBetween(TODAY, hxSettings.race_date);
+    daysEl.textContent = d >= 0 ? d : '✓';
+    subEl.textContent = hxSettings.race_name || 'Next race';
+  } else {
+    daysEl.textContent = '—';
+    subEl.textContent = '8 stations · gear swaps built in';
+  }
+  // Pull race settings in the background so the countdown fills in on first visit
+  if (!hxLoaded && currentUser) loadHyrox().then(() => { if (currentView === 'train') renderTrainHub(); });
+}
+
+function openProgram(p) {
+  if (p === 'hyrox') switchView('hyrox');
 }
 
 // ─── RENDER ───────────────────────────────────────────────────────────────────
@@ -2084,7 +2304,7 @@ function renderAll() {
   renderBigCounter();
   renderQuickBtns();
   renderSetsToday();
-  if (currentView==='history') renderHistory();
+  if (currentView==='me') renderHistory();
 }
 
 function renderExTabs() {
