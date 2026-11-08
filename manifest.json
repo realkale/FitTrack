@@ -1,7 +1,7 @@
 {
   "name": "FitTrack",
   "short_name": "FitTrack",
-  "description": "Personal daily fitness tracker for push-ups, pull-ups, and sit-ups",
+  "description": "Personal fitness tracker for push-ups, pull-ups, sit-ups and HYROX training",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0a0f",

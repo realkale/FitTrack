@@ -27,10 +27,11 @@
     #app { max-width: 480px; margin: 0 auto; padding: 0 16px 80px; min-height: 100vh; }
 
     /* Nav */
-    .nav { display: flex; border-bottom: 1px solid #181818; margin-bottom: 28px; }
+    .nav { display: flex; border-bottom: 1px solid #181818; margin-bottom: 28px; overflow-x: auto; scrollbar-width: none; }
+    .nav::-webkit-scrollbar { display: none; }
     .nav-btn { background: none; border: none; cursor: pointer; font-family: inherit;
-      font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
-      padding: 10px 20px; color: #555; border-bottom: 2px solid transparent;
+      font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; flex: 1 0 auto;
+      padding: 10px 8px; color: #555; border-bottom: 2px solid transparent; white-space: nowrap;
       transition: color 0.2s, border-color 0.2s; }
     .nav-btn.active { color: #f0ede8; border-bottom-color: #f0ede8; }
 
@@ -178,6 +179,54 @@
 
     .hidden { display: none !important; }
 
+    /* ── HYROX ── */
+    :root { --hx: #ffc93d; --hx-dim: rgba(255,201,61,0.10); --hx-border: rgba(255,201,61,0.28); }
+    .hx-race { border: 1px solid var(--hx-border); background: var(--hx-dim); border-radius: 10px;
+      padding: 14px 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 14px; cursor: pointer; }
+    .hx-race-num { font-family: 'Bebas Neue', sans-serif; font-size: 44px; line-height: 0.9; color: var(--hx); min-width: 48px; text-align: center; }
+    .hx-race-name { font-size: 13px; color: #f0ede8; }
+    .hx-race-sub { font-size: 9px; letter-spacing: 0.12em; color: #8a7a4a; text-transform: uppercase; margin-top: 3px; }
+    .hx-stats { display: flex; gap: 8px; margin-bottom: 24px; }
+    .hx-stat { flex: 1; background: #0f0f0f; border: 1px solid #1a1a1a; border-radius: 8px; padding: 10px 6px; text-align: center; }
+    .hx-stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 24px; line-height: 1; color: #f0ede8; }
+    .hx-stat-label { font-size: 8px; letter-spacing: 0.12em; color: #444; text-transform: uppercase; margin-top: 4px; }
+    .hx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 28px; }
+    .hx-card { background: #0f0f0f; border: 1px solid #1a1a1a; border-radius: 10px; padding: 12px;
+      cursor: pointer; text-align: left; font-family: inherit; color: inherit; transition: border-color 0.2s;
+      display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .hx-card:hover, .hx-card:focus-visible { border-color: var(--hx-border); outline: none; }
+    .hx-card.wide { grid-column: 1 / -1; flex-direction: row; align-items: center; gap: 12px; }
+    .hx-card-top { display: flex; align-items: center; gap: 6px; }
+    .hx-card-num { font-size: 9px; color: #444; letter-spacing: 0.1em; }
+    .hx-card-name { font-size: 12px; color: #f0ede8; }
+    .hx-card-spec { font-size: 9px; color: #555; letter-spacing: 0.04em; line-height: 1.5; }
+    .hx-card-pb { font-family: 'Bebas Neue', sans-serif; font-size: 22px; line-height: 1; color: var(--hx); margin-top: 4px; }
+    .hx-card-pb.none { color: #2a2a2a; }
+    .hx-card-last { font-size: 9px; color: #3a3a3a; }
+    .hx-card-last.stale { color: #8a5a3a; }
+    .hx-proj { border: 1px dashed #222; border-radius: 10px; padding: 14px 16px; margin-bottom: 28px; }
+    .hx-proj-time { font-family: 'Bebas Neue', sans-serif; font-size: 40px; line-height: 1; color: #f0ede8; }
+    .hx-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .hx-chip { padding: 7px 10px; border: 1px solid #222; border-radius: 6px; background: transparent;
+      font-family: inherit; font-size: 10px; letter-spacing: 0.06em; color: #777; cursor: pointer; }
+    .hx-chip.active { border-color: var(--hx); color: var(--hx); background: var(--hx-dim); }
+    .hx-alt { border: 1px solid #1a1a1a; border-radius: 8px; padding: 12px; background: #0c0c0c; }
+    .hx-alt-name { font-size: 12px; color: #f0ede8; margin-bottom: 4px; }
+    .hx-alt-equip { font-size: 9px; color: #8a7a4a; letter-spacing: 0.06em; margin-bottom: 6px; }
+    .hx-alt-how { font-size: 11px; color: #888; line-height: 1.6; }
+    .hx-alt-btn { margin-top: 10px; padding: 7px 12px; border: 1px solid var(--hx-border); border-radius: 6px;
+      background: transparent; color: var(--hx); font-family: inherit; font-size: 10px; letter-spacing: 0.1em;
+      text-transform: uppercase; cursor: pointer; }
+    .hx-input { width: 100%; background: #0f0f0f; border: 1px solid #1e1e1e; border-radius: 6px; padding: 12px;
+      font-family: inherit; font-size: 15px; color: #f0ede8; outline: none; }
+    .hx-input:focus { border-color: var(--hx-border); }
+    .hx-time { font-family: 'Bebas Neue', sans-serif; font-size: 28px; text-align: center; letter-spacing: 0.04em; }
+    .hx-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #111; }
+    .hx-scroll { max-height: 82vh; overflow-y: auto; }
+    .hx-banner { border: 1px solid #4a1a1a; background: #1f0f0f; color: #ff9999; border-radius: 8px;
+      padding: 12px 14px; font-size: 11px; line-height: 1.7; margin-bottom: 20px; }
+    .hx-banner code { color: #f0ede8; }
+
     /* Unsupported voice */
     .voice-unsupported { color: #ff9999; font-size: 12px; text-align: center;
       line-height: 1.8; padding: 20px 0 36px; }
@@ -267,6 +316,7 @@
     <button class="nav-btn" data-view="challenges" onclick="switchView('challenges')">
       Challenges<span id="challenge-badge" class="hidden" style="display:inline-block;margin-left:5px;width:6px;height:6px;border-radius:50%;background:#ff4d4d;"></span>
     </button>
+    <button class="nav-btn" data-view="hyrox" onclick="switchView('hyrox')">HYROX</button>
   </div>
 
   <!-- TODAY VIEW -->
@@ -399,6 +449,110 @@
 
     <div class="section-label" style="margin:28px 0 10px;">Past Challenges</div>
     <div id="past-challenges-list" style="display:flex;flex-direction:column;gap:8px;"></div>
+  </div>
+
+  <!-- HYROX VIEW -->
+  <div id="view-hyrox" class="hidden">
+    <div id="hx-setup-banner" class="hx-banner hidden"></div>
+
+    <div class="hx-race" id="hx-race" onclick="openHyroxSettings()" role="button" tabindex="0">
+      <div class="hx-race-num" id="hx-race-days">—</div>
+      <div style="flex:1;min-width:0;">
+        <div class="hx-race-name" id="hx-race-name">Set your race</div>
+        <div class="hx-race-sub" id="hx-race-sub">Tap to add date &amp; division</div>
+      </div>
+      <div style="color:#8a7a4a;font-size:14px;">✎</div>
+    </div>
+
+    <div class="hx-stats">
+      <div class="hx-stat"><div class="hx-stat-num" id="hx-stat-week">0</div><div class="hx-stat-label">Logged · 7d</div></div>
+      <div class="hx-stat"><div class="hx-stat-num" id="hx-stat-cover">0/9</div><div class="hx-stat-label">Stations · 14d</div></div>
+      <div class="hx-stat"><div class="hx-stat-num" id="hx-stat-pbs">0/9</div><div class="hx-stat-label">Benchmarks</div></div>
+    </div>
+
+    <div class="section-label">Stations — tap for alternatives &amp; logging</div>
+    <div class="hx-grid" id="hx-grid"></div>
+
+    <div class="hx-proj">
+      <div class="section-label" style="margin-bottom:6px;">Projected finish</div>
+      <div class="hx-proj-time" id="hx-proj-time">—</div>
+      <div style="font-size:10px;color:#444;line-height:1.6;margin-top:6px;" id="hx-proj-note"></div>
+    </div>
+
+    <div class="section-label">Recent training</div>
+    <div id="hx-recent"></div>
+  </div>
+</div>
+
+<!-- HYROX Station Modal (alternatives + logging) -->
+<div class="modal-overlay hidden" id="hx-station-modal" onclick="if(event.target===this)closeModal('hx-station-modal')">
+  <div class="modal hx-scroll">
+    <button class="modal-close" onclick="closeModal('hx-station-modal')">✕</button>
+    <div class="modal-title" id="hx-m-title"></div>
+    <div class="modal-sub" id="hx-m-sub"></div>
+
+    <!-- Step 1: overview + alternatives -->
+    <div id="hx-m-overview">
+      <div style="font-size:11px;color:#888;line-height:1.6;margin-bottom:14px;" id="hx-m-desc"></div>
+      <button class="modal-action-btn" style="width:100%;background:var(--hx);color:#0a0a0f;margin-bottom:22px;" onclick="hxStartLog('official')">Log official station</button>
+      <div class="section-label">No equipment? Alternatives</div>
+      <div id="hx-m-alts" style="display:flex;flex-direction:column;gap:8px;margin-bottom:22px;"></div>
+      <div class="section-label">Your recent efforts</div>
+      <div id="hx-m-history"></div>
+    </div>
+
+    <!-- Step 2: log form -->
+    <div id="hx-m-form" class="hidden">
+      <div class="section-label">What you did</div>
+      <div class="hx-chips" id="hx-f-variants"></div>
+      <div class="hx-alt" id="hx-f-how" style="margin-bottom:16px;"></div>
+
+      <div class="section-label">Time</div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;">
+        <input id="hx-f-min" class="hx-input hx-time" type="number" inputmode="numeric" min="0" max="999" placeholder="min"/>
+        <span style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:#444;">:</span>
+        <input id="hx-f-sec" class="hx-input hx-time" type="number" inputmode="numeric" min="0" max="59" placeholder="sec"/>
+      </div>
+
+      <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <div style="flex:1;" id="hx-f-amount-wrap">
+          <div class="section-label" id="hx-f-amount-label">Distance</div>
+          <input id="hx-f-amount" class="hx-input" type="number" inputmode="decimal" min="0" step="any"/>
+        </div>
+        <div style="flex:1;" id="hx-f-weight-wrap">
+          <div class="section-label">Weight (kg)</div>
+          <input id="hx-f-weight" class="hx-input" type="number" inputmode="decimal" min="0" step="any"/>
+        </div>
+      </div>
+
+      <div class="section-label">Notes (optional)</div>
+      <input id="hx-f-notes" class="hx-input" type="text" maxlength="500" placeholder="e.g. felt strong, 4 × 12.5 m" style="margin-bottom:12px;"/>
+      <div id="hx-f-error" style="color:#ff9999;font-size:12px;margin-bottom:12px;display:none;white-space:pre-wrap;"></div>
+
+      <div class="modal-actions">
+        <button class="modal-action-btn" style="background:#1a1a1a;color:#888;border:1px solid #222;" onclick="hxShowOverview()">Back</button>
+        <button class="modal-action-btn" id="hx-f-save" style="background:var(--hx);color:#0a0a0f;" onclick="hxSaveLog()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HYROX Race Settings Modal -->
+<div class="modal-overlay hidden" id="hx-settings-modal" onclick="if(event.target===this)closeModal('hx-settings-modal')">
+  <div class="modal">
+    <div class="modal-title">Your Race</div>
+    <div class="modal-sub">Sets the weights shown for each station</div>
+    <div class="section-label">Division</div>
+    <div class="hx-chips" id="hx-s-divisions"></div>
+    <div class="section-label">Race name</div>
+    <input id="hx-s-name" class="hx-input" type="text" maxlength="80" placeholder="e.g. HYROX Las Vegas" style="margin-bottom:14px;"/>
+    <div class="section-label">Race date</div>
+    <input id="hx-s-date" class="hx-input" type="date" style="margin-bottom:16px;color-scheme:dark;"/>
+    <div id="hx-s-error" style="color:#ff9999;font-size:12px;margin-bottom:12px;display:none;white-space:pre-wrap;"></div>
+    <div class="modal-actions">
+      <button class="modal-action-btn" style="background:#1a1a1a;color:#888;border:1px solid #222;" onclick="closeModal('hx-settings-modal')">Cancel</button>
+      <button class="modal-action-btn" id="hx-s-save" style="background:var(--hx);color:#0a0a0f;" onclick="hxSaveSettings()">Save</button>
+    </div>
   </div>
 </div>
 
@@ -813,6 +967,7 @@ function handleLogout() {
   log = {};
   myGroups = [];
   activeGroupId = null;
+  hxLogs = []; hxSettings = { division: 'open_m', race_date: null, race_name: null }; hxLoaded = false;
   document.getElementById('app').classList.add('hidden');
   document.getElementById('login-screen').classList.remove('hidden');
   document.getElementById('auth-email').value = '';
@@ -1915,10 +2070,12 @@ function switchView(v) {
   document.getElementById('view-history').classList.toggle('hidden', v!=='history');
   document.getElementById('view-friends').classList.toggle('hidden', v!=='friends');
   document.getElementById('view-challenges').classList.toggle('hidden', v!=='challenges');
+  document.getElementById('view-hyrox').classList.toggle('hidden', v!=='hyrox');
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view===v));
   if (v==='history') renderHistory();
   if (v==='friends') { loadLeaderboard(); loadPendingGroupInvites(); }
   if (v==='challenges') loadChallenges();
+  if (v==='hyrox') loadHyrox();
 }
 
 // ─── RENDER ───────────────────────────────────────────────────────────────────
@@ -2258,6 +2415,476 @@ function copyShareText() {
     .then(()=>showToast('Copied to clipboard! 📋', true))
     .catch(()=>showToast('Copy not available in this browser', false));
 }
+
+// ─── HYROX ────────────────────────────────────────────────────────────────────
+// Separate from `logs` (tables: hyrox_logs, hyrox_profile — see supabase/hyrox.sql)
+// so HYROX training never affects leaderboards or challenge math.
+
+const HX_DIVISIONS = { open_w:'Open · Women', open_m:'Open · Men', pro_w:'Pro · Women', pro_m:'Pro · Men' };
+
+// Official specs (2025/26 season). Sled weights include the sled.
+// Each alternative says what equipment it needs and how to dose it so it
+// roughly matches the effort of the real station.
+const HX_STATIONS = {
+  run: {
+    label:'Running', icon:'🏃', race:'8 × 1 km', unit:'km', amount:1,
+    desc:'Eight 1 km runs, one before each station. Most of your race time is here — and you run them on tired legs. Log each 1 km rep (or a longer run with total distance) to track your pace.',
+    alts:[
+      { id:'treadmill', name:'Treadmill', equip:'Treadmill', unit:'km', amount:1, how:'Set 1% incline to mimic outdoor effort. Best for race-pace repeats: 1 km on, 1–2 min off.' },
+      { id:'bike-run', name:'Bike (low impact)', equip:'Stationary, echo or road bike', how:'If your legs or joints need a break: ride hard for the same time as your 1 km pace, repeated 4–8×. Keeps the engine without the pounding.' },
+      { id:'stairs', name:'Stairs / incline walk', equip:'Stair climber, hill or stairwell', how:'Steep incline walk or stair intervals for the same time as a 1 km run. Builds the leg endurance that holds your pace late in the race.' },
+      { id:'compromised', name:'Compromised run', equip:'Any station or alternative + space to run', unit:'km', amount:1, how:'Do a station (or its alternative) then immediately run 1 km. This is the most HYROX-specific running workout — log the run time.' }
+    ]
+  },
+  ski: {
+    label:'SkiErg', icon:'⛷️', n:1, race:'1,000 m', unit:'m', amount:1000,
+    desc:'1,000 m on a SkiErg: a pull-down from overhead with a hip hinge. Lats, triceps and core, plus a big aerobic load.',
+    alts:[
+      { id:'row-for-ski', name:'Rower', equip:'Rowing machine', unit:'m', amount:1000, how:'Row 1,000 m hard. Same pull-and-hinge pattern. Most people row a bit faster than they ski over the same distance.' },
+      { id:'band-pulldown', name:'Band straight-arm pulldowns', equip:'Resistance band + high anchor (door, rack, tree)', unit:'reps', amount:160, how:'4 rounds: 40 fast straight-arm pulldowns with a slight hip hinge, 20 s rest. The closest match to the ski stroke without a machine.' },
+      { id:'slams', name:'Med-ball slams', equip:'Slam ball — or burpees if you have nothing', unit:'reps', amount:60, how:'4 minutes: 15 slams at the start of each minute, full hinge each rep. Matches the time and the overhead-to-floor pattern.' },
+      { id:'bike-for-ski', name:'Air / echo bike', equip:'Bike with moving handles', how:'Ride hard for your target SkiErg time (about 4–5 min), driving with the arms.' }
+    ]
+  },
+  sled_push: {
+    label:'Sled Push', icon:'🛷', n:2, race:'50 m (4 × 12.5 m)', unit:'m', amount:50,
+    weights:{ open_w:102, open_m:152, pro_w:152, pro_m:202 }, wlabel:'incl. sled',
+    desc:'Push a weighted sled 4 lengths of 12.5 m. Quads, glutes and calves — and very hard on the legs for the run that follows.',
+    alts:[
+      { id:'deadmill', name:'Treadmill push (motor off)', equip:'Treadmill with the power off, or a curved manual treadmill', how:'Hands on the rails, body at about 45°, drive with your legs to move the belt. 4 × 30–45 s hard, matching your sled time.' },
+      { id:'plate-push', name:'Plate or towel push', equip:'Weight plate on turf, or a towel on a smooth floor', unit:'m', amount:50, how:'Push a heavy plate across turf, or hands on a towel across hardwood, staying low. 4 × 12.5 m. Add a loaded backpack on the plate to go heavier.' },
+      { id:'wall-drive', name:'Wall drives + heavy step-ups', equip:'A wall + a box or bench (and dumbbells if you have them)', how:'4 rounds: 30 s fast wall drives (hands on the wall, body at 45°, drive the knees), then 10 heavy step-ups per leg.' },
+      { id:'car-push', name:'Car push', equip:'A car, an empty flat lot, and a helper in the driver\'s seat', unit:'m', amount:50, how:'Car in neutral with someone ready to brake. Push 4 × 12.5 m. Heavy and very race-like. Only do this where it\'s flat and there\'s no traffic.' }
+    ]
+  },
+  sled_pull: {
+    label:'Sled Pull', icon:'🪢', n:3, race:'50 m', unit:'m', amount:50,
+    weights:{ open_w:78, open_m:103, pro_w:103, pro_m:153 }, wlabel:'incl. sled',
+    desc:'Pull a sled toward you hand-over-hand with a rope, then walk back and repeat. Back, biceps, grip and legs.',
+    alts:[
+      { id:'rope-drag', name:'Rope + loaded bag pull', equip:'10 m+ rope, plus a sandbag, tire or loaded duffel', unit:'m', amount:50, how:'Tie the rope to the weight, pull it to you hand-over-hand, walk back, repeat to 50 m total. The closest match to the real thing.' },
+      { id:'backward-drag', name:'Backward drag', equip:'Strap or rope + a weighted bag or tire', unit:'m', amount:50, how:'Hold the strap and walk backwards, staying low, 4 × 12.5 m. Hits the same legs and grip.' },
+      { id:'heavy-rows', name:'Heavy rows + hangs', equip:'Cable machine, heavy band, or a loaded backpack', unit:'reps', amount:75, how:'5 × 15 heavy rows with short rest, then 2 × 30 s dead hang (or a heavy towel hold) for grip.' }
+    ]
+  },
+  bbj: {
+    label:'Burpee Broad Jumps', icon:'🐸', n:4, race:'80 m', unit:'m', amount:80,
+    desc:'Burpee, then a two-footed jump forward, repeated for 80 m. You don\'t need any equipment — the alternatives are for when you\'re short on space or need lower impact.',
+    alts:[
+      { id:'bbj-in-place', name:'Burpee + jump in place', equip:'About 2 m² of floor', unit:'reps', amount:55, how:'Burpee, jump forward, step back to your start. About 50–60 reps covers 80 m for most people.' },
+      { id:'burpee-tuck', name:'Burpee + tuck jump', equip:'Nothing', unit:'reps', amount:55, how:'The same rep count with a tuck jump instead of a broad jump. Good for small rooms.' },
+      { id:'bbj-low', name:'Low-impact version', equip:'Nothing (good for apartments or sore joints)', unit:'reps', amount:55, how:'Step back into the plank, step forward, then a squat to a calf raise. Same rep count, much less pounding.' }
+    ]
+  },
+  row: {
+    label:'Rowing', icon:'🚣', n:5, race:'1,000 m', unit:'m', amount:1000,
+    desc:'1,000 m on a rowing machine. Legs drive and the back finishes the stroke. A chance to settle your breathing if you pace it well.',
+    alts:[
+      { id:'ski-for-row', name:'SkiErg', equip:'SkiErg', unit:'m', amount:1000, how:'Ski 1,000 m. The same pulling and aerobic demand.' },
+      { id:'bike-for-row', name:'Bike', equip:'Echo, air or stationary bike', how:'Ride hard for your target row time (about 4–5 min).' },
+      { id:'row-complex', name:'Dumbbell row + squat-jump circuit', equip:'Dumbbells, kettlebell or a loaded backpack', unit:'reps', amount:100, how:'5 rounds with minimal rest: 10 bent-over rows + 10 squat jumps. Legs and back together, like a rowing stroke.' },
+      { id:'inverted-row', name:'Inverted rows', equip:'TRX, rings, or a sturdy table', unit:'reps', amount:60, how:'4 × 15 inverted rows with 30 s rest, then 2 min of jumping jacks to keep your heart rate up.' }
+    ]
+  },
+  farmers: {
+    label:'Farmers Carry', icon:'🧺', n:6, race:'200 m', unit:'m', amount:200,
+    weights:{ open_w:16, open_m:24, pro_w:24, pro_m:32 }, wlabel:'× 2 kettlebells', wper:2,
+    desc:'Carry two kettlebells 200 m. Grip is the limit for most people. Shoulders back, short quick steps.',
+    alts:[
+      { id:'jugs', name:'Water jugs or loaded bags', equip:'Jugs, buckets or shopping bags (1 US gallon of water ≈ 3.8 kg)', unit:'m', amount:200, how:'Two heavy containers, one per hand. Walk 200 m — laps of a driveway, hallway or yard.' },
+      { id:'suitcase', name:'Single-arm suitcase carry', equip:'One dumbbell or kettlebell', unit:'m', amount:200, how:'50 m on one side, 50 m on the other, twice. Harder on your core, the same grip demand.' },
+      { id:'trap-bar', name:'Trap bar carry', equip:'Trap / hex bar', unit:'m', amount:200, how:'Load to about twice the race kettlebell weight. Walk 200 m in 25–50 m segments.' },
+      { id:'static-hold', name:'Static holds (no space)', equip:'Heavy dumbbells, bags or jugs', how:'4 × 45–60 s holds, standing tall. Matches the time you\'ll spend carrying on race day.' }
+    ]
+  },
+  lunges: {
+    label:'Sandbag Lunges', icon:'🎒', n:7, race:'100 m', unit:'m', amount:100,
+    weights:{ open_w:10, open_m:20, pro_w:20, pro_m:30 }, wlabel:'sandbag',
+    desc:'Walking lunges for 100 m with a sandbag on your shoulders; your back knee touches the ground each rep. A big quad burner right before wall balls.',
+    alts:[
+      { id:'backpack-lunge', name:'Backpack walking lunges', equip:'Backpack loaded with books or water bottles', unit:'m', amount:100, how:'Wear it high on your back or hug it on your shoulders. 100 m, back knee touching each rep.' },
+      { id:'goblet-lunge', name:'Goblet walking lunges', equip:'One dumbbell or kettlebell held at the chest', unit:'m', amount:100, how:'100 m. Start at race weight; go lighter if your form breaks down.' },
+      { id:'lunge-in-place', name:'Reverse lunges in place', equip:'Nothing (or any weight)', unit:'reps', amount:90, how:'No space to walk? Alternating reverse lunges: about 80–100 reps ≈ 100 m.' },
+      { id:'barbell-lunge', name:'Barbell back-rack lunges', equip:'Barbell', unit:'m', amount:100, how:'Bar on your back at about race weight. Great for building strength, but less like the race than a bag.' }
+    ]
+  },
+  wall_balls: {
+    label:'Wall Balls', icon:'🏐', n:8, race:'100 reps', unit:'reps', amount:100,
+    weights:{ open_w:4, open_m:6, pro_w:6, pro_m:9 }, wlabel:'ball',
+    targets:{ open_w:'2.7 m', open_m:'3.0 m', pro_w:'2.7 m', pro_m:'3.0 m' },
+    desc:'Squat and throw a medicine ball to a target, 100 reps. Done on already-burning legs. Pick a set pattern (e.g. 25/25/20/15/15) and stick to it.',
+    alts:[
+      { id:'thrusters', name:'Dumbbell / kettlebell thrusters', equip:'1–2 dumbbells or a kettlebell, about race ball weight', unit:'reps', amount:100, how:'100 thrusters with full squat depth, in the same sets you plan to race.' },
+      { id:'any-ball', name:'Any ball + any high wall', equip:'A ball (a basketball partly filled with sand works) + an outside wall', unit:'reps', amount:100, how:'Mark a target about 3 m up. Squat and throw 100 times. Keeps the catch-and-throw rhythm.' },
+      { id:'squat-press', name:'Squat + push press', equip:'Backpack, water jug or sandbag', unit:'reps', amount:100, how:'Hug it at your chest, squat, then press it overhead as you stand. 100 reps.' }
+    ]
+  }
+};
+const HX_ORDER = ['run','ski','sled_push','sled_pull','bbj','row','farmers','lunges','wall_balls'];
+
+let hxLogs = [];      // rows from hyrox_logs, newest first
+let hxSettings = { division: 'open_m', race_date: null, race_name: null };
+let hxLoaded = false;
+let hxCurrent = null; // { station, variant }
+
+function hxEsc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function hxFmt(sec) {
+  if (sec == null) return '—';
+  sec = Math.round(sec);
+  const h = Math.floor(sec / 3600), m = Math.floor((sec % 3600) / 60), s = sec % 60;
+  return h ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}` : `${m}:${String(s).padStart(2,'0')}`;
+}
+function hxLb(kg) { return Math.round(kg * 2.2046); }
+function hxDaysBetween(a, b) { // whole local days from date string a to b
+  return Math.round((new Date(b + 'T00:00:00') - new Date(a + 'T00:00:00')) / 86400000);
+}
+// Raw Supabase error text (message / details / hint / code) for precise diagnosis
+function hxErrText(e) {
+  if (!e) return 'Unknown error';
+  return [e.message, e.details && `details: ${e.details}`, e.hint && `hint: ${e.hint}`, e.code && `code: ${e.code}`]
+    .filter(Boolean).join('\n');
+}
+function hxIsMissingTable(e) {
+  return e && (e.code === '42P01' || e.code === 'PGRST205' || /does not exist|schema cache/i.test(e.message || ''));
+}
+
+function hxSpecLine(key) {
+  const st = HX_STATIONS[key], d = hxSettings.division;
+  let line = st.race;
+  if (st.weights) {
+    const kg = st.weights[d];
+    line += st.wper ? ` · ${st.wper} × ${kg} kg (${hxLb(kg)} lb)` : ` · ${kg} kg (${hxLb(kg)} lb) ${st.wlabel}`;
+  }
+  if (st.targets) line += ` · ${st.targets[d]} target`;
+  return line;
+}
+function hxVariantLabel(key, variantId) {
+  if (variantId === 'official') return 'Official';
+  return HX_STATIONS[key].alts.find(a => a.id === variantId)?.name || variantId;
+}
+
+// Best "benchmark" per station: official version, timed, full race distance.
+// For runs, the benchmark is best pace per km on runs of ≥ 1 km.
+function hxBest(key) {
+  const st = HX_STATIONS[key];
+  let best = null;
+  hxLogs.forEach(r => {
+    if (r.station !== key || r.variant !== 'official' || !r.duration_sec) return;
+    if (key === 'run') {
+      const km = Number(r.amount) || 1;
+      if (km < 1) return;
+      const pace = r.duration_sec / km;
+      if (best == null || pace < best) best = pace;
+    } else {
+      if (r.amount != null && Number(r.amount) < st.amount) return; // partial efforts don't count
+      if (best == null || r.duration_sec < best) best = r.duration_sec;
+    }
+  });
+  return best;
+}
+function hxLastDate(key) {
+  const r = hxLogs.find(r => r.station === key);
+  return r ? r.local_date : null;
+}
+
+async function loadHyrox() {
+  if (!currentUser) return;
+  if (!hxLoaded) renderHyrox(); // render the shell immediately with defaults
+  const banner = document.getElementById('hx-setup-banner');
+  try {
+    const [logsRes, profRes] = await Promise.all([
+      sb.from('hyrox_logs')
+        .select('id, station, variant, duration_sec, amount, unit, weight_kg, notes, local_date, logged_at')
+        .eq('profile_id', currentUser.id)
+        .order('logged_at', { ascending: false })
+        .limit(500),
+      sb.from('hyrox_profile').select('division, race_date, race_name').eq('profile_id', currentUser.id).maybeSingle()
+    ]);
+    if (logsRes.error) throw logsRes.error;
+    if (profRes.error) throw profRes.error;
+    hxLogs = logsRes.data || [];
+    if (profRes.data) hxSettings = profRes.data;
+    hxLoaded = true;
+    banner.classList.add('hidden');
+  } catch (e) {
+    console.error('HYROX load failed', e);
+    banner.innerHTML = hxIsMissingTable(e)
+      ? 'HYROX tables aren\'t set up yet. Run <code>supabase/hyrox.sql</code> in the Supabase SQL Editor, then reopen this tab.'
+      : 'Could not load HYROX data:<br><code>' + hxEsc(hxErrText(e)).replace(/\n/g, '<br>') + '</code>';
+    banner.classList.remove('hidden');
+  }
+  renderHyrox();
+}
+
+function renderHyrox() {
+  // Race header
+  const daysEl = document.getElementById('hx-race-days');
+  const nameEl = document.getElementById('hx-race-name');
+  const subEl = document.getElementById('hx-race-sub');
+  const div = HX_DIVISIONS[hxSettings.division] || HX_DIVISIONS.open_m;
+  if (hxSettings.race_date) {
+    const days = hxDaysBetween(TODAY, hxSettings.race_date);
+    daysEl.textContent = days >= 0 ? days : '✓';
+    nameEl.textContent = hxSettings.race_name || 'HYROX race';
+    const dateStr = new Date(hxSettings.race_date + 'T00:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+    subEl.textContent = (days > 0 ? `${days === 1 ? 'day' : 'days'} to go · ` : days === 0 ? 'Race day! · ' : 'Done · ') + dateStr + ' · ' + div;
+  } else {
+    daysEl.textContent = '—';
+    nameEl.textContent = hxSettings.race_name || 'Set your race';
+    subEl.textContent = 'Tap to add date · ' + div;
+  }
+
+  // Stats
+  const weekStart = dateRange('week').start;
+  const twoWeekStart = (() => { const d = new Date(TODAY + 'T00:00:00'); d.setDate(d.getDate() - 13); return localDateStr(d); })();
+  document.getElementById('hx-stat-week').textContent = hxLogs.filter(r => r.local_date >= weekStart).length;
+  const covered = new Set(hxLogs.filter(r => r.local_date >= twoWeekStart).map(r => r.station));
+  document.getElementById('hx-stat-cover').textContent = `${covered.size}/9`;
+  const bests = Object.fromEntries(HX_ORDER.map(k => [k, hxBest(k)]));
+  const pbCount = HX_ORDER.filter(k => bests[k] != null).length;
+  document.getElementById('hx-stat-pbs').textContent = `${pbCount}/9`;
+
+  // Station grid
+  const grid = document.getElementById('hx-grid');
+  grid.innerHTML = '';
+  HX_ORDER.forEach(k => {
+    const st = HX_STATIONS[k];
+    const last = hxLastDate(k);
+    const ago = last ? hxDaysBetween(last, TODAY) : null;
+    const lastTxt = last == null ? 'Not trained yet' : ago === 0 ? 'Trained today' : ago === 1 ? 'Yesterday' : `${ago}d ago`;
+    const pb = bests[k];
+    const pbTxt = pb == null ? 'No benchmark' : (k === 'run' ? `${hxFmt(pb)} /km` : hxFmt(pb));
+    const btn = document.createElement('button');
+    btn.className = 'hx-card' + (k === 'run' ? ' wide' : '');
+    btn.onclick = () => openHyroxStation(k);
+    btn.innerHTML = k === 'run'
+      ? `<div style="font-size:26px;">${st.icon}</div>
+         <div style="flex:1;min-width:0;">
+           <div class="hx-card-name">${st.label}</div>
+           <div class="hx-card-spec">${hxSpecLine(k)} · between every station</div>
+           <div class="hx-card-last ${ago == null || ago > 7 ? 'stale' : ''}">${lastTxt}</div>
+         </div>
+         <div class="hx-card-pb ${pb == null ? 'none' : ''}" style="font-size:24px;text-align:right;">${pbTxt}</div>`
+      : `<div class="hx-card-top"><span style="font-size:18px;">${st.icon}</span><span class="hx-card-num">${String(st.n).padStart(2,'0')}</span></div>
+         <div class="hx-card-name">${st.label}</div>
+         <div class="hx-card-spec">${hxSpecLine(k)}</div>
+         <div class="hx-card-pb ${pb == null ? 'none' : ''}">${pbTxt}</div>
+         <div class="hx-card-last ${ago == null || ago > 14 ? 'stale' : ''}">${lastTxt}</div>`;
+    grid.appendChild(btn);
+  });
+
+  // Projection: best official time at each station + 8 × best 1 km pace
+  const projEl = document.getElementById('hx-proj-time');
+  const noteEl = document.getElementById('hx-proj-note');
+  if (pbCount === 9) {
+    const total = HX_ORDER.reduce((s, k) => s + (k === 'run' ? bests[k] * 8 : bests[k]), 0);
+    projEl.textContent = hxFmt(total);
+    noteEl.textContent = `Your best station times + 8 × your best 1 km pace (${hxFmt(bests.run)}). Leaves out Roxzone transitions (usually 5–10 min) and fatigue, so treat it as your best-case time.`;
+  } else {
+    const missing = HX_ORDER.filter(k => bests[k] == null).map(k => HX_STATIONS[k].label);
+    projEl.textContent = '—';
+    noteEl.textContent = `Log one official, full-distance time for each station to see a projection. Still needed: ${missing.join(', ')}.`;
+  }
+
+  // Recent
+  const recent = document.getElementById('hx-recent');
+  if (!hxLogs.length) {
+    recent.innerHTML = '<div style="color:#2a2a2a;font-size:13px;text-align:center;padding:30px 0;">Nothing logged yet.<br/><span style="font-size:11px;">Tap a station to start.</span></div>';
+  } else {
+    recent.innerHTML = hxLogs.slice(0, 20).map(hxRowHtml).join('');
+  }
+}
+
+function hxRowHtml(r) {
+  const st = HX_STATIONS[r.station];
+  if (!st) return '';
+  const bits = [];
+  if (r.duration_sec) bits.push(hxFmt(r.duration_sec));
+  if (r.amount != null) bits.push(`${Number(r.amount)} ${r.unit || ''}`.trim());
+  if (r.weight_kg != null) bits.push(`${Number(r.weight_kg)} kg${st.wper ? '/hand' : ''}`);
+  if (r.station === 'run' && r.duration_sec && r.amount) bits.push(`${hxFmt(r.duration_sec / r.amount)}/km`);
+  const isAlt = r.variant !== 'official';
+  const dateStr = r.local_date === TODAY ? 'Today' : new Date(r.local_date + 'T00:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric' });
+  return `<div class="hx-row">
+    <div style="font-size:18px;width:24px;text-align:center;">${st.icon}</div>
+    <div style="flex:1;min-width:0;">
+      <div style="font-size:12px;color:#ccc;">${st.label}${isAlt ? ` <span style="color:#8a7a4a;font-size:10px;">· ${hxEsc(hxVariantLabel(r.station, r.variant))}</span>` : ''}</div>
+      <div style="font-size:10px;color:#555;margin-top:2px;">${hxEsc(bits.join(' · ') || 'Logged')}${r.notes ? ' — ' + hxEsc(r.notes) : ''}</div>
+    </div>
+    <div style="font-size:9px;color:#383838;white-space:nowrap;">${dateStr}</div>
+    <button class="del-btn" title="Delete" onclick="hxDeleteLog('${r.id}')">✕</button>
+  </div>`;
+}
+
+// ── Station modal ──
+function openHyroxStation(key) {
+  hxCurrent = { station: key, variant: 'official' };
+  const st = HX_STATIONS[key];
+  document.getElementById('hx-m-title').textContent = `${st.icon} ${st.label}`;
+  document.getElementById('hx-m-sub').textContent = hxSpecLine(key);
+  document.getElementById('hx-m-desc').textContent = st.desc;
+  document.getElementById('hx-m-alts').innerHTML = st.alts.map(a => `
+    <div class="hx-alt">
+      <div class="hx-alt-name">${hxEsc(a.name)}</div>
+      <div class="hx-alt-equip">NEEDS: ${hxEsc(a.equip)}</div>
+      <div class="hx-alt-how">${hxEsc(a.how)}</div>
+      <button class="hx-alt-btn" onclick="hxStartLog('${a.id}')">Log this</button>
+    </div>`).join('');
+  const hist = hxLogs.filter(r => r.station === key).slice(0, 8);
+  document.getElementById('hx-m-history').innerHTML = hist.length
+    ? hist.map(hxRowHtml).join('')
+    : '<div style="color:#2a2a2a;font-size:12px;padding:10px 0;">No efforts logged for this station yet.</div>';
+  hxShowOverview();
+  document.getElementById('hx-station-modal').classList.remove('hidden');
+}
+
+function hxShowOverview() {
+  document.getElementById('hx-m-overview').classList.remove('hidden');
+  document.getElementById('hx-m-form').classList.add('hidden');
+}
+
+function hxStartLog(variantId) {
+  const key = hxCurrent.station;
+  ['hx-f-min','hx-f-sec','hx-f-notes','hx-f-weight'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('hx-f-error').style.display = 'none';
+  const st = HX_STATIONS[key];
+  document.getElementById('hx-f-weight-wrap').classList.toggle('hidden', !st.weights);
+  hxSelectVariant(variantId);
+  document.getElementById('hx-m-overview').classList.add('hidden');
+  document.getElementById('hx-m-form').classList.remove('hidden');
+  document.getElementById('hx-f-min').focus();
+}
+
+function hxSelectVariant(variantId) {
+  const key = hxCurrent.station, st = HX_STATIONS[key];
+  hxCurrent.variant = variantId;
+  const opts = [{ id:'official', name:'Official' }, ...st.alts];
+  document.getElementById('hx-f-variants').innerHTML = opts.map(o =>
+    `<button class="hx-chip ${o.id === variantId ? 'active' : ''}" onclick="hxSelectVariant('${o.id}')">${hxEsc(o.name)}</button>`).join('');
+
+  const alt = st.alts.find(a => a.id === variantId);
+  const howEl = document.getElementById('hx-f-how');
+  howEl.innerHTML = alt
+    ? `<div class="hx-alt-equip">NEEDS: ${hxEsc(alt.equip)}</div><div class="hx-alt-how">${hxEsc(alt.how)}</div>`
+    : `<div class="hx-alt-equip">RACE STANDARD</div><div class="hx-alt-how">${hxEsc(hxSpecLine(key))}. Log it at full distance to set a benchmark; partial efforts are saved but don't count as one.</div>`;
+
+  // Amount field follows the variant's unit (or hides if the variant is time-only)
+  const unit = alt ? alt.unit : st.unit;
+  const amount = alt ? alt.amount : st.amount;
+  const wrap = document.getElementById('hx-f-amount-wrap');
+  wrap.classList.toggle('hidden', !unit);
+  document.getElementById('hx-f-amount-label').textContent = unit === 'reps' ? 'Reps' : unit === 'km' ? 'Distance (km)' : 'Distance (m)';
+  document.getElementById('hx-f-amount').value = amount ?? '';
+  hxCurrent.unit = unit || null;
+  // Race weight only makes sense pre-filled for the official version
+  if (st.weights) document.getElementById('hx-f-weight').value = alt ? '' : st.weights[hxSettings.division];
+}
+
+async function hxSaveLog() {
+  const errEl = document.getElementById('hx-f-error');
+  errEl.style.display = 'none';
+  const min = parseInt(document.getElementById('hx-f-min').value) || 0;
+  const sec = parseInt(document.getElementById('hx-f-sec').value) || 0;
+  if (sec > 59) { errEl.textContent = 'Seconds should be 0–59.'; errEl.style.display = 'block'; return; }
+  const duration = min * 60 + sec;
+  const amountRaw = document.getElementById('hx-f-amount').value;
+  const weightRaw = document.getElementById('hx-f-weight').value;
+  const amount = hxCurrent.unit && amountRaw !== '' ? Number(amountRaw) : null;
+  const weight = HX_STATIONS[hxCurrent.station].weights && weightRaw !== '' ? Number(weightRaw) : null;
+  const notes = document.getElementById('hx-f-notes').value.trim() || null;
+  if (!duration && !amount) { errEl.textContent = 'Enter a time, or a distance/reps amount.'; errEl.style.display = 'block'; return; }
+  if (amount != null && !(amount > 0)) { errEl.textContent = 'Amount must be greater than 0.'; errEl.style.display = 'block'; return; }
+
+  const row = {
+    profile_id: currentUser.id,
+    station: hxCurrent.station,
+    variant: hxCurrent.variant,
+    duration_sec: duration || null,
+    amount, unit: amount != null ? hxCurrent.unit : null,
+    weight_kg: weight, notes,
+    local_date: TODAY
+  };
+  const btn = document.getElementById('hx-f-save');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    const prevBest = hxBest(row.station);
+    const { data, error } = await sb.from('hyrox_logs').insert(row)
+      .select('id, station, variant, duration_sec, amount, unit, weight_kg, notes, local_date, logged_at').single();
+    if (error) throw error;
+    hxLogs.unshift(data);
+    const newBest = hxBest(row.station);
+    closeModal('hx-station-modal');
+    renderHyrox();
+    const isPb = newBest != null && (prevBest == null || newBest < prevBest);
+    showToast(isPb ? (prevBest == null ? 'Benchmark set! 🏁' : 'New PB! 🔥') : `Logged ${HX_STATIONS[row.station].label} ✅`, true);
+  } catch (e) {
+    console.error('HYROX save failed', e);
+    errEl.textContent = hxIsMissingTable(e) ? 'HYROX tables aren\'t set up yet — run supabase/hyrox.sql first.\n\n' + hxErrText(e) : hxErrText(e);
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Save';
+  }
+}
+
+async function hxDeleteLog(id) {
+  const idx = hxLogs.findIndex(r => r.id === id);
+  if (idx < 0) return;
+  const [removed] = hxLogs.splice(idx, 1);
+  renderHyrox();
+  if (!document.getElementById('hx-station-modal').classList.contains('hidden')) openHyroxStation(hxCurrent.station);
+  const { error } = await sb.from('hyrox_logs').delete().eq('id', id);
+  if (error) {
+    console.error('HYROX delete failed', error);
+    hxLogs.splice(idx, 0, removed);
+    renderHyrox();
+    showToast('Could not delete: ' + (error.message || error.code), false);
+  }
+}
+
+// ── Race settings ──
+let hxDraftDivision = 'open_m';
+function openHyroxSettings() {
+  hxDraftDivision = hxSettings.division || 'open_m';
+  hxRenderDivisionChips();
+  document.getElementById('hx-s-name').value = hxSettings.race_name || '';
+  document.getElementById('hx-s-date').value = hxSettings.race_date || '';
+  document.getElementById('hx-s-error').style.display = 'none';
+  document.getElementById('hx-settings-modal').classList.remove('hidden');
+}
+function hxRenderDivisionChips() {
+  document.getElementById('hx-s-divisions').innerHTML = Object.entries(HX_DIVISIONS).map(([k, v]) =>
+    `<button class="hx-chip ${k === hxDraftDivision ? 'active' : ''}" onclick="hxDraftDivision='${k}';hxRenderDivisionChips()">${v}</button>`).join('');
+}
+async function hxSaveSettings() {
+  const errEl = document.getElementById('hx-s-error');
+  errEl.style.display = 'none';
+  const payload = {
+    profile_id: currentUser.id,
+    division: hxDraftDivision,
+    race_name: document.getElementById('hx-s-name').value.trim() || null,
+    race_date: document.getElementById('hx-s-date').value || null,
+    updated_at: new Date().toISOString()
+  };
+  const btn = document.getElementById('hx-s-save');
+  btn.disabled = true; btn.textContent = 'Saving…';
+  try {
+    const { error } = await sb.from('hyrox_profile').upsert(payload, { onConflict: 'profile_id' });
+    if (error) throw error;
+    hxSettings = { division: payload.division, race_name: payload.race_name, race_date: payload.race_date };
+    closeModal('hx-settings-modal');
+    renderHyrox();
+    showToast('Race saved 🏁', true);
+  } catch (e) {
+    console.error('HYROX settings save failed', e);
+    errEl.textContent = hxErrText(e);
+    errEl.style.display = 'block';
+  } finally {
+    btn.disabled = false; btn.textContent = 'Save';
+  }
+}
+document.getElementById('hx-race').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') openHyroxSettings(); });
 
 // ─── TOAST ────────────────────────────────────────────────────────────────────
 function showToast(msg, success) {
