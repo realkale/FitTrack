@@ -4,8 +4,8 @@
   "description": "Personal fitness tracker for push-ups, pull-ups, sit-ups and HYROX training",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0a0a0f",
-  "theme_color": "#0a0a0f",
+  "background_color": "#141517",
+  "theme_color": "#141517",
   "orientation": "portrait",
   "icons": [
     { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
