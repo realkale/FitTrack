@@ -6,56 +6,95 @@
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
   <meta name="apple-mobile-web-app-title" content="FitTrack"/>
-  <meta name="theme-color" content="#0a0a0f"/>
+  <meta name="theme-color" content="#141517"/>
   <title>FitTrack</title>
   <link rel="manifest" href="manifest.json"/>
   <!-- Apple touch icons -->
   <link rel="apple-touch-icon" href="icon-192.png"/>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Bebas+Neue&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700;800&family=Inter:wght@400;500;600&family=Caveat+Brush&display=swap');
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { height: 100%; background: #0a0a0f; color: #f0ede8; font-family: 'DM Mono', 'Courier New', monospace; -webkit-tap-highlight-color: transparent; }
+    html, body { height: 100%; background: #141517; color: #EDE7DA; font-family: 'Inter', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
     body { padding-bottom: env(safe-area-inset-bottom); }
     input[type=number]::-webkit-inner-spin-button,
     input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
     input[type=number] { -moz-appearance: textfield; }
     ::-webkit-scrollbar { width: 3px; }
-    ::-webkit-scrollbar-track { background: #0a0a0f; }
-    ::-webkit-scrollbar-thumb { background: #222; border-radius: 2px; }
+    ::-webkit-scrollbar-track { background: #141517; }
+    ::-webkit-scrollbar-thumb { background: #3A3D41; border-radius: 2px; }
 
-    #app { max-width: 480px; margin: 0 auto; padding: 0 16px 80px; min-height: 100vh; }
+    #app { max-width: 480px; margin: 0 auto; padding: 0 16px calc(110px + env(safe-area-inset-bottom)); min-height: 100vh; }
 
-    /* Nav */
-    .nav { display: flex; border-bottom: 1px solid #181818; margin-bottom: 28px; overflow-x: auto; scrollbar-width: none; }
-    .nav::-webkit-scrollbar { display: none; }
-    .nav-btn { background: none; border: none; cursor: pointer; font-family: inherit;
-      font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; flex: 1 0 auto;
-      padding: 10px 8px; color: #555; border-bottom: 2px solid transparent; white-space: nowrap;
-      transition: color 0.2s, border-color 0.2s; }
-    .nav-btn.active { color: #f0ede8; border-bottom-color: #f0ede8; }
+    /* Bottom nav */
+    .bottom-nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+      background: rgba(14,15,16,0.97); border-top: 1px solid #2E3033;
+      padding-bottom: env(safe-area-inset-bottom); }
+    .bottom-nav-inner { max-width: 480px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .nav-btn { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 5px; min-height: 64px; background: none; border: none; cursor: pointer; font-family: inherit;
+      font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #A3A6AA; transition: color 0.2s; }
+    .nav-btn svg { width: 22px; height: 22px; }
+    .nav-btn.active { color: #EDE7DA; }
+    .nav-dot { position: absolute; top: 12px; left: calc(50% + 10px); width: 7px; height: 7px; border-radius: 50%; background: #FF5B1A; }
+
+    /* Segmented control (Social) */
+    .seg { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; padding: 4px;
+      border-radius: 8px; background: #222427; margin-bottom: 22px; }
+    .seg-btn { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 40px;
+      border: none; border-radius: 7px; background: transparent; color: #A3A6AA; cursor: pointer;
+      font-family: inherit; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; }
+    .seg-btn.active { background: #EDE7DA; color: #141517; font-weight: 500; }
+    .seg-count { min-width: 16px; height: 16px; padding: 0 4px; border-radius: 8px; background: #FF5B1A;
+      color: #141517; font-size: 9px; line-height: 16px; letter-spacing: 0; font-weight: 500; }
+
+    /* Train hub */
+    .prog-card { display: flex; flex-direction: column; gap: 14px; width: 100%; padding: 18px; margin-bottom: 14px;
+      border-radius: 8px; border: 1px solid; text-align: left; font-family: inherit; color: #EDE7DA; cursor: pointer; }
+    .prog-card:disabled { cursor: default; }
+    .prog-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .prog-name { font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase; font-size: 34px; line-height: 0.9; letter-spacing: 0.04em; }
+    .prog-sub { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #A3A6AA; margin-top: 4px; }
+    .prog-count { font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase; font-size: 40px; line-height: 0.9; text-align: right; }
+    .prog-count-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #A3A6AA; text-align: right; }
+    .prog-foot { display: flex; justify-content: space-between; align-items: center; font-size: 11px; letter-spacing: 0.06em; color: #A3A6AA; }
+    .murph-parts { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+    .murph-part { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0; border-radius: 8px; background: #222427; }
+    .murph-part b { font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase; font-size: 20px; line-height: 1; }
+    .murph-part span { font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: #A3A6AA; }
+    .back-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; margin-bottom: 14px; padding: 0;
+      background: none; border: none; cursor: pointer; font-family: inherit; font-size: 11px;
+      letter-spacing: 0.12em; text-transform: uppercase; color: #A3A6AA; }
+
+    /* Groups list (Social › Groups) */
+    .group-row { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1px solid #2E3033;
+      border-radius: 8px; background: #222427; }
+    .group-row-name { flex: 1; min-width: 0; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .group-row-code { font-size: 10px; letter-spacing: 0.12em; color: #A3A6AA; margin-top: 2px; }
+    .group-row-btn { min-height: 36px; padding: 0 14px; border: none; border-radius: 6px; background: #8CC63F; color: #141517;
+      font-family: inherit; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; cursor: pointer; }
 
     /* Exercise tabs */
     .ex-tabs { display: flex; gap: 6px; margin-bottom: 28px; }
-    .ex-tab { flex: 1; padding: 10px 4px; border: 1px solid #1a1a1a; border-radius: 8px;
+    .ex-tab { flex: 1; padding: 10px 4px; border: 1px solid #2E3033; border-radius: 8px;
       cursor: pointer; background: transparent; font-family: inherit; font-size: 10px;
       letter-spacing: 0.1em; text-transform: uppercase; transition: all 0.2s;
-      display: flex; flex-direction: column; align-items: center; gap: 5px; color: #3a3a3a; }
+      display: flex; flex-direction: column; align-items: center; gap: 5px; color: #8E9196; }
     .ex-tab .ex-icon { font-size: 20px; }
-    .ex-tab .ex-total { font-family: 'Bebas Neue', sans-serif; font-size: 18px; letter-spacing: 0.04em; color: #2a2a2a; }
+    .ex-tab .ex-total { font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase; font-size: 18px; letter-spacing: 0.04em; color: #8E9196; }
 
     /* Big counter */
     .big-counter { text-align: center; margin-bottom: 32px; }
-    .big-num { font-family: 'Bebas Neue', sans-serif; font-size: 96px; line-height: 1; letter-spacing: 0.02em; transition: color 0.3s; }
-    .big-label { font-size: 10px; letter-spacing: 0.18em; color: #383838; text-transform: uppercase; }
+    .big-num { font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase; font-size: 96px; line-height: 1; letter-spacing: 0.02em; transition: color 0.3s; }
+    .big-label { font-size: 10px; letter-spacing: 0.18em; color: #8E9196; text-transform: uppercase; }
 
     /* Mode toggle */
-    .mode-toggle { display: flex; background: #0f0f0f; border-radius: 8px; padding: 3px;
-      margin-bottom: 24px; border: 1px solid #181818; }
+    .mode-toggle { display: flex; background: #222427; border-radius: 8px; padding: 3px;
+      margin-bottom: 24px; border: 1px solid #2E3033; }
     .mode-btn { flex: 1; padding: 8px 0; border: none; border-radius: 6px; cursor: pointer;
       font-family: inherit; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
-      transition: all 0.2s; background: transparent; color: #383838; }
-    .mode-btn.active { background: #1a1a1a; box-shadow: 0 1px 4px rgba(0,0,0,0.5); }
+      transition: all 0.2s; background: transparent; color: #8E9196; }
+    .mode-btn.active { background: #3A3D41; box-shadow: 0 1px 4px rgba(0,0,0,0.5); }
 
     /* Mic */
     .mic-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; margin-bottom: 36px; }
@@ -63,90 +102,90 @@
       background: transparent; cursor: pointer; display: flex; align-items: center;
       justify-content: center; font-size: 32px; transition: all 0.2s; color: var(--ex-color); }
     .mic-btn:hover { background: var(--ex-dim); }
-    .mic-btn.active { background: var(--ex-color); color: #0a0a0f; animation: pulse 1s infinite; }
+    .mic-btn.active { background: var(--ex-color); color: #141517; animation: pulse 1s infinite; }
     @keyframes pulse {
       0%,100% { box-shadow: 0 0 0 0 var(--ex-dim); }
       50% { box-shadow: 0 0 0 18px transparent; }
     }
-    .mic-hint { font-size: 10px; color: #383838; letter-spacing: 0.1em; text-align: center; }
-    .transcript-box { font-size: 11px; color: #606060; background: #111; padding: 7px 14px;
+    .mic-hint { font-size: 10px; color: #8E9196; letter-spacing: 0.1em; text-align: center; }
+    .transcript-box { font-size: 11px; color: #A3A6AA; background: #222427; padding: 7px 14px;
       border-radius: 6px; max-width: 280px; text-align: center; display: none; }
 
     /* Manual input */
     .manual-wrap { margin-bottom: 36px; }
-    .section-label { font-size: 9px; letter-spacing: 0.18em; color: #383838;
+    .section-label { font-size: 9px; letter-spacing: 0.18em; color: #8E9196;
       text-transform: uppercase; margin-bottom: 10px; }
     .quick-btns { display: flex; gap: 6px; margin-bottom: 18px; }
-    .quick-btn { flex: 1; padding: 11px 0; border: 1px solid #1e1e1e; background: transparent;
-      border-radius: 6px; cursor: pointer; font-family: 'Bebas Neue', sans-serif;
+    .quick-btn { flex: 1; padding: 11px 0; border: 1px solid #2E3033; background: transparent;
+      border-radius: 6px; cursor: pointer; font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;
       font-size: 22px; letter-spacing: 0.04em; transition: all 0.15s; }
     .custom-row { display: flex; gap: 8px; }
-    .custom-input { flex: 1; background: #0f0f0f; border: 1px solid #1e1e1e; border-radius: 6px;
-      padding: 12px; font-family: 'Bebas Neue', sans-serif; font-size: 30px;
+    .custom-input { flex: 1; background: #222427; border: 1px solid #2E3033; border-radius: 6px;
+      padding: 12px; font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase; font-size: 30px;
       color: var(--ex-color); outline: none; letter-spacing: 0.04em; text-align: center;
       transition: border-color 0.2s; }
     .log-btn { padding: 12px 18px; border: none; border-radius: 6px; cursor: pointer;
       font-family: inherit; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
       font-weight: 500; white-space: nowrap; transition: opacity 0.15s;
-      background: var(--ex-color); color: #0a0a0f; }
+      background: var(--ex-color); color: #141517; }
     .log-btn:hover { opacity: 0.8; }
-    .input-hint { font-size: 9px; color: #282828; margin-top: 7px; letter-spacing: 0.06em; }
+    .input-hint { font-size: 9px; color: #8E9196; margin-top: 7px; letter-spacing: 0.06em; }
 
     /* Sets today */
     .sets-today { display: flex; flex-direction: column; gap: 16px; }
-    .sets-group-label { font-size: 9px; letter-spacing: 0.18em; color: #383838;
+    .sets-group-label { font-size: 9px; letter-spacing: 0.18em; color: #8E9196;
       text-transform: uppercase; margin-bottom: 8px; }
     .pills { display: flex; flex-wrap: wrap; gap: 6px; }
     .pill { border-radius: 4px; padding: 5px 10px; font-size: 11px;
       display: flex; gap: 8px; align-items: center; }
-    .pill-time { font-size: 10px; color: #383838; }
-    .del-btn { background: none; border: none; cursor: pointer; color: #333;
+    .pill-time { font-size: 10px; color: #8E9196; }
+    .del-btn { background: none; border: none; cursor: pointer; color: #8E9196;
       font-size: 13px; line-height: 1; transition: color 0.15s; }
-    .del-btn:hover { color: #ff4d4d; }
+    .del-btn:hover { color: #FF5B1A; }
 
     /* History chart */
     .chart-wrap { margin-bottom: 36px; }
     .legend { display: flex; gap: 16px; margin-bottom: 12px; }
     .legend-item { display: flex; align-items: center; gap: 5px; font-size: 9px;
-      color: #555; letter-spacing: 0.08em; }
+      color: #A3A6AA; letter-spacing: 0.08em; }
     .legend-dot { width: 8px; height: 8px; border-radius: 2px; }
     .bars { display: flex; align-items: flex-end; gap: 3px; height: 80px; }
     .bar-col { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; height: 100%; gap: 1px; }
     .bar-seg { width: 100%; border-radius: 0; transition: height 0.4s ease; min-height: 0; }
     .bar-seg.top { border-radius: 2px 2px 0 0; }
     .chart-dates { display: flex; justify-content: space-between; margin-top: 5px;
-      font-size: 8px; color: #2a2a2a; }
+      font-size: 8px; color: #8E9196; }
 
     /* Day list */
-    .day-row { border-bottom: 1px solid #111; padding: 14px 0; }
-    .day-label { font-size: 11px; color: #353535; margin-bottom: 8px; letter-spacing: 0.06em; }
+    .day-row { border-bottom: 1px solid #2E3033; padding: 14px 0; }
+    .day-label { font-size: 11px; color: #8E9196; margin-bottom: 8px; letter-spacing: 0.06em; }
     .day-cards { display: flex; gap: 10px; }
     .day-card { flex: 1; border-radius: 6px; padding: 8px 10px; text-align: center; }
-    .day-card-label { font-size: 9px; color: #404040; letter-spacing: 0.1em; margin-bottom: 3px; }
-    .day-card-num { font-family: 'Bebas Neue', sans-serif; font-size: 28px; line-height: 1; }
-    .day-card-sets { font-size: 9px; color: #383838; margin-top: 4px; }
+    .day-card-label { font-size: 9px; color: #8E9196; letter-spacing: 0.1em; margin-bottom: 3px; }
+    .day-card-num { font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase; font-size: 28px; line-height: 1; }
+    .day-card-sets { font-size: 9px; color: #8E9196; margin-top: 4px; }
 
     /* Share button */
-    .share-btn { display: flex; align-items: center; gap: 8px; background: #141414;
-      border: 1px solid #222; border-radius: 8px; padding: 12px 16px; cursor: pointer;
+    .share-btn { display: flex; align-items: center; gap: 8px; background: #222427;
+      border: 1px solid #3A3D41; border-radius: 8px; padding: 12px 16px; cursor: pointer;
       font-family: inherit; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
-      color: #888; width: 100%; margin-bottom: 28px; transition: all 0.2s; }
-    .share-btn:hover { border-color: #444; color: #f0ede8; }
+      color: #A3A6AA; width: 100%; margin-bottom: 28px; transition: all 0.2s; }
+    .share-btn:hover { border-color: #5A5D62; color: #EDE7DA; }
 
     /* Modal overlay */
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85);
       display: flex; align-items: flex-end; justify-content: center; z-index: 200;
       padding: 0; backdrop-filter: blur(4px); }
-    .modal { background: #111; border-radius: 16px 16px 0 0; padding: 24px 20px 40px;
-      width: 100%; max-width: 480px; border-top: 1px solid #222; }
-    .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px;
+    .modal { background: #222427; border-radius: 10px 10px 0 0; padding: 24px 20px 40px;
+      width: 100%; max-width: 480px; border-top: 1px solid #3A3D41; }
+    .modal-title { font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase; font-size: 28px;
       letter-spacing: 0.04em; margin-bottom: 4px; }
-    .modal-sub { font-size: 10px; color: #444; letter-spacing: 0.12em;
+    .modal-sub { font-size: 10px; color: #8E9196; letter-spacing: 0.12em;
       text-transform: uppercase; margin-bottom: 20px; }
-    .modal-close { float: right; background: none; border: none; color: #444;
+    .modal-close { float: right; background: none; border: none; color: #8E9196;
       font-size: 20px; cursor: pointer; line-height: 1; margin-top: -4px; }
-    .card-preview { border-radius: 12px; overflow: hidden; margin-bottom: 16px;
-      border: 1px solid #222; }
+    .card-preview { border-radius: 8px; overflow: hidden; margin-bottom: 16px;
+      border: 1px solid #3A3D41; }
     .modal-actions { display: flex; gap: 10px; }
     .modal-action-btn { flex: 1; padding: 13px; border: none; border-radius: 8px;
       cursor: pointer; font-family: inherit; font-size: 11px; letter-spacing: 0.1em;
@@ -155,10 +194,10 @@
 
     /* Period tabs in share modal */
     .period-tabs { display: flex; gap: 6px; margin-bottom: 16px; }
-    .period-tab { flex: 1; padding: 8px; border: 1px solid #222; border-radius: 6px;
+    .period-tab { flex: 1; padding: 8px; border: 1px solid #3A3D41; border-radius: 6px;
       background: transparent; cursor: pointer; font-family: inherit; font-size: 10px;
-      letter-spacing: 0.1em; text-transform: uppercase; color: #555; transition: all 0.2s; }
-    .period-tab.active { border-color: #555; color: #f0ede8; background: #1a1a1a; }
+      letter-spacing: 0.1em; text-transform: uppercase; color: #A3A6AA; transition: all 0.2s; }
+    .period-tab.active { border-color: #5A5D62; color: #EDE7DA; background: #3A3D41; }
 
     /* Toast */
     .toast { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
@@ -172,64 +211,180 @@
 
     /* Header */
     .header { padding-top: 52px; margin-bottom: 6px; }
-    .header-eyebrow { font-size: 10px; letter-spacing: 0.22em; color: #282828;
+    .header-eyebrow { font-size: 10px; letter-spacing: 0.22em; color: #8E9196;
       text-transform: uppercase; margin-bottom: 2px; }
-    .header-title { font-family: 'Bebas Neue', sans-serif; font-size: 48px;
+    .header-title { font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase; font-size: 48px;
       line-height: 1; letter-spacing: 0.04em; }
 
     .hidden { display: none !important; }
 
     /* ── HYROX ── */
-    :root { --hx: #ffc93d; --hx-dim: rgba(255,201,61,0.10); --hx-border: rgba(255,201,61,0.28); }
-    .hx-race { border: 1px solid var(--hx-border); background: var(--hx-dim); border-radius: 10px;
+    :root { --hx: #FF5B1A; --hx-dim: rgba(255,91,26,0.10); --hx-border: rgba(255,91,26,0.35); }
+    .hx-race { border: 1px solid var(--hx-border); background: var(--hx-dim); border-radius: 8px;
       padding: 14px 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 14px; cursor: pointer; }
-    .hx-race-num { font-family: 'Bebas Neue', sans-serif; font-size: 44px; line-height: 0.9; color: var(--hx); min-width: 48px; text-align: center; }
-    .hx-race-name { font-size: 13px; color: #f0ede8; }
-    .hx-race-sub { font-size: 9px; letter-spacing: 0.12em; color: #8a7a4a; text-transform: uppercase; margin-top: 3px; }
+    .hx-race-num { font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase; font-size: 44px; line-height: 0.9; color: var(--hx); min-width: 48px; text-align: center; }
+    .hx-race-name { font-size: 13px; color: #EDE7DA; }
+    .hx-race-sub { font-size: 9px; letter-spacing: 0.12em; color: #A3A6AA; text-transform: uppercase; margin-top: 3px; }
     .hx-stats { display: flex; gap: 8px; margin-bottom: 24px; }
-    .hx-stat { flex: 1; background: #0f0f0f; border: 1px solid #1a1a1a; border-radius: 8px; padding: 10px 6px; text-align: center; }
-    .hx-stat-num { font-family: 'Bebas Neue', sans-serif; font-size: 24px; line-height: 1; color: #f0ede8; }
-    .hx-stat-label { font-size: 8px; letter-spacing: 0.12em; color: #444; text-transform: uppercase; margin-top: 4px; }
+    .hx-stat { flex: 1; background: #222427; border: 1px solid #2E3033; border-radius: 8px; padding: 10px 6px; text-align: center; }
+    .hx-stat-num { font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase; font-size: 24px; line-height: 1; color: #EDE7DA; }
+    .hx-stat-label { font-size: 8px; letter-spacing: 0.12em; color: #8E9196; text-transform: uppercase; margin-top: 4px; }
     .hx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 28px; }
-    .hx-card { background: #0f0f0f; border: 1px solid #1a1a1a; border-radius: 10px; padding: 12px;
+    .hx-card { background: #222427; border: 1px solid #2E3033; border-radius: 8px; padding: 12px;
       cursor: pointer; text-align: left; font-family: inherit; color: inherit; transition: border-color 0.2s;
       display: flex; flex-direction: column; gap: 4px; min-width: 0; }
     .hx-card:hover, .hx-card:focus-visible { border-color: var(--hx-border); outline: none; }
     .hx-card.wide { grid-column: 1 / -1; flex-direction: row; align-items: center; gap: 12px; }
     .hx-card-top { display: flex; align-items: center; gap: 6px; }
-    .hx-card-num { font-size: 9px; color: #444; letter-spacing: 0.1em; }
-    .hx-card-name { font-size: 12px; color: #f0ede8; }
-    .hx-card-spec { font-size: 9px; color: #555; letter-spacing: 0.04em; line-height: 1.5; }
-    .hx-card-pb { font-family: 'Bebas Neue', sans-serif; font-size: 22px; line-height: 1; color: var(--hx); margin-top: 4px; }
-    .hx-card-pb.none { color: #2a2a2a; }
-    .hx-card-last { font-size: 9px; color: #3a3a3a; }
-    .hx-card-last.stale { color: #8a5a3a; }
-    .hx-proj { border: 1px dashed #222; border-radius: 10px; padding: 14px 16px; margin-bottom: 28px; }
-    .hx-proj-time { font-family: 'Bebas Neue', sans-serif; font-size: 40px; line-height: 1; color: #f0ede8; }
+    .hx-card-num { font-size: 9px; color: #8E9196; letter-spacing: 0.1em; }
+    .hx-card-name { font-size: 12px; color: #EDE7DA; }
+    .hx-card-spec { font-size: 9px; color: #A3A6AA; letter-spacing: 0.04em; line-height: 1.5; }
+    .hx-card-pb { font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase; font-size: 22px; line-height: 1; color: var(--hx); margin-top: 4px; }
+    .hx-card-pb.none { color: #8E9196; }
+    .hx-card-last { font-size: 9px; color: #8E9196; }
+    .hx-card-last.stale { color: #FF8A5C; }
+    .hx-proj { border: 1px dashed #3A3D41; border-radius: 8px; padding: 14px 16px; margin-bottom: 28px; }
+    .hx-proj-time { font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase; font-size: 40px; line-height: 1; color: #EDE7DA; }
     .hx-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
-    .hx-chip { padding: 7px 10px; border: 1px solid #222; border-radius: 6px; background: transparent;
-      font-family: inherit; font-size: 10px; letter-spacing: 0.06em; color: #777; cursor: pointer; }
+    .hx-chip { padding: 7px 10px; border: 1px solid #3A3D41; border-radius: 6px; background: transparent;
+      font-family: inherit; font-size: 10px; letter-spacing: 0.06em; color: #A3A6AA; cursor: pointer; }
     .hx-chip.active { border-color: var(--hx); color: var(--hx); background: var(--hx-dim); }
-    .hx-alt { border: 1px solid #1a1a1a; border-radius: 8px; padding: 12px; background: #0c0c0c; }
-    .hx-alt-name { font-size: 12px; color: #f0ede8; margin-bottom: 4px; }
-    .hx-alt-equip { font-size: 9px; color: #8a7a4a; letter-spacing: 0.06em; margin-bottom: 6px; }
-    .hx-alt-how { font-size: 11px; color: #888; line-height: 1.6; }
+    .hx-alt { border: 1px solid #2E3033; border-radius: 8px; padding: 12px; background: #222427; }
+    .hx-alt-name { font-size: 12px; color: #EDE7DA; margin-bottom: 4px; }
+    .hx-alt-equip { font-size: 9px; color: #A3A6AA; letter-spacing: 0.06em; margin-bottom: 6px; }
+    .hx-alt-how { font-size: 11px; color: #A3A6AA; line-height: 1.6; }
     .hx-alt-btn { margin-top: 10px; padding: 7px 12px; border: 1px solid var(--hx-border); border-radius: 6px;
       background: transparent; color: var(--hx); font-family: inherit; font-size: 10px; letter-spacing: 0.1em;
       text-transform: uppercase; cursor: pointer; }
-    .hx-input { width: 100%; background: #0f0f0f; border: 1px solid #1e1e1e; border-radius: 6px; padding: 12px;
-      font-family: inherit; font-size: 15px; color: #f0ede8; outline: none; }
+    .hx-input { width: 100%; background: #222427; border: 1px solid #2E3033; border-radius: 6px; padding: 12px;
+      font-family: inherit; font-size: 15px; color: #EDE7DA; outline: none; }
     .hx-input:focus { border-color: var(--hx-border); }
-    .hx-time { font-family: 'Bebas Neue', sans-serif; font-size: 28px; text-align: center; letter-spacing: 0.04em; }
-    .hx-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #111; }
+    .hx-time { font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase; font-size: 28px; text-align: center; letter-spacing: 0.04em; }
+    .hx-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #2E3033; }
     .hx-scroll { max-height: 82vh; overflow-y: auto; }
-    .hx-banner { border: 1px solid #4a1a1a; background: #1f0f0f; color: #ff9999; border-radius: 8px;
+    .hx-banner { border: 1px solid #6B2E12; background: #2A1A12; color: #FF8A5C; border-radius: 8px;
       padding: 12px 14px; font-size: 11px; line-height: 1.7; margin-bottom: 20px; }
-    .hx-banner code { color: #f0ede8; }
+    .hx-banner code { color: #EDE7DA; }
 
     /* Unsupported voice */
-    .voice-unsupported { color: #ff9999; font-size: 12px; text-align: center;
+    .voice-unsupported { color: #FF8A5C; font-size: 12px; text-align: center;
       line-height: 1.8; padding: 20px 0 36px; }
+
+    /* ── Turf & Iron ──
+       Wall #141517 ground · Rubber #222427 cards · Seam #2E3033/#3A3D41 lines · Banner #EDE7DA text
+       Turf #8CC63F primary · Cone #FF5B1A alerts and PRs only.
+       Barlow Condensed for headings, numbers and labels; Inter for body; Caveat Brush once per screen at most. */
+    :root { --turf: #8CC63F; --cone: #FF5B1A; --label: 'Barlow Condensed', sans-serif; }
+
+    .header-title { font-size: 44px; line-height: 0.95; letter-spacing: 0.01em; }
+    .header-eyebrow, .section-label, .sets-group-label, .big-label, .modal-sub, .prog-sub, .prog-count-label,
+    .hx-stat-label, .hx-race-sub, .day-label, .legend-item {
+      font-family: var(--label); font-weight: 700; font-size: 13px; letter-spacing: 0.28em; color: #A3A6AA; }
+    .prog-sub, .prog-count-label, .hx-stat-label, .legend-item { font-size: 12px; letter-spacing: 0.2em; }
+
+    /* Bottom nav: near-black strip, turf for the active tab */
+    .bottom-nav { background: #0E0F10; border-top-color: #2E3033; }
+    .nav-btn { font-family: var(--label); font-weight: 700; font-size: 13px; letter-spacing: 0.15em; color: #A3A6AA; }
+    .nav-btn.active { color: var(--turf); }
+
+    /* Buttons: solid turf for the main action, cream outline for secondary */
+    .log-btn, .group-row-btn, .modal-action-btn, .hx-alt-btn {
+      font-family: var(--label); font-weight: 800; font-size: 18px; letter-spacing: 0.12em; }
+    .log-btn { min-height: 52px; padding: 0 22px; }
+    .group-row-btn { font-size: 15px; background: var(--turf); color: #141517; }
+    .share-btn { justify-content: center; min-height: 48px; background: transparent; border: 2px solid #EDE7DA; border-radius: 6px;
+      color: #EDE7DA; font-family: var(--label); font-weight: 700; font-size: 16px; letter-spacing: 0.14em; }
+    .share-btn:hover { border-color: #EDE7DA; background: rgba(237,231,218,0.06); }
+    .back-btn { font-family: var(--label); font-weight: 700; font-size: 14px; letter-spacing: 0.18em; }
+
+    /* Chips: segmented controls become pill rows; the selected one is a cream banner */
+    .seg, .mode-toggle { display: flex; gap: 8px; padding: 0; background: transparent; border: none; }
+    .seg-btn, .mode-btn, .period-tab { flex: 1; min-height: 40px; border-radius: 999px; background: #222427; border: 1px solid #3A3D41;
+      color: #EDE7DA; font-family: 'Inter', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0; text-transform: none; box-shadow: none; }
+    .seg-btn.active, .mode-btn.active, .period-tab.active { background: #EDE7DA; border-color: #EDE7DA; color: #141517; box-shadow: none; }
+
+    /* Exercise stat tiles */
+    .ex-tab { gap: 4px; padding: 14px 8px 12px; background: #222427; border: 2px solid transparent; border-radius: 8px;
+      font-family: var(--label); font-weight: 700; font-size: 12px; letter-spacing: 0.18em; color: #A3A6AA; }
+    .ex-tab.active { border-color: var(--tile); color: #EDE7DA; }
+    .ex-tab .ex-total { font-size: 40px; line-height: 1; letter-spacing: 0; color: #EDE7DA; }
+    .ex-tab.active .ex-total { color: var(--tile); }
+
+    /* Quick add, inputs, sets */
+    .quick-btn { border-color: #3A3D41; font-size: 24px; }
+    .custom-input { border-color: #3A3D41; }
+    .custom-input:focus, .hx-input:focus { border-color: var(--ex-color, var(--turf)); }
+    .pill { border-radius: 6px; }
+
+    /* Cards: rubber, no shadow, cut-steel corners */
+    .prog-card { background: #222427; border-color: #222427; border-radius: 6px; }
+    .prog-name { font-size: 34px; letter-spacing: 0.02em; }
+    .murph-part { background: #141517; border-radius: 6px; }
+    .prog-card-banner { background: #EDE7DA; border-color: #EDE7DA; color: #141517; }
+    .prog-card-banner::before { content: ''; height: 2px; background: linear-gradient(90deg, #141517 0 45%, var(--cone) 45% 55%, #141517 55%); }
+    .prog-card-banner .prog-sub, .prog-card-banner .prog-count-label, .prog-card-banner .prog-foot { color: #3A3D41; }
+    .prog-name-wide { font-weight: 700 !important; letter-spacing: 0.32em; }
+    .prog-open { font-family: var(--label); font-weight: 800; font-size: 14px; letter-spacing: 0.18em; text-transform: uppercase; color: #141517; }
+    .chip { padding: 4px 10px; border-radius: 999px; background: #3A3D41; color: #EDE7DA; font-size: 12px; font-weight: 600; }
+    .script-accent { font-family: 'Caveat Brush', cursive; font-size: 22px; letter-spacing: 0; text-transform: none; color: var(--cone); }
+    .group-row, .hx-card, .hx-stat, .hx-alt { background: #222427; border-color: #222427; border-radius: 8px; }
+    .modal { background: #222427; border-top-color: #3A3D41; }
+
+    /* Sled-lane progress bar: striped track like lane markings on turf */
+    .lane { position: relative; height: 10px; border-radius: 2px; overflow: hidden;
+      background: repeating-linear-gradient(90deg, #2E3033 0 18px, #3A3D41 18px 20px); }
+    .lane-fill { position: absolute; left: 0; top: 0; height: 100%; border-radius: 2px; background: var(--turf); transition: width 0.4s ease; }
+    .lane-fill-them { background: #EDE7DA; }
+    .prog-open-dark { color: #EDE7DA; }
+
+    /* ── Murph ── */
+    .mu-hero { display: flex; flex-direction: column; gap: 16px; padding: 18px; margin-bottom: 24px; background: #222427; border-radius: 6px; }
+    .mu-order { list-style: none; display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+    .mu-order li { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 0;
+      background: #141517; border-radius: 6px; font-size: 11px; color: #A3A6AA; }
+    .mu-order b { font-family: var(--label); font-weight: 800; font-size: 20px; line-height: 1; text-transform: uppercase; color: #EDE7DA; }
+    .mu-panel { display: flex; flex-direction: column; gap: 14px; padding: 16px; margin-bottom: 24px; background: #222427; border-radius: 8px; }
+    .mu-seg { margin-bottom: 0; }
+    .mu-seg .seg-btn { background: #141517; }
+    .mu-seg .seg-btn.active { background: #EDE7DA; }
+    .mu-vest { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 14px; border: 2px solid #3A3D41; border-radius: 6px;
+      background: transparent; color: #EDE7DA; cursor: pointer; font-family: var(--label); font-weight: 700; font-size: 16px;
+      letter-spacing: 0.12em; text-transform: uppercase; }
+    .mu-vest-box { position: relative; flex-shrink: 0; width: 20px; height: 20px; border: 2px solid currentColor; border-radius: 4px; }
+    .mu-vest-state { margin-left: auto; font-size: 14px; color: #A3A6AA; }
+    .mu-vest[aria-pressed="true"] { border-color: var(--turf); color: var(--turf); }
+    .mu-vest[aria-pressed="true"] .mu-vest-box { background: var(--turf); }
+    .mu-vest[aria-pressed="true"] .mu-vest-box::after { content: ''; position: absolute; left: 5px; top: 1px; width: 5px; height: 10px;
+      border: solid #141517; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+    .vest-ctl { display: flex; gap: 8px; align-items: stretch; }
+    .vest-ctl .mu-vest { flex: 1; min-width: 0; }
+    .vest-lb { display: flex; align-items: center; gap: 4px; padding: 0 4px; border: 2px solid var(--turf); border-radius: 6px; }
+    .vest-lb input { width: 52px; height: 40px; border: none; background: transparent; color: #EDE7DA; text-align: center; outline: none;
+      font-family: var(--label); font-weight: 800; font-size: 22px; }
+    .vest-unit { font-size: 12px; color: #A3A6AA; margin-right: 2px; }
+    .vest-step { width: 36px; height: 40px; border: none; border-radius: 4px; background: #2E3033; color: #EDE7DA; cursor: pointer;
+      font-family: var(--label); font-weight: 800; font-size: 20px; line-height: 1; }
+    .vest-step:hover { background: #3A3D41; }
+    .mu-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .mu-panel .custom-input, .mu-panel .hx-input { background: #141517; border-color: #3A3D41; }
+    .mu-log-btn { background: var(--turf) !important; color: #141517; }
+    .mu-hint { font-size: 12px; line-height: 1.5; color: #A3A6AA; }
+    .mu-ready-row { display: flex; flex-direction: column; gap: 8px; }
+    .mu-ready-row + .mu-ready-row { padding-top: 12px; border-top: 1px solid #2E3033; }
+    .mu-ready-top { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+    .mu-ready-name { font-family: var(--label); font-weight: 800; font-size: 18px; text-transform: uppercase; }
+    .mu-ready-num { font-size: 13px; color: #A3A6AA; }
+    .mu-ready-num b { color: #EDE7DA; font-weight: 600; }
+    .mu-key { display: inline-block; width: 10px; height: 10px; border-radius: 2px; vertical-align: -1px; margin-right: 4px; }
+    .mu-key-any { background: #EDE7DA; }
+    .mu-key-vest { background: var(--turf); }
+    .mu-best { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .mu-best > div:not(.mu-hint) { padding: 12px; background: #141517; border-radius: 6px; }
+    .mu-best-num { font-family: var(--label); font-weight: 800; font-size: 30px; line-height: 1; }
+    .mu-row { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-top: 1px solid #2E3033; font-size: 14px; }
+    .mu-row b { font-weight: 600; }
+    .pill-vest { padding: 1px 5px; border-radius: 3px; background: #EDE7DA; color: #141517; font-family: var(--label);
+      font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; }
   </style>
 </head>
 <body>
@@ -238,8 +393,8 @@
 <div id="login-screen" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;">
   <div style="max-width:340px;width:100%;">
     <div style="text-align:center;margin-bottom:32px;">
-      <div style="font-size:10px;letter-spacing:0.22em;color:#282828;text-transform:uppercase;margin-bottom:4px;">Personal Fitness Log</div>
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:44px;line-height:1;letter-spacing:0.04em;">FIT<span style="color:#ff4d4d;">TRACK</span></div>
+      <div style="font-size:10px;letter-spacing:0.22em;color:#8E9196;text-transform:uppercase;margin-bottom:4px;">Personal Fitness Log</div>
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;font-size:44px;line-height:1;letter-spacing:0.04em;">FIT<span style="color:#8CC63F;">TRACK</span></div>
     </div>
 
     <!-- Sign In / Sign Up toggle -->
@@ -253,28 +408,28 @@
       <div id="auth-name-field" class="hidden">
         <div class="section-label">Display Name</div>
         <input id="auth-name" type="text" placeholder="e.g. Kale" autocomplete="off"
-          style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:13px 14px;font-family:inherit;font-size:15px;color:#f0ede8;outline:none;box-sizing:border-box;"/>
+          style="width:100%;background:#222427;border:1px solid #2E3033;border-radius:6px;padding:13px 14px;font-family:inherit;font-size:15px;color:#EDE7DA;outline:none;box-sizing:border-box;"/>
       </div>
       <div id="auth-email-field">
         <div class="section-label">Email</div>
         <input id="auth-email" type="email" placeholder="you@example.com" autocomplete="off"
-          style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:13px 14px;font-family:inherit;font-size:15px;color:#f0ede8;outline:none;box-sizing:border-box;"/>
+          style="width:100%;background:#222427;border:1px solid #2E3033;border-radius:6px;padding:13px 14px;font-family:inherit;font-size:15px;color:#EDE7DA;outline:none;box-sizing:border-box;"/>
       </div>
       <div id="auth-password-field">
         <div class="section-label" id="auth-password-label">Password</div>
         <input id="auth-password" type="password" placeholder="At least 6 characters" autocomplete="off"
-          style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:13px 14px;font-family:inherit;font-size:15px;color:#f0ede8;outline:none;box-sizing:border-box;"/>
+          style="width:100%;background:#222427;border:1px solid #2E3033;border-radius:6px;padding:13px 14px;font-family:inherit;font-size:15px;color:#EDE7DA;outline:none;box-sizing:border-box;"/>
         <div id="auth-forgot-link" onclick="setAuthMode('reset')"
-          style="margin-top:8px;text-align:right;font-size:11px;color:#383838;cursor:pointer;letter-spacing:0.05em;">Forgot password?</div>
+          style="margin-top:8px;text-align:right;font-size:11px;color:#8E9196;cursor:pointer;letter-spacing:0.05em;">Forgot password?</div>
       </div>
       <button id="auth-submit-btn" onclick="handleAuthSubmit()"
-        style="margin-top:8px;padding:14px;border:none;border-radius:6px;cursor:pointer;background:#ff4d4d;color:#0a0a0f;font-family:inherit;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;font-weight:600;">
+        style="margin-top:8px;padding:14px;border:none;border-radius:6px;cursor:pointer;background:#8CC63F;color:#141517;font-family:inherit;font-size:12px;letter-spacing:0.1em;text-transform:uppercase;font-weight:600;">
         Sign In
       </button>
-      <div id="auth-error" style="color:#ff9999;font-size:12px;text-align:center;display:none;"></div>
-      <div id="auth-info" style="color:#7dff9f;font-size:12px;text-align:center;display:none;line-height:1.6;"></div>
+      <div id="auth-error" style="color:#FF8A5C;font-size:12px;text-align:center;display:none;"></div>
+      <div id="auth-info" style="color:#A6DB5C;font-size:12px;text-align:center;display:none;line-height:1.6;"></div>
       <div id="auth-back-link" class="hidden" onclick="setAuthMode('signin')"
-        style="text-align:center;font-size:11px;color:#383838;cursor:pointer;letter-spacing:0.05em;">← Back to sign in</div>
+        style="text-align:center;font-size:11px;color:#8E9196;cursor:pointer;letter-spacing:0.05em;">← Back to sign in</div>
     </div>
   </div>
 </div>
@@ -286,15 +441,15 @@
   <div class="modal">
     <div class="modal-title">📦 Old Workout History Found</div>
     <div class="modal-sub" id="import-count-label">Found entries on this device</div>
-    <div style="font-size:12px;color:#888;line-height:1.7;margin-bottom:20px;">
+    <div style="font-size:12px;color:#A3A6AA;line-height:1.7;margin-bottom:20px;">
       This device has workout history saved locally from before the app started syncing to a shared
       account. Import it now so it counts toward your totals, streaks, and the leaderboard.
     </div>
-    <div id="claim-error" style="color:#ff9999;font-size:12px;margin-bottom:12px;display:none;"></div>
+    <div id="claim-error" style="color:#FF8A5C;font-size:12px;margin-bottom:12px;display:none;"></div>
     <div class="modal-actions">
-      <button class="modal-action-btn" style="background:#1a1a1a;color:#888;border:1px solid #222;"
+      <button class="modal-action-btn" style="background:#3A3D41;color:#A3A6AA;border:1px solid #3A3D41;"
         onclick="dismissImport()">Skip</button>
-      <button class="modal-action-btn" id="import-btn" style="background:#f0ede8;color:#0a0a0f;"
+      <button class="modal-action-btn" id="import-btn" style="background:#EDE7DA;color:#141517;"
         onclick="runImport()">Import My History</button>
     </div>
   </div>
@@ -303,21 +458,29 @@
   <div class="header" style="display:flex;justify-content:space-between;align-items:flex-end;">
     <div>
       <div class="header-eyebrow" id="welcome-label">Personal Fitness Log</div>
-      <div class="header-title">DAILY <span id="header-accent">TRACKER</span></div>
+      <div class="header-title"><span id="header-main">DAILY</span> <span id="header-accent">TRACKER</span></div>
     </div>
-    <button onclick="handleLogout()" style="background:none;border:none;color:#333;font-size:10px;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;padding-bottom:8px;">Log Out</button>
   </div>
+  <div style="height:22px;"></div>
 
-  <!-- Nav -->
-  <div class="nav">
-    <button class="nav-btn active" data-view="today" onclick="switchView('today')">Today</button>
-    <button class="nav-btn" data-view="history" onclick="switchView('history')">History</button>
-    <button class="nav-btn" data-view="friends" onclick="switchView('friends')">Friends</button>
-    <button class="nav-btn" data-view="challenges" onclick="switchView('challenges')">
-      Challenges<span id="challenge-badge" class="hidden" style="display:inline-block;margin-left:5px;width:6px;height:6px;border-radius:50%;background:#ff4d4d;"></span>
-    </button>
-    <button class="nav-btn" data-view="hyrox" onclick="switchView('hyrox')">HYROX</button>
-  </div>
+  <!-- Bottom nav -->
+  <nav class="bottom-nav" aria-label="Primary">
+    <div class="bottom-nav-inner">
+      <button class="nav-btn active" data-tab="today" onclick="switchView('today')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>Log
+      </button>
+      <button class="nav-btn" data-tab="train" onclick="switchView('train')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/></svg>Train
+      </button>
+      <button class="nav-btn" data-tab="social" onclick="switchView('social')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14.5c2.3 0 4 1.4 4.5 4"/></svg>Social
+        <span id="social-dot" class="nav-dot hidden" aria-label="Something needs your response"></span>
+      </button>
+      <button class="nav-btn" data-tab="me" onclick="switchView('me')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/></svg>Me
+      </button>
+    </div>
+  </nav>
 
   <!-- TODAY VIEW -->
   <div id="view-today">
@@ -328,6 +491,19 @@
     <div class="big-counter">
       <div class="big-num" id="big-num">0</div>
       <div class="big-label" id="big-label">Push-Ups Today</div>
+    </div>
+
+    <!-- Weighted vest: applies to every set logged below (shared with the Murph screen) -->
+    <div class="vest-ctl" style="margin-bottom:16px;">
+      <button class="mu-vest" id="log-vest" aria-pressed="false" onclick="toggleVest('log')">
+        <span class="mu-vest-box" aria-hidden="true"></span><span>Vest</span><span class="mu-vest-state" id="log-vest-state">Off</span>
+      </button>
+      <div class="vest-lb hidden" id="log-vest-lb-wrap">
+        <button class="vest-step" aria-label="Lighter vest" onclick="stepVest('log',-5)">−</button>
+        <input id="log-vest-lb" type="number" inputmode="decimal" min="1" max="100" step="0.5" aria-label="Vest weight in pounds" onchange="setVestLb('log', this.value)"/>
+        <span class="vest-unit">lb</span>
+        <button class="vest-step" aria-label="Heavier vest" onclick="stepVest('log',5)">+</button>
+      </div>
     </div>
 
     <!-- Mode toggle -->
@@ -346,7 +522,7 @@
     <!-- Voice unsupported -->
     <div class="voice-unsupported hidden" id="voice-unsupported">
       Voice input isn't supported in this browser.<br>
-      <span style="color:#383838">Switch to Manual input above.</span>
+      <span style="color:#8E9196">Switch to Manual input above.</span>
     </div>
 
     <!-- Manual panel -->
@@ -385,13 +561,49 @@
     </div>
 
     <div id="day-list"></div>
+
+    <button class="share-btn" style="margin-top:28px;color:#A6DB5C;border-color:rgba(140,198,63,0.3);justify-content:center;" onclick="handleLogout()">Log Out</button>
   </div>
 
-  <!-- FRIENDS VIEW -->
-  <div id="view-friends" class="hidden">
+  <!-- SOCIAL VIEW -->
+  <div id="view-social" class="hidden">
+    <div class="seg" role="tablist" aria-label="Social sections">
+      <button class="seg-btn active" role="tab" data-seg="leaderboard" onclick="setSocialSeg('leaderboard')">Leaderboard</button>
+      <button class="seg-btn" role="tab" data-seg="challenges" onclick="setSocialSeg('challenges')">Challenges<span id="challenge-badge" class="seg-count hidden">0</span></button>
+      <button class="seg-btn" role="tab" data-seg="groups" onclick="setSocialSeg('groups')">Groups<span id="group-invite-badge" class="seg-count hidden">0</span></button>
+    </div>
+
+  <!-- SOCIAL › LEADERBOARD -->
+  <div id="view-friends">
     <!-- Group switcher -->
-    <div class="section-label">Group</div>
+    <div class="section-label">Leaderboard for</div>
     <div style="display:flex;gap:6px;margin-bottom:20px;overflow-x:auto;padding-bottom:2px;" id="group-switcher"></div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+      <div class="section-label" id="leaderboard-title" style="margin-bottom:0;">Last 7 Days — Global</div>
+    </div>
+    <div class="period-tabs" style="margin-bottom:16px;">
+      <button class="period-tab active" data-lb-period="week" onclick="setLeaderboardPeriod('week')">Last 7 Days</button>
+      <button class="period-tab" data-lb-period="month" onclick="setLeaderboardPeriod('month')">Last 30 Days</button>
+      <button class="period-tab" data-lb-period="alltime" onclick="setLeaderboardPeriod('alltime')">All Time</button>
+    </div>
+    <div id="leaderboard-list" style="display:flex;flex-direction:column;gap:8px;margin-top:0;"></div>
+    <div id="leaderboard-empty" class="hidden" style="color:#8E9196;font-size:13px;text-align:center;padding:40px 0;">
+      No one's logged anything in this period yet.<br/>
+      <span style="font-size:11px;">Be the first!</span>
+    </div>
+  </div>
+
+  <!-- SOCIAL › GROUPS -->
+  <div id="view-groups" class="hidden">
+    <!-- Pending group invites (received) -->
+    <div id="pending-group-invites-section" class="hidden" style="margin-bottom:24px;">
+      <div class="section-label" style="margin-bottom:10px;">Group Invites</div>
+      <div id="pending-group-invites-list" style="display:flex;flex-direction:column;gap:10px;"></div>
+    </div>
+
+    <div class="section-label">Your groups</div>
+    <div id="my-groups-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;"></div>
 
     <!-- Create / Join group -->
     <div style="display:flex;gap:8px;margin-bottom:16px;">
@@ -403,30 +615,6 @@
       </button>
     </div>
 
-    <!-- Invite someone to the active group -->
-    <button class="share-btn hidden" id="invite-to-group-btn" style="margin-bottom:20px;" onclick="openInviteModal()">
-      <span style="font-size:16px;">👋</span><span>Invite Someone to This Group</span>
-    </button>
-
-    <!-- Pending group invites (received) -->
-    <div id="pending-group-invites-section" class="hidden" style="margin-bottom:24px;">
-      <div class="section-label" style="margin-bottom:10px;">Group Invites</div>
-      <div id="pending-group-invites-list" style="display:flex;flex-direction:column;gap:10px;"></div>
-    </div>
-
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-      <div class="section-label" id="leaderboard-title" style="margin-bottom:0;">Last 7 Days — Global</div>
-    </div>
-    <div class="period-tabs" style="margin-bottom:16px;">
-      <button class="period-tab active" data-lb-period="week" onclick="setLeaderboardPeriod('week')">Last 7 Days</button>
-      <button class="period-tab" data-lb-period="month" onclick="setLeaderboardPeriod('month')">Last 30 Days</button>
-      <button class="period-tab" data-lb-period="alltime" onclick="setLeaderboardPeriod('alltime')">All Time</button>
-    </div>
-    <div id="leaderboard-list" style="display:flex;flex-direction:column;gap:8px;margin-top:0;"></div>
-    <div id="leaderboard-empty" class="hidden" style="color:#2a2a2a;font-size:13px;text-align:center;padding:40px 0;">
-      No one's logged anything in this period yet.<br/>
-      <span style="font-size:11px;">Be the first!</span>
-    </div>
   </div>
 
   <!-- CHALLENGES VIEW -->
@@ -442,7 +630,7 @@
 
     <div class="section-label" style="margin-bottom:10px;">Active Challenges</div>
     <div id="active-challenges-list" style="display:flex;flex-direction:column;gap:12px;"></div>
-    <div id="challenges-empty" class="hidden" style="color:#2a2a2a;font-size:13px;text-align:center;padding:40px 0;">
+    <div id="challenges-empty" class="hidden" style="color:#8E9196;font-size:13px;text-align:center;padding:40px 0;">
       No active challenges yet.<br/>
       <span style="font-size:11px;">Challenge a friend from a shared group to get started!</span>
     </div>
@@ -450,9 +638,49 @@
     <div class="section-label" style="margin:28px 0 10px;">Past Challenges</div>
     <div id="past-challenges-list" style="display:flex;flex-direction:column;gap:8px;"></div>
   </div>
+  </div><!-- /view-social -->
+
+  <!-- TRAIN VIEW (program hub) -->
+  <div id="view-train" class="hidden">
+    <button class="prog-card" id="murph-card" onclick="openProgram('murph')">
+      <div class="prog-top">
+        <div>
+          <div class="prog-name">MURPH</div>
+          <div class="prog-sub script-accent" id="murph-date">Memorial Day</div>
+        </div>
+        <div>
+          <div class="prog-count" id="murph-days">—</div>
+          <div class="prog-count-label">days out</div>
+        </div>
+      </div>
+      <div class="murph-parts">
+        <div class="murph-part"><b>1 MI</b><span>Run</span></div>
+        <div class="murph-part"><b>100</b><span>Pull</span></div>
+        <div class="murph-part"><b>200</b><span>Push</span></div>
+        <div class="murph-part"><b>300</b><span>Squat</span></div>
+        <div class="murph-part"><b>1 MI</b><span>Run</span></div>
+      </div>
+      <div class="prog-foot"><span id="murph-card-sub">All in a 20 lb vest</span><span class="prog-open prog-open-dark">Open ›</span></div>
+    </button>
+
+    <button class="prog-card prog-card-banner" onclick="openProgram('hyrox')">
+      <div class="prog-top">
+        <div>
+          <div class="prog-name prog-name-wide">HYROX</div>
+          <div class="prog-sub" id="hx-card-sub">8 stations · gear swaps built in</div>
+        </div>
+        <div>
+          <div class="prog-count" id="hx-card-days">—</div>
+          <div class="prog-count-label">days out</div>
+        </div>
+      </div>
+      <div class="prog-foot"><span>Station PBs · projected finish</span><span class="prog-open">Open ›</span></div>
+    </button>
+  </div>
 
   <!-- HYROX VIEW -->
   <div id="view-hyrox" class="hidden">
+    <button class="back-btn" onclick="switchView('train')">‹ Train</button>
     <div id="hx-setup-banner" class="hx-banner hidden"></div>
 
     <div class="hx-race" id="hx-race" onclick="openHyroxSettings()" role="button" tabindex="0">
@@ -461,7 +689,7 @@
         <div class="hx-race-name" id="hx-race-name">Set your race</div>
         <div class="hx-race-sub" id="hx-race-sub">Tap to add date &amp; division</div>
       </div>
-      <div style="color:#8a7a4a;font-size:14px;">✎</div>
+      <div style="color:#A3A6AA;font-size:14px;">✎</div>
     </div>
 
     <div class="hx-stats">
@@ -476,11 +704,109 @@
     <div class="hx-proj">
       <div class="section-label" style="margin-bottom:6px;">Projected finish</div>
       <div class="hx-proj-time" id="hx-proj-time">—</div>
-      <div style="font-size:10px;color:#444;line-height:1.6;margin-top:6px;" id="hx-proj-note"></div>
+      <div style="font-size:10px;color:#8E9196;line-height:1.6;margin-top:6px;" id="hx-proj-note"></div>
     </div>
 
     <div class="section-label">Recent training</div>
     <div id="hx-recent"></div>
+  </div>
+
+  <!-- MURPH VIEW -->
+  <div id="view-murph" class="hidden">
+    <button class="back-btn" onclick="switchView('train')">‹ Train</button>
+    <div id="mu-setup-banner" class="hx-banner hidden"></div>
+
+    <div class="mu-hero">
+      <div class="prog-top">
+        <div>
+          <div class="section-label" style="margin-bottom:4px;">For time · 20 lb vest</div>
+          <div class="script-accent" id="mu-date">Memorial Day</div>
+        </div>
+        <div>
+          <div class="prog-count" id="mu-days">—</div>
+          <div class="prog-count-label">days out</div>
+        </div>
+      </div>
+      <ol class="mu-order" aria-label="Murph, in order">
+        <li><b>1 mi</b>run</li>
+        <li><b>100</b>pull-ups</li>
+        <li><b>200</b>push-ups</li>
+        <li><b>300</b>squats</li>
+        <li><b>1 mi</b>run</li>
+      </ol>
+    </div>
+
+    <div class="section-label">Log training</div>
+    <div class="mu-panel">
+      <div class="seg mu-seg" id="mu-kind">
+        <button class="seg-btn" data-kind="run" onclick="muSetKind('run')">Run</button>
+        <button class="seg-btn" data-kind="pullups" onclick="muSetKind('pullups')">Pull-ups</button>
+        <button class="seg-btn" data-kind="pushups" onclick="muSetKind('pushups')">Push-ups</button>
+        <button class="seg-btn" data-kind="squats" onclick="muSetKind('squats')">Squats</button>
+      </div>
+      <div class="vest-ctl">
+        <button class="mu-vest" id="mu-vest" aria-pressed="false" onclick="toggleVest('mu')">
+          <span class="mu-vest-box" aria-hidden="true"></span><span>Vest</span><span class="mu-vest-state" id="mu-vest-state">Off</span>
+        </button>
+        <div class="vest-lb hidden" id="mu-vest-lb-wrap">
+          <button class="vest-step" aria-label="Lighter vest" onclick="stepVest('mu',-5)">−</button>
+          <input id="mu-vest-lb" type="number" inputmode="decimal" min="1" max="100" step="0.5" aria-label="Vest weight in pounds" onchange="setVestLb('mu', this.value)"/>
+          <span class="vest-unit">lb</span>
+          <button class="vest-step" aria-label="Heavier vest" onclick="stepVest('mu',5)">+</button>
+        </div>
+      </div>
+      <div id="mu-reps-fields">
+        <label class="section-label" for="mu-reps" style="display:block;">Reps</label>
+        <input id="mu-reps" class="custom-input" type="number" inputmode="numeric" min="1" max="9999" placeholder="0" style="width:100%;"/>
+        <div class="quick-btns" id="mu-quick" style="margin:10px 0 0;"></div>
+      </div>
+      <div id="mu-run-fields" class="mu-fields hidden">
+        <div>
+          <label class="section-label" for="mu-dist" style="display:block;">Miles</label>
+          <input id="mu-dist" class="hx-input" type="number" inputmode="decimal" step="0.01" min="0.01" max="50" value="1"/>
+        </div>
+        <div>
+          <label class="section-label" for="mu-time" style="display:block;">Time (mm:ss)</label>
+          <input id="mu-time" class="hx-input" type="text" inputmode="numeric" placeholder="8:30" autocomplete="off"/>
+        </div>
+      </div>
+      <button class="log-btn mu-log-btn" id="mu-log-btn" onclick="muSaveTraining()">Log set</button>
+      <div class="mu-hint" id="mu-log-hint">Reps count toward your daily totals.</div>
+    </div>
+
+    <div class="section-label">Readiness · best day vs Murph</div>
+    <div class="mu-panel" id="mu-ready"></div>
+
+    <div class="section-label">Full Murph</div>
+    <div class="mu-panel">
+      <div class="mu-best" id="mu-best"></div>
+      <button class="share-btn" id="mu-attempt-open" style="margin-bottom:0;" onclick="muOpenAttempt()">Log a full Murph</button>
+      <div id="mu-attempt-form" class="hidden" style="display:flex;flex-direction:column;gap:12px;">
+        <div>
+          <label class="section-label" for="mu-att-time" style="display:block;">Total time (h:mm:ss or mm:ss)</label>
+          <input id="mu-att-time" class="hx-input" type="text" inputmode="numeric" placeholder="52:30" autocomplete="off"/>
+        </div>
+        <div class="vest-ctl">
+          <button class="mu-vest" id="mu-att-vest" aria-pressed="true" onclick="toggleVest('mu-att')">
+            <span class="mu-vest-box" aria-hidden="true"></span><span>Vest</span><span class="mu-vest-state" id="mu-att-vest-state">On</span>
+          </button>
+          <div class="vest-lb" id="mu-att-vest-lb-wrap">
+            <button class="vest-step" aria-label="Lighter vest" onclick="stepVest('mu-att',-5)">−</button>
+            <input id="mu-att-vest-lb" type="number" inputmode="decimal" min="1" max="100" step="0.5" aria-label="Vest weight in pounds" onchange="setVestLb('mu-att', this.value)"/>
+            <span class="vest-unit">lb</span>
+            <button class="vest-step" aria-label="Heavier vest" onclick="stepVest('mu-att',5)">+</button>
+          </div>
+        </div>
+        <div class="mu-hint">Adds 100 pull-ups, 200 push-ups and 300 squats to today's totals.</div>
+        <div style="display:flex;gap:8px;">
+          <button class="share-btn" style="margin-bottom:0;" onclick="muCloseAttempt()">Cancel</button>
+          <button class="log-btn" style="flex:1;background:var(--turf);" onclick="muSaveAttempt()">Save</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label">Runs &amp; attempts</div>
+    <div id="mu-recent" style="margin-bottom:24px;"></div>
   </div>
 </div>
 
@@ -493,8 +819,8 @@
 
     <!-- Step 1: overview + alternatives -->
     <div id="hx-m-overview">
-      <div style="font-size:11px;color:#888;line-height:1.6;margin-bottom:14px;" id="hx-m-desc"></div>
-      <button class="modal-action-btn" style="width:100%;background:var(--hx);color:#0a0a0f;margin-bottom:22px;" onclick="hxStartLog('official')">Log official station</button>
+      <div style="font-size:11px;color:#A3A6AA;line-height:1.6;margin-bottom:14px;" id="hx-m-desc"></div>
+      <button class="modal-action-btn" style="width:100%;background:var(--hx);color:#141517;margin-bottom:22px;" onclick="hxStartLog('official')">Log official station</button>
       <div class="section-label">No equipment? Alternatives</div>
       <div id="hx-m-alts" style="display:flex;flex-direction:column;gap:8px;margin-bottom:22px;"></div>
       <div class="section-label">Your recent efforts</div>
@@ -510,7 +836,7 @@
       <div class="section-label">Time</div>
       <div style="display:flex;gap:8px;align-items:center;margin-bottom:16px;">
         <input id="hx-f-min" class="hx-input hx-time" type="number" inputmode="numeric" min="0" max="999" placeholder="min"/>
-        <span style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:#444;">:</span>
+        <span style="font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;font-size:28px;color:#8E9196;">:</span>
         <input id="hx-f-sec" class="hx-input hx-time" type="number" inputmode="numeric" min="0" max="59" placeholder="sec"/>
       </div>
 
@@ -527,11 +853,11 @@
 
       <div class="section-label">Notes (optional)</div>
       <input id="hx-f-notes" class="hx-input" type="text" maxlength="500" placeholder="e.g. felt strong, 4 × 12.5 m" style="margin-bottom:12px;"/>
-      <div id="hx-f-error" style="color:#ff9999;font-size:12px;margin-bottom:12px;display:none;white-space:pre-wrap;"></div>
+      <div id="hx-f-error" style="color:#FF8A5C;font-size:12px;margin-bottom:12px;display:none;white-space:pre-wrap;"></div>
 
       <div class="modal-actions">
-        <button class="modal-action-btn" style="background:#1a1a1a;color:#888;border:1px solid #222;" onclick="hxShowOverview()">Back</button>
-        <button class="modal-action-btn" id="hx-f-save" style="background:var(--hx);color:#0a0a0f;" onclick="hxSaveLog()">Save</button>
+        <button class="modal-action-btn" style="background:#3A3D41;color:#A3A6AA;border:1px solid #3A3D41;" onclick="hxShowOverview()">Back</button>
+        <button class="modal-action-btn" id="hx-f-save" style="background:var(--hx);color:#141517;" onclick="hxSaveLog()">Save</button>
       </div>
     </div>
   </div>
@@ -548,10 +874,10 @@
     <input id="hx-s-name" class="hx-input" type="text" maxlength="80" placeholder="e.g. HYROX Las Vegas" style="margin-bottom:14px;"/>
     <div class="section-label">Race date</div>
     <input id="hx-s-date" class="hx-input" type="date" style="margin-bottom:16px;color-scheme:dark;"/>
-    <div id="hx-s-error" style="color:#ff9999;font-size:12px;margin-bottom:12px;display:none;white-space:pre-wrap;"></div>
+    <div id="hx-s-error" style="color:#FF8A5C;font-size:12px;margin-bottom:12px;display:none;white-space:pre-wrap;"></div>
     <div class="modal-actions">
-      <button class="modal-action-btn" style="background:#1a1a1a;color:#888;border:1px solid #222;" onclick="closeModal('hx-settings-modal')">Cancel</button>
-      <button class="modal-action-btn" id="hx-s-save" style="background:var(--hx);color:#0a0a0f;" onclick="hxSaveSettings()">Save</button>
+      <button class="modal-action-btn" style="background:#3A3D41;color:#A3A6AA;border:1px solid #3A3D41;" onclick="closeModal('hx-settings-modal')">Cancel</button>
+      <button class="modal-action-btn" id="hx-s-save" style="background:var(--hx);color:#141517;" onclick="hxSaveSettings()">Save</button>
     </div>
   </div>
 </div>
@@ -564,7 +890,7 @@
 
     <div style="margin-bottom:16px;">
       <div class="section-label">Opponent</div>
-      <select id="challenge-opponent" style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:12px 14px;font-family:inherit;font-size:14px;color:#f0ede8;outline:none;box-sizing:border-box;">
+      <select id="challenge-opponent" style="width:100%;background:#222427;border:1px solid #2E3033;border-radius:6px;padding:12px 14px;font-family:inherit;font-size:14px;color:#EDE7DA;outline:none;box-sizing:border-box;">
         <option value="">Select a friend from a shared group…</option>
       </select>
     </div>
@@ -577,13 +903,13 @@
     <div style="margin-bottom:16px;">
       <div class="section-label">Target Count</div>
       <input id="challenge-target" type="number" min="1" max="99999" placeholder="e.g. 200" autocomplete="off"
-        style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:12px 14px;font-family:'Bebas Neue',sans-serif;font-size:24px;color:#f0ede8;outline:none;box-sizing:border-box;text-align:center;"/>
+        style="width:100%;background:#222427;border:1px solid #2E3033;border-radius:6px;padding:12px 14px;font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;font-size:24px;color:#EDE7DA;outline:none;box-sizing:border-box;text-align:center;"/>
     </div>
 
-    <div id="challenge-error" style="color:#ff9999;font-size:12px;margin-bottom:12px;display:none;"></div>
+    <div id="challenge-error" style="color:#FF8A5C;font-size:12px;margin-bottom:12px;display:none;"></div>
     <div class="modal-actions">
-      <button class="modal-action-btn" style="background:#1a1a1a;color:#888;border:1px solid #222;" onclick="closeModal('challenge-modal')">Cancel</button>
-      <button class="modal-action-btn" id="send-challenge-btn" style="background:#f0ede8;color:#0a0a0f;" onclick="handleSendChallenge()">Send Challenge</button>
+      <button class="modal-action-btn" style="background:#3A3D41;color:#A3A6AA;border:1px solid #3A3D41;" onclick="closeModal('challenge-modal')">Cancel</button>
+      <button class="modal-action-btn" id="send-challenge-btn" style="background:#EDE7DA;color:#141517;" onclick="handleSendChallenge()">Send Challenge</button>
     </div>
   </div>
 </div>
@@ -596,12 +922,12 @@
     <div style="margin-bottom:16px;">
       <div class="section-label">Group Name</div>
       <input id="new-group-name" type="text" placeholder="e.g. College Friends" autocomplete="off"
-        style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:12px 14px;font-family:inherit;font-size:15px;color:#f0ede8;outline:none;box-sizing:border-box;"/>
+        style="width:100%;background:#222427;border:1px solid #2E3033;border-radius:6px;padding:12px 14px;font-family:inherit;font-size:15px;color:#EDE7DA;outline:none;box-sizing:border-box;"/>
     </div>
-    <div id="create-group-error" style="color:#ff9999;font-size:12px;margin-bottom:12px;display:none;"></div>
+    <div id="create-group-error" style="color:#FF8A5C;font-size:12px;margin-bottom:12px;display:none;"></div>
     <div class="modal-actions">
-      <button class="modal-action-btn" style="background:#1a1a1a;color:#888;border:1px solid #222;" onclick="closeModal('create-group-modal')">Cancel</button>
-      <button class="modal-action-btn" id="create-group-btn" style="background:#f0ede8;color:#0a0a0f;" onclick="handleCreateGroup()">Create</button>
+      <button class="modal-action-btn" style="background:#3A3D41;color:#A3A6AA;border:1px solid #3A3D41;" onclick="closeModal('create-group-modal')">Cancel</button>
+      <button class="modal-action-btn" id="create-group-btn" style="background:#EDE7DA;color:#141517;" onclick="handleCreateGroup()">Create</button>
     </div>
   </div>
 </div>
@@ -614,12 +940,12 @@
     <div style="margin-bottom:16px;">
       <div class="section-label">Join Code</div>
       <input id="join-group-code" type="text" placeholder="e.g. SWOLE4F2A" autocomplete="off" style="text-transform:uppercase;"
-        style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:12px 14px;font-family:inherit;font-size:15px;color:#f0ede8;outline:none;box-sizing:border-box;text-transform:uppercase;"/>
+        style="width:100%;background:#222427;border:1px solid #2E3033;border-radius:6px;padding:12px 14px;font-family:inherit;font-size:15px;color:#EDE7DA;outline:none;box-sizing:border-box;text-transform:uppercase;"/>
     </div>
-    <div id="join-group-error" style="color:#ff9999;font-size:12px;margin-bottom:12px;display:none;"></div>
+    <div id="join-group-error" style="color:#FF8A5C;font-size:12px;margin-bottom:12px;display:none;"></div>
     <div class="modal-actions">
-      <button class="modal-action-btn" style="background:#1a1a1a;color:#888;border:1px solid #222;" onclick="closeModal('join-group-modal')">Cancel</button>
-      <button class="modal-action-btn" id="join-group-btn" style="background:#f0ede8;color:#0a0a0f;" onclick="handleJoinGroup()">Join</button>
+      <button class="modal-action-btn" style="background:#3A3D41;color:#A3A6AA;border:1px solid #3A3D41;" onclick="closeModal('join-group-modal')">Cancel</button>
+      <button class="modal-action-btn" id="join-group-btn" style="background:#EDE7DA;color:#141517;" onclick="handleJoinGroup()">Join</button>
     </div>
   </div>
 </div>
@@ -629,12 +955,12 @@
   <div class="modal">
     <div class="modal-title">🎉 Group Created!</div>
     <div class="modal-sub">Share this code with friends</div>
-    <div style="background:#0f0f0f;border:1px solid #222;border-radius:8px;padding:20px;text-align:center;margin-bottom:16px;">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:0.1em;color:#ff4d4d;" id="created-group-code"></div>
+    <div style="background:#222427;border:1px solid #3A3D41;border-radius:8px;padding:20px;text-align:center;margin-bottom:16px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;font-size:36px;letter-spacing:0.1em;color:#8CC63F;" id="created-group-code"></div>
     </div>
     <div class="modal-actions">
-      <button class="modal-action-btn" style="background:#1a1a1a;color:#888;border:1px solid #222;" onclick="copyGroupCode()">📋 Copy Code</button>
-      <button class="modal-action-btn" style="background:#f0ede8;color:#0a0a0f;" onclick="closeModal('group-created-modal')">Done</button>
+      <button class="modal-action-btn" style="background:#3A3D41;color:#A3A6AA;border:1px solid #3A3D41;" onclick="copyGroupCode()">📋 Copy Code</button>
+      <button class="modal-action-btn" style="background:#EDE7DA;color:#141517;" onclick="closeModal('group-created-modal')">Done</button>
     </div>
   </div>
 </div>
@@ -648,14 +974,14 @@
     <div style="margin-bottom:12px;">
       <input id="invite-search-input" type="text" placeholder="Search by display name…" autocomplete="off"
         oninput="handleInviteSearch()"
-        style="width:100%;background:#0f0f0f;border:1px solid #1e1e1e;border-radius:6px;padding:12px 14px;font-family:inherit;font-size:15px;color:#f0ede8;outline:none;box-sizing:border-box;"/>
+        style="width:100%;background:#222427;border:1px solid #2E3033;border-radius:6px;padding:12px 14px;font-family:inherit;font-size:15px;color:#EDE7DA;outline:none;box-sizing:border-box;"/>
     </div>
 
     <div id="invite-search-results" style="max-height:240px;overflow-y:auto;display:flex;flex-direction:column;gap:6px;margin-bottom:12px;"></div>
-    <div id="invite-error" style="color:#ff9999;font-size:12px;margin-bottom:8px;display:none;"></div>
+    <div id="invite-error" style="color:#FF8A5C;font-size:12px;margin-bottom:8px;display:none;"></div>
 
     <div class="modal-actions">
-      <button class="modal-action-btn" style="background:#1a1a1a;color:#888;border:1px solid #222;" onclick="closeModal('invite-modal')">Close</button>
+      <button class="modal-action-btn" style="background:#3A3D41;color:#A3A6AA;border:1px solid #3A3D41;" onclick="closeModal('invite-modal')">Close</button>
     </div>
   </div>
 </div>
@@ -675,9 +1001,9 @@
       <canvas id="share-canvas" style="width:100%;display:block;"></canvas>
     </div>
     <div class="modal-actions">
-      <button class="modal-action-btn" style="background:#1a1a1a;color:#888;border:1px solid #222;"
+      <button class="modal-action-btn" style="background:#3A3D41;color:#A3A6AA;border:1px solid #3A3D41;"
         onclick="copyShareText()">📋 Copy Text</button>
-      <button class="modal-action-btn" style="background:#f0ede8;color:#0a0a0f;"
+      <button class="modal-action-btn" style="background:#EDE7DA;color:#141517;"
         onclick="downloadCard()">⬇ Save Image</button>
     </div>
   </div>
@@ -689,9 +1015,10 @@
 <script>
 // ─── DATA ───────────────────────────────────────────────────────────────────
 const EXERCISES = {
-  pushups: { label:'Push-Ups', icon:'💪', color:'#ff4d4d', colorDim:'rgba(255,77,77,0.12)', colorBorder:'rgba(255,77,77,0.25)', colorToday:'#ff8080', quickAmounts:[5,10,15,20,25], voiceRx:[/(\d+)\s*push[\s-]?ups?/,/push[\s-]?ups?\s*[:\s]\s*(\d+)/] },
-  pullups: { label:'Pull-Ups', icon:'🏋️', color:'#4d9fff', colorDim:'rgba(77,159,255,0.12)', colorBorder:'rgba(77,159,255,0.25)', colorToday:'#80bfff', quickAmounts:[3,5,8,10,12], voiceRx:[/(\d+)\s*pull[\s-]?ups?/,/pull[\s-]?ups?\s*[:\s]\s*(\d+)/,/(\d+)\s*chin[\s-]?ups?/] },
-  situps:  { label:'Sit-Ups',  icon:'🧘', color:'#4dff9f', colorDim:'rgba(77,255,159,0.12)', colorBorder:'rgba(77,255,159,0.25)', colorToday:'#80ffbf', quickAmounts:[10,15,20,25,30], voiceRx:[/(\d+)\s*sit[\s-]?ups?/,/sit[\s-]?ups?\s*[:\s]\s*(\d+)/,/(\d+)\s*crunches?/] }
+  pushups: { label:'Push-Ups', icon:'💪', color:'#8CC63F', colorDim:'rgba(140,198,63,0.12)', colorBorder:'rgba(140,198,63,0.3)', colorToday:'#A6DB5C', quickAmounts:[5,10,15,20,25], voiceRx:[/(\d+)\s*push[\s-]?ups?/,/push[\s-]?ups?\s*[:\s]\s*(\d+)/] },
+  pullups: { label:'Pull-Ups', icon:'🏋️', color:'#EDE7DA', colorDim:'rgba(237,231,218,0.10)', colorBorder:'rgba(237,231,218,0.3)', colorToday:'#F7F3EA', quickAmounts:[3,5,8,10,12], voiceRx:[/(\d+)\s*pull[\s-]?ups?/,/pull[\s-]?ups?\s*[:\s]\s*(\d+)/,/(\d+)\s*chin[\s-]?ups?/] },
+  situps:  { label:'Sit-Ups',  icon:'🧘', color:'#6AAEE6', colorDim:'rgba(106,174,230,0.12)', colorBorder:'rgba(106,174,230,0.3)', colorToday:'#93C5EE', quickAmounts:[10,15,20,25,30], voiceRx:[/(\d+)\s*sit[\s-]?ups?/,/sit[\s-]?ups?\s*[:\s]\s*(\d+)/,/(\d+)\s*crunches?/] },
+  squats:  { label:'Squats',   icon:'🦵', color:'#F2A65A', colorDim:'rgba(242,166,90,0.12)', colorBorder:'rgba(242,166,90,0.3)', colorToday:'#F6BE85', quickAmounts:[10,20,25,30,50], voiceRx:[/(\d+)\s*(?:air\s*)?squats?/,/squats?\s*[:\s]\s*(\d+)/] }
 };
 const EX_KEYS = Object.keys(EXERCISES);
 
@@ -967,6 +1294,7 @@ function handleLogout() {
   log = {};
   myGroups = [];
   activeGroupId = null;
+  pendingChallengeCount = 0; pendingGroupInviteCount = 0; updateSocialBadges();
   hxLogs = []; hxSettings = { division: 'open_m', race_date: null, race_name: null }; hxLoaded = false;
   document.getElementById('app').classList.add('hidden');
   document.getElementById('login-screen').classList.remove('hidden');
@@ -979,6 +1307,7 @@ async function enterApp() {
   document.getElementById('login-screen').classList.add('hidden');
   document.getElementById('app').classList.remove('hidden');
   document.getElementById('welcome-label').textContent = currentUser.display_name + "'s Fitness Log";
+  switchView('today');
   showToast('Loading your data…', true);
   await loadLogsFromServer();
   await loadMyGroups();
@@ -1183,7 +1512,7 @@ function renderGroupSwitcher() {
     const isActive = activeGroupId === id;
     const btn = document.createElement('button');
     btn.textContent = label;
-    btn.style.cssText = `flex-shrink:0;padding:8px 16px;border-radius:20px;cursor:pointer;font-family:inherit;font-size:11px;letter-spacing:0.06em;white-space:nowrap;transition:all 0.2s;border:1px solid ${isActive ? '#ff4d4d' : '#222'};background:${isActive ? 'rgba(255,77,77,0.1)' : 'transparent'};color:${isActive ? '#ff8080' : '#666'};`;
+    btn.style.cssText = `flex-shrink:0;padding:8px 16px;border-radius:20px;cursor:pointer;font-family:inherit;font-size:11px;letter-spacing:0.06em;white-space:nowrap;transition:all 0.2s;border:1px solid ${isActive ? '#8CC63F' : '#3A3D41'};background:${isActive ? 'rgba(140,198,63,0.1)' : 'transparent'};color:${isActive ? '#A6DB5C' : '#A3A6AA'};`;
     btn.onclick = () => { activeGroupId = id; renderGroupSwitcher(); loadLeaderboard(); };
     return btn;
   };
@@ -1191,8 +1520,38 @@ function renderGroupSwitcher() {
   wrap.appendChild(makeChip(null, '🌍 Global'));
   myGroups.forEach(g => wrap.appendChild(makeChip(g.id, g.name)));
 
-  // The invite button only makes sense for a real group, not the virtual Global group
-  document.getElementById('invite-to-group-btn').classList.toggle('hidden', !activeGroupId);
+  renderMyGroupsList();
+}
+
+function renderMyGroupsList() {
+  const list = document.getElementById('my-groups-list');
+  list.innerHTML = '';
+  if (myGroups.length === 0) {
+    const empty = document.createElement('div');
+    empty.style.cssText = 'color:#A3A6AA;font-size:12px;padding:6px 0 4px;';
+    empty.textContent = 'You are not in any private groups yet.';
+    list.appendChild(empty);
+    return;
+  }
+  myGroups.forEach(g => {
+    const row = document.createElement('div');
+    row.className = 'group-row';
+    const info = document.createElement('div');
+    info.style.cssText = 'flex:1;min-width:0;';
+    const name = document.createElement('div');
+    name.className = 'group-row-name';
+    name.textContent = g.name;
+    const code = document.createElement('div');
+    code.className = 'group-row-code';
+    code.textContent = g.join_code ? 'CODE ' + g.join_code : '';
+    info.append(name, code);
+    const btn = document.createElement('button');
+    btn.className = 'group-row-btn';
+    btn.textContent = 'Invite';
+    btn.onclick = () => { activeGroupId = g.id; renderGroupSwitcher(); openInviteModal(); };
+    row.append(info, btn);
+    list.appendChild(row);
+  });
 }
 
 function openCreateGroupModal() {
@@ -1324,7 +1683,7 @@ function openInviteModal() {
   const group = myGroups.find(g => g.id === activeGroupId);
   document.getElementById('invite-modal-group-name').textContent = group ? `Invite someone to ${group.name}` : 'Invite someone';
   document.getElementById('invite-search-input').value = '';
-  document.getElementById('invite-search-results').innerHTML = '<div style="color:#333;font-size:12px;padding:10px 0;">Type a name to search…</div>';
+  document.getElementById('invite-search-results').innerHTML = '<div style="color:#8E9196;font-size:12px;padding:10px 0;">Type a name to search…</div>';
   document.getElementById('invite-error').style.display = 'none';
   document.getElementById('invite-modal').classList.remove('hidden');
 
@@ -1349,11 +1708,11 @@ function handleInviteSearch() {
   const resultsEl = document.getElementById('invite-search-results');
 
   if (!query) {
-    resultsEl.innerHTML = '<div style="color:#333;font-size:12px;padding:10px 0;">Type a name to search…</div>';
+    resultsEl.innerHTML = '<div style="color:#8E9196;font-size:12px;padding:10px 0;">Type a name to search…</div>';
     return;
   }
 
-  resultsEl.innerHTML = '<div style="color:#333;font-size:12px;padding:10px 0;">Searching…</div>';
+  resultsEl.innerHTML = '<div style="color:#8E9196;font-size:12px;padding:10px 0;">Searching…</div>';
   inviteSearchTimeout = setTimeout(() => runInviteSearch(query), 300); // debounce
 }
 
@@ -1372,26 +1731,26 @@ async function runInviteSearch(query) {
     resultsEl.innerHTML = '';
 
     if (results.length === 0) {
-      resultsEl.innerHTML = '<div style="color:#333;font-size:12px;padding:10px 0;">No one found with that name.</div>';
+      resultsEl.innerHTML = '<div style="color:#8E9196;font-size:12px;padding:10px 0;">No one found with that name.</div>';
       return;
     }
 
     results.forEach(person => {
       const isAlreadyMember = existingMemberIdsForActiveGroup.has(person.id);
       const row = document.createElement('div');
-      row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#0f0f0f;border:1px solid #1a1a1a;border-radius:6px;';
+      row.style.cssText = 'display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:#222427;border:1px solid #2E3033;border-radius:6px;';
       row.innerHTML = `
-        <span style="font-size:13px;color:#ccc;">${person.display_name}</span>
+        <span style="font-size:13px;color:#EDE7DA;">${person.display_name}</span>
         ${isAlreadyMember
-          ? '<span style="font-size:10px;color:#444;">Already in group</span>'
-          : `<button style="padding:6px 14px;border:none;border-radius:6px;background:#ff4d4d;color:#0a0a0f;font-family:inherit;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;" onclick="sendGroupInvite('${person.id}', this)">Invite</button>`
+          ? '<span style="font-size:10px;color:#8E9196;">Already in group</span>'
+          : `<button style="padding:6px 14px;border:none;border-radius:6px;background:#8CC63F;color:#141517;font-family:inherit;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;" onclick="sendGroupInvite('${person.id}', this)">Invite</button>`
         }
       `;
       resultsEl.appendChild(row);
     });
   } catch (e) {
     console.error('Invite search failed', e);
-    resultsEl.innerHTML = '<div style="color:#ff9999;font-size:12px;padding:10px 0;">Search failed — try again.</div>';
+    resultsEl.innerHTML = '<div style="color:#FF8A5C;font-size:12px;padding:10px 0;">Search failed — try again.</div>';
   }
 }
 
@@ -1406,8 +1765,8 @@ async function sendGroupInvite(inviteeId, btnEl) {
     });
     if (error) throw error;
     btnEl.textContent = 'Invited ✓';
-    btnEl.style.background = '#1a1a1a';
-    btnEl.style.color = '#7dff9f';
+    btnEl.style.background = '#3A3D41';
+    btnEl.style.color = '#A6DB5C';
     showToast('Invite sent! 🎉', true);
   } catch (e) {
     console.error('Failed to send invite', e);
@@ -1433,17 +1792,19 @@ async function loadPendingGroupInvites() {
     if (error) throw error;
 
     const invites = data || [];
+    pendingGroupInviteCount = invites.length;
+    updateSocialBadges();
     section.classList.toggle('hidden', invites.length === 0);
     wrap.innerHTML = '';
 
     invites.forEach(inv => {
       const card = document.createElement('div');
-      card.style.cssText = 'background:#0f0f0f;border:1px solid #1e1e1e;border-radius:10px;padding:14px 16px;';
+      card.style.cssText = 'background:#222427;border:1px solid #2E3033;border-radius: 8px;padding:14px 16px;';
       card.innerHTML = `
-        <div style="font-size:13px;color:#eee;margin-bottom:12px;"><strong>${inv.inviter?.display_name || 'Someone'}</strong> invited you to <strong>${inv.groups?.name || 'a group'}</strong></div>
+        <div style="font-size:13px;color:#EDE7DA;margin-bottom:12px;"><strong>${inv.inviter?.display_name || 'Someone'}</strong> invited you to <strong>${inv.groups?.name || 'a group'}</strong></div>
         <div style="display:flex;gap:8px;">
-          <button onclick="respondToGroupInvite('${inv.id}','declined')" style="flex:1;padding:9px;border:1px solid #333;background:transparent;border-radius:6px;color:#888;font-family:inherit;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;">Decline</button>
-          <button onclick="respondToGroupInvite('${inv.id}','accepted')" style="flex:1;padding:9px;border:none;background:#ff4d4d;border-radius:6px;color:#0a0a0f;font-family:inherit;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;font-weight:600;cursor:pointer;">Accept</button>
+          <button onclick="respondToGroupInvite('${inv.id}','declined')" style="flex:1;padding:9px;border:1px solid #3A3D41;background:transparent;border-radius:6px;color:#A3A6AA;font-family:inherit;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;">Decline</button>
+          <button onclick="respondToGroupInvite('${inv.id}','accepted')" style="flex:1;padding:9px;border:none;background:#8CC63F;border-radius:6px;color:#141517;font-family:inherit;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;font-weight:600;cursor:pointer;">Accept</button>
         </div>
       `;
       wrap.appendChild(card);
@@ -1533,7 +1894,7 @@ function renderChallengeExercisePicker() {
     const ex = EXERCISES[k];
     const isActive = challengeExercise === k;
     const btn = document.createElement('button');
-    btn.style.cssText = `flex:1;padding:10px 0;border-radius:8px;cursor:pointer;font-family:inherit;font-size:11px;letter-spacing:0.06em;transition:all 0.2s;border:1px solid ${isActive ? ex.colorBorder : '#1e1e1e'};background:${isActive ? ex.colorDim : 'transparent'};color:${isActive ? ex.color : '#555'};`;
+    btn.style.cssText = `flex:1;padding:10px 0;border-radius:8px;cursor:pointer;font-family:inherit;font-size:11px;letter-spacing:0.06em;transition:all 0.2s;border:1px solid ${isActive ? ex.colorBorder : '#2E3033'};background:${isActive ? ex.colorDim : 'transparent'};color:${isActive ? ex.color : '#A3A6AA'};`;
     btn.innerHTML = `${ex.icon}<br/>${ex.label}`;
     btn.onclick = () => { challengeExercise = k; renderChallengeExercisePicker(); };
     wrap.appendChild(btn);
@@ -1604,8 +1965,9 @@ async function loadChallenges() {
     const past = all.filter(c => c.status === 'completed' || c.status === 'declined' ||
       (c.status === 'pending' && c.creator_id === currentUser.id));
 
-    // Update nav badge if there are pending invites for me
-    document.getElementById('challenge-badge').classList.toggle('hidden', pending.length === 0);
+    // Update Social badges if there are pending challenge invites for me
+    pendingChallengeCount = pending.length;
+    updateSocialBadges();
 
     await renderPendingChallenges(pending);
     await renderActiveChallenges(active);
@@ -1624,13 +1986,13 @@ async function renderPendingChallenges(pending) {
   pending.forEach(c => {
     const ex = EXERCISES[c.exercise];
     const card = document.createElement('div');
-    card.style.cssText = `background:${ex.colorDim};border:1px solid ${ex.colorBorder};border-radius:10px;padding:14px 16px;`;
+    card.style.cssText = `background:${ex.colorDim};border:1px solid ${ex.colorBorder};border-radius: 8px;padding:14px 16px;`;
     card.innerHTML = `
-      <div style="font-size:13px;color:#eee;margin-bottom:4px;"><strong>${c.creator.display_name}</strong> challenged you</div>
-      <div style="font-size:12px;color:#999;margin-bottom:12px;">${ex.icon} ${c.target_count} ${ex.label} — first to hit it wins</div>
+      <div style="font-size:13px;color:#EDE7DA;margin-bottom:4px;"><strong>${c.creator.display_name}</strong> challenged you</div>
+      <div style="font-size:12px;color:#A3A6AA;margin-bottom:12px;">${ex.icon} ${c.target_count} ${ex.label} — first to hit it wins</div>
       <div style="display:flex;gap:8px;">
-        <button onclick="respondToChallenge('${c.id}','declined')" style="flex:1;padding:9px;border:1px solid #333;background:transparent;border-radius:6px;color:#888;font-family:inherit;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;">Decline</button>
-        <button onclick="respondToChallenge('${c.id}','active')" style="flex:1;padding:9px;border:none;background:${ex.color};border-radius:6px;color:#0a0a0f;font-family:inherit;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;font-weight:600;cursor:pointer;">Accept</button>
+        <button onclick="respondToChallenge('${c.id}','declined')" style="flex:1;padding:9px;border:1px solid #3A3D41;background:transparent;border-radius:6px;color:#A3A6AA;font-family:inherit;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;">Decline</button>
+        <button onclick="respondToChallenge('${c.id}','active')" style="flex:1;padding:9px;border:none;background:${ex.color};border-radius:6px;color:#141517;font-family:inherit;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;font-weight:600;cursor:pointer;">Accept</button>
       </div>
     `;
     wrap.appendChild(card);
@@ -1693,27 +2055,23 @@ async function renderActiveChallenges(active) {
     }
 
     const card = document.createElement('div');
-    card.style.cssText = `background:#0f0f0f;border:1px solid #1e1e1e;border-radius:10px;padding:16px;`;
+    card.style.cssText = `background:#222427;border:1px solid #2E3033;border-radius: 8px;padding:16px;`;
     card.innerHTML = `
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <div style="font-size:12px;color:#888;">${ex.icon} ${c.target_count} ${ex.label}</div>
-        <div style="font-size:10px;color:#444;letter-spacing:0.06em;">vs ${theirName}</div>
+        <div style="font-size:12px;color:#A3A6AA;">${ex.icon} ${c.target_count} ${ex.label}</div>
+        <div style="font-size:10px;color:#8E9196;letter-spacing:0.06em;">vs ${theirName}</div>
       </div>
       <div style="margin-bottom:10px;">
-        <div style="display:flex;justify-content:space-between;font-size:11px;color:#ccc;margin-bottom:4px;">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:#EDE7DA;margin-bottom:4px;">
           <span>${myName}</span><span>${myProgress} / ${c.target_count}</span>
         </div>
-        <div style="height:8px;background:#1a1a1a;border-radius:4px;overflow:hidden;">
-          <div style="height:100%;width:${myPct}%;background:${ex.color};transition:width 0.4s ease;"></div>
-        </div>
+        <div class="lane"><div class="lane-fill" style="width:${myPct}%;"></div></div>
       </div>
       <div>
-        <div style="display:flex;justify-content:space-between;font-size:11px;color:#888;margin-bottom:4px;">
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:#A3A6AA;margin-bottom:4px;">
           <span>${theirName}</span><span>${theirProgress} / ${c.target_count}</span>
         </div>
-        <div style="height:8px;background:#1a1a1a;border-radius:4px;overflow:hidden;">
-          <div style="height:100%;width:${theirPct}%;background:#444;transition:width 0.4s ease;"></div>
-        </div>
+        <div class="lane"><div class="lane-fill lane-fill-them" style="width:${theirPct}%;"></div></div>
       </div>
     `;
     wrap.appendChild(card);
@@ -1745,7 +2103,7 @@ function renderPastChallenges(past) {
   const wrap = document.getElementById('past-challenges-list');
   wrap.innerHTML = '';
   if (past.length === 0) {
-    wrap.innerHTML = '<div style="color:#2a2a2a;font-size:12px;">No past challenges yet.</div>';
+    wrap.innerHTML = '<div style="color:#8E9196;font-size:12px;">No past challenges yet.</div>';
     return;
   }
   past.forEach(c => {
@@ -1753,15 +2111,15 @@ function renderPastChallenges(past) {
     const isCreator = c.creator_id === currentUser.id;
     const theirName = isCreator ? c.opponent.display_name : c.creator.display_name;
     let resultText, resultColor;
-    if (c.status === 'declined') { resultText = 'Declined'; resultColor = '#555'; }
-    else if (c.winner_id === currentUser.id) { resultText = 'You won 🏆'; resultColor = '#7dff9f'; }
-    else if (c.winner_id) { resultText = `${theirName} won`; resultColor = '#ff9999'; }
-    else { resultText = 'Pending'; resultColor = '#555'; }
+    if (c.status === 'declined') { resultText = 'Declined'; resultColor = '#A3A6AA'; }
+    else if (c.winner_id === currentUser.id) { resultText = 'You won 🏆'; resultColor = '#A6DB5C'; }
+    else if (c.winner_id) { resultText = `${theirName} won`; resultColor = '#FF8A5C'; }
+    else { resultText = 'Pending'; resultColor = '#A3A6AA'; }
 
     const row = document.createElement('div');
-    row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#0d0d0d;border-radius:6px;font-size:12px;';
+    row.style.cssText = 'display:flex;justify-content:space-between;align-items:center;padding:10px 12px;background:#222427;border-radius:6px;font-size:12px;';
     row.innerHTML = `
-      <span style="color:#888;">${ex.icon} ${c.target_count} ${ex.label} vs ${theirName}</span>
+      <span style="color:#A3A6AA;">${ex.icon} ${c.target_count} ${ex.label} vs ${theirName}</span>
       <span style="color:${resultColor};">${resultText}</span>
     `;
     wrap.appendChild(row);
@@ -1772,11 +2130,15 @@ function renderPastChallenges(past) {
 async function loadLogsFromServer() {
   if (!currentUser) return;
   try {
-    const { data, error } = await sb
+    const fetchLogs = cols => sb
       .from('logs')
-      .select('id, exercise, count, local_date, logged_at')
+      .select(cols)
       .eq('profile_id', currentUser.id)
       .order('logged_at', { ascending: true });
+    let { data, error } = await fetchLogs('id, exercise, count, local_date, logged_at, vest_lb, murph_log_id');
+    // Before supabase/murph.sql has run, logs has no vest columns: load without them
+    logsHaveVest = !error;
+    if (error && /vest_lb|murph_log_id/.test(error.message || '')) ({ data, error } = await fetchLogs('id, exercise, count, local_date, logged_at'));
     if (error) throw error;
 
     const rebuilt = {};
@@ -1784,7 +2146,7 @@ async function loadLogsFromServer() {
       if (!rebuilt[row.local_date]) rebuilt[row.local_date] = {};
       if (!rebuilt[row.local_date][row.exercise]) rebuilt[row.local_date][row.exercise] = [];
       const timeStr = new Date(row.logged_at).toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
-      rebuilt[row.local_date][row.exercise].push({ count: row.count, time: timeStr, id: row.id });
+      rebuilt[row.local_date][row.exercise].push({ count: row.count, time: timeStr, id: row.id, vestLb: row.vest_lb ? Number(row.vest_lb) : null, murphLogId: row.murph_log_id || null });
     });
     log = rebuilt;
   } catch (e) {
@@ -1810,7 +2172,7 @@ async function loadLeaderboard() {
   const listEl = document.getElementById('leaderboard-list');
   const emptyEl = document.getElementById('leaderboard-empty');
   const titleEl = document.getElementById('leaderboard-title');
-  listEl.innerHTML = '<div style="color:#333;font-size:12px;text-align:center;padding:20px 0;">Loading…</div>';
+  listEl.innerHTML = '<div style="color:#8E9196;font-size:12px;text-align:center;padding:20px 0;">Loading…</div>';
 
   const groupLabel = activeGroupId ? (myGroups.find(g => g.id === activeGroupId)?.name || 'Group') : 'Global';
   titleEl.textContent = `${leaderboardPeriodLabel(leaderboardPeriod)} — ${groupLabel}`;
@@ -1843,15 +2205,15 @@ async function loadLeaderboard() {
     const { data, error } = await query;
     if (error) throw error;
 
-    const totals = {}; // { profile_id: { name, pushups, pullups, situps, total } }
+    const totals = {}; // { profile_id: { name, pushups, pullups, situps, squats, total } }
     (data || []).forEach(row => {
       const pid = row.profile_id;
-      if (!totals[pid]) totals[pid] = { name: row.profiles?.display_name || 'Unknown', pushups: 0, pullups: 0, situps: 0 };
-      totals[pid][row.exercise] += row.count;
+      if (!totals[pid]) totals[pid] = { name: row.profiles?.display_name || 'Unknown', ...Object.fromEntries(EX_KEYS.map(k => [k, 0])) };
+      if (row.exercise in EXERCISES) totals[pid][row.exercise] += row.count;
     });
 
     const ranked = Object.values(totals)
-      .map(u => ({ ...u, total: u.pushups + u.pullups + u.situps }))
+      .map(u => ({ ...u, total: EX_KEYS.reduce((s, k) => s + u[k], 0) }))
       .sort((a, b) => b.total - a.total);
 
     listEl.innerHTML = '';
@@ -1864,20 +2226,20 @@ async function loadLeaderboard() {
     ranked.forEach((u, i) => {
       const isMe = u.name === currentUser.display_name;
       const row = document.createElement('div');
-      row.style.cssText = `display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:8px;background:${isMe ? 'rgba(255,77,77,0.08)' : '#0f0f0f'};border:1px solid ${isMe ? 'rgba(255,77,77,0.25)' : '#1a1a1a'};`;
+      row.style.cssText = `display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:8px;background:${isMe ? 'rgba(140,198,63,0.08)' : '#222427'};border:1px solid ${isMe ? 'rgba(140,198,63,0.25)' : '#2E3033'};`;
       row.innerHTML = `
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:${i===0?'#ffd700':i===1?'#c0c0c0':i===2?'#cd7f32':'#444'};width:28px;">#${i+1}</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;font-size:20px;color:${i===0?'#ffd700':i===1?'#c0c0c0':i===2?'#cd7f32':'#8E9196'};width:28px;">#${i+1}</div>
         <div style="flex:1;">
-          <div style="font-size:13px;color:${isMe?'#ff8080':'#ccc'};">${u.name}${isMe ? ' (you)' : ''}</div>
-          <div style="font-size:9px;color:#444;letter-spacing:0.05em;margin-top:2px;">💪 ${u.pushups} · 🏋️ ${u.pullups} · 🧘 ${u.situps}</div>
+          <div style="font-size:13px;color:${isMe?'#A6DB5C':'#EDE7DA'};">${u.name}${isMe ? ' (you)' : ''}</div>
+          <div style="font-size:9px;color:#8E9196;letter-spacing:0.05em;margin-top:2px;">${EX_KEYS.map(k => `${EXERCISES[k].icon} ${u[k]}`).join(' · ')}</div>
         </div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:#f0ede8;">${u.total}</div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:800;text-transform:uppercase;font-size:24px;color:#EDE7DA;">${u.total}</div>
       `;
       listEl.appendChild(row);
     });
   } catch (e) {
     console.error(e);
-    listEl.innerHTML = '<div style="color:#ff9999;font-size:12px;text-align:center;padding:20px 0;">Could not load leaderboard.</div>';
+    listEl.innerHTML = '<div style="color:#FF8A5C;font-size:12px;text-align:center;padding:20px 0;">Could not load leaderboard.</div>';
   }
 }
 
@@ -1922,21 +2284,23 @@ function streak() {
   return s;
 }
 
-async function addEntry(type, count) {
+async function addEntry(type, count, opts = {}) {
   const now = new Date();
   const timeStr = now.toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit'});
 
   // Optimistic UI update
   if (!log[TODAY]) log[TODAY] = {};
   if (!log[TODAY][type]) log[TODAY][type] = [];
-  const tempEntry = { count, time: timeStr, id: 'temp-' + Date.now() };
+  const tempEntry = { count, time: timeStr, id: 'temp-' + Date.now(), vestLb: opts.vestLb || null, murphLogId: null };
   log[TODAY][type].push(tempEntry);
   renderAll();
 
   try {
+    const row = { profile_id: currentUser.id, exercise: type, count, local_date: TODAY };
+    if (opts.vestLb) row.vest_lb = opts.vestLb; // only sent when set, so plain sets still save before murph.sql has run
     const { data, error } = await sb
       .from('logs')
-      .insert({ profile_id: currentUser.id, exercise: type, count, local_date: TODAY })
+      .insert(row)
       .select('id')
       .single();
     if (error) throw error;
@@ -2012,9 +2376,7 @@ function toggleMic() {
     if (t) {
       const act = parseVoice(t);
       if (act) {
-        addEntry(act.type, act.count);
-        setActiveExercise(act.type);
-        showToast('Logged '+act.count+' '+EXERCISES[act.type].label+'! 🎉', true);
+        if (logSet(act.type, act.count)) setActiveExercise(act.type);
       } else {
         showToast('Couldn\'t detect exercise. Try: "10 push-ups"', false);
       }
@@ -2029,15 +2391,22 @@ function logManual() {
   const inp = document.getElementById('custom-input');
   const count = parseInt(inp.value);
   if (!count || count <= 0 || count > 9999) { showToast('Enter a number between 1–9999', false); return; }
-  addEntry(activeExercise, count);
-  showToast('Logged '+count+' '+EXERCISES[activeExercise].label+'! 🎉', true);
+  if (!logSet(activeExercise, count)) return;
   inp.value = '';
   inp.focus();
 }
 
 function quickAdd(n) {
-  addEntry(activeExercise, n);
-  showToast('Logged '+n+' '+EXERCISES[activeExercise].label+'! 🎉', true);
+  logSet(activeExercise, n);
+}
+
+// Every set picks up the current vest setting (shared by the Log tab and the Murph screen)
+function logSet(type, count) {
+  const vestLb = currentVestLb();
+  if (vestLb && !logsHaveVest) { showToast('Run supabase/murph.sql to save vest sets', false); return false; }
+  addEntry(type, count, { vestLb });
+  showToast(`Logged ${count} ${EXERCISES[type].label}${vestLb ? ` · ${vestLb} lb vest` : ''}! 🎉`, true);
+  return true;
 }
 
 // ─── STATE SETTERS ────────────────────────────────────────────────────────────
@@ -2058,24 +2427,111 @@ function setMode(m) {
   document.getElementById('voice-panel').classList.toggle('hidden', m!=='voice');
   document.getElementById('voice-unsupported').classList.add('hidden');
   document.getElementById('manual-panel').classList.toggle('hidden', m!=='manual');
-  const modeVoiceBtn = document.getElementById('mode-voice');
-  const modeManuBtn  = document.getElementById('mode-manual');
-  modeVoiceBtn.style.color = m==='voice' ? EXERCISES[activeExercise].color : '#383838';
-  modeManuBtn.style.color  = m==='manual'? EXERCISES[activeExercise].color : '#383838';
 }
 
+// Four top-level tabs. Sub-screens (HYROX inside Train; Leaderboard / Challenges /
+// Groups inside Social) map onto their parent tab so the nav highlight stays right.
+const TAB_TITLES = { today: null, train: 'TRAIN', social: 'SOCIAL', me: 'MY HISTORY' };
+const LEGACY_VIEWS = { history: 'me', friends: 'social', challenges: 'social' };
+let socialSeg = 'leaderboard';
+
 function switchView(v) {
+  if (LEGACY_VIEWS[v]) {
+    if (v === 'friends') socialSeg = 'leaderboard';
+    if (v === 'challenges') socialSeg = 'challenges';
+    v = LEGACY_VIEWS[v];
+  }
   currentView = v;
+  const tab = (v === 'hyrox' || v === 'murph') ? 'train' : v;
+
   document.getElementById('view-today').classList.toggle('hidden', v!=='today');
-  document.getElementById('view-history').classList.toggle('hidden', v!=='history');
-  document.getElementById('view-friends').classList.toggle('hidden', v!=='friends');
-  document.getElementById('view-challenges').classList.toggle('hidden', v!=='challenges');
+  document.getElementById('view-history').classList.toggle('hidden', v!=='me');
+  document.getElementById('view-social').classList.toggle('hidden', v!=='social');
+  document.getElementById('view-train').classList.toggle('hidden', v!=='train');
   document.getElementById('view-hyrox').classList.toggle('hidden', v!=='hyrox');
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view===v));
-  if (v==='history') renderHistory();
-  if (v==='friends') { loadLeaderboard(); loadPendingGroupInvites(); }
-  if (v==='challenges') loadChallenges();
+  document.getElementById('view-murph').classList.toggle('hidden', v!=='murph');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab===tab));
+
+  // Header: the Log tab keeps the colored DAILY TRACKER title; other tabs show their name
+  const title = v === 'hyrox' ? 'HYROX' : v === 'murph' ? 'MURPH' : TAB_TITLES[tab];
+  document.getElementById('header-main').textContent = title || 'DAILY';
+  document.getElementById('header-accent').classList.toggle('hidden', !!title);
+
+  window.scrollTo(0, 0);
+  if (v==='me') renderHistory();
+  if (v==='social') setSocialSeg(socialSeg);
+  if (v==='train') renderTrainHub();
   if (v==='hyrox') loadHyrox();
+  if (v==='murph') loadMurph();
+}
+
+function setSocialSeg(seg) {
+  socialSeg = seg;
+  document.getElementById('view-friends').classList.toggle('hidden', seg!=='leaderboard');
+  document.getElementById('view-challenges').classList.toggle('hidden', seg!=='challenges');
+  document.getElementById('view-groups').classList.toggle('hidden', seg!=='groups');
+  document.querySelectorAll('.seg-btn').forEach(b => {
+    const on = b.dataset.seg === seg;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
+  if (seg==='leaderboard') loadLeaderboard();
+  if (seg==='challenges') loadChallenges();
+  if (seg==='groups') { renderGroupSwitcher(); loadPendingGroupInvites(); }
+}
+
+// Red dot on the Social tab when a challenge or group invite is waiting on me
+let pendingChallengeCount = 0, pendingGroupInviteCount = 0;
+function updateSocialBadges() {
+  const setCount = (id, n) => {
+    const el = document.getElementById(id);
+    el.textContent = n;
+    el.classList.toggle('hidden', n === 0);
+  };
+  setCount('challenge-badge', pendingChallengeCount);
+  setCount('group-invite-badge', pendingGroupInviteCount);
+  document.getElementById('social-dot').classList.toggle('hidden', pendingChallengeCount + pendingGroupInviteCount === 0);
+}
+
+// ─── TRAIN HUB ────────────────────────────────────────────────────────────────
+// Memorial Day = last Monday of May. If this year's has passed, count to next year's.
+function nextMemorialDay() {
+  const forYear = y => {
+    const d = new Date(y, 4, 31);
+    while (d.getDay() !== 1) d.setDate(d.getDate() - 1);
+    return localDateStr(d);
+  };
+  const y = Number(TODAY.slice(0, 4));
+  const thisYear = forYear(y);
+  return hxDaysBetween(TODAY, thisYear) >= 0 ? thisYear : forYear(y + 1);
+}
+
+function renderTrainHub() {
+  const md = nextMemorialDay();
+  const mdDays = hxDaysBetween(TODAY, md);
+  document.getElementById('murph-days').textContent = mdDays === 0 ? 'TODAY' : mdDays;
+  document.getElementById('murph-date').textContent = 'Memorial Day · ' +
+    new Date(md + 'T00:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  const muPb = muBestAttempt(true);
+  document.getElementById('murph-card-sub').textContent = muPb ? `Vest PR ${hxFmt(muPb)}` : 'All in a 20 lb vest';
+  if (!muTried && currentUser) loadMurph().then(() => { if (currentView === 'train') renderTrainHub(); });
+
+  const daysEl = document.getElementById('hx-card-days');
+  const subEl = document.getElementById('hx-card-sub');
+  if (hxSettings.race_date) {
+    const d = hxDaysBetween(TODAY, hxSettings.race_date);
+    daysEl.textContent = d >= 0 ? d : '✓';
+    subEl.textContent = hxSettings.race_name || 'Next race';
+  } else {
+    daysEl.textContent = '—';
+    subEl.textContent = '8 stations · gear swaps built in';
+  }
+  // Pull race settings in the background so the countdown fills in on first visit
+  if (!hxLoaded && currentUser) loadHyrox().then(() => { if (currentView === 'train') renderTrainHub(); });
+}
+
+function openProgram(p) {
+  if (p === 'hyrox' || p === 'murph') switchView(p);
 }
 
 // ─── RENDER ───────────────────────────────────────────────────────────────────
@@ -2084,7 +2540,9 @@ function renderAll() {
   renderBigCounter();
   renderQuickBtns();
   renderSetsToday();
-  if (currentView==='history') renderHistory();
+  renderVestControls();
+  if (currentView==='me') renderHistory();
+  if (currentView==='murph') renderMurph();
 }
 
 function renderExTabs() {
@@ -2094,11 +2552,9 @@ function renderExTabs() {
     const ex = EXERCISES[k];
     const isActive = k===activeExercise;
     const btn = document.createElement('button');
-    btn.className = 'ex-tab';
-    btn.style.borderColor = isActive ? ex.colorBorder : '#1a1a1a';
-    btn.style.background  = isActive ? ex.colorDim : 'transparent';
-    btn.style.color       = isActive ? ex.color : '#3a3a3a';
-    btn.innerHTML = `<span class="ex-icon">${ex.icon}</span><span>${ex.label}</span><span class="ex-total" style="color:${isActive?ex.color:'#2a2a2a'}">${todayTotal(k)}</span>`;
+    btn.className = 'ex-tab' + (isActive ? ' active' : '');
+    btn.style.setProperty('--tile', ex.color);
+    btn.innerHTML = `<span class="ex-icon">${ex.icon}</span><span>${ex.label}</span><span class="ex-total">${todayTotal(k)}</span>`;
     btn.onclick = () => setActiveExercise(k);
     wrap.appendChild(btn);
   });
@@ -2124,14 +2580,13 @@ function renderQuickBtns() {
     btn.textContent = n;
     btn.style.color = ex.color;
     btn.onmouseenter = () => { btn.style.background=ex.colorDim; btn.style.borderColor=ex.colorBorder; };
-    btn.onmouseleave = () => { btn.style.background='transparent'; btn.style.borderColor='#1e1e1e'; };
+    btn.onmouseleave = () => { btn.style.background='transparent'; btn.style.borderColor='#2E3033'; };
     btn.onclick = () => quickAdd(n);
     wrap.appendChild(btn);
   });
   document.getElementById('custom-input').style.color = ex.color;
   document.getElementById('log-btn-color') && (document.getElementById('log-btn-color').style.background=ex.color);
   document.querySelectorAll('.log-btn').forEach(b => b.style.background=ex.color);
-  document.querySelectorAll('.mode-btn.active').forEach(b => b.style.color=ex.color);
 }
 
 function renderSetsToday() {
@@ -2151,7 +2606,7 @@ function renderSetsToday() {
       p.style.background = ex.colorDim;
       p.style.border = '1px solid '+ex.colorBorder;
       p.style.color = ex.colorToday;
-      p.innerHTML = `<span>${entry.count}</span><span class="pill-time">${entry.time}</span><button class="del-btn" onclick="deleteEntry('${k}',${i})">×</button>`;
+      p.innerHTML = `<span>${entry.count}</span>${entry.vestLb ? `<span class="pill-vest" title="Weighted vest">${entry.vestLb} lb</span>` : ''}<span class="pill-time">${entry.time}</span><button class="del-btn" onclick="deleteEntry('${k}',${i})">×</button>`;
       pillWrap.appendChild(p);
     });
   });
@@ -2208,7 +2663,7 @@ function renderDayList() {
   wrap.innerHTML = '';
   const days = Object.keys(log).sort((a,b)=>b.localeCompare(a));
   if (!days.length) {
-    wrap.innerHTML = '<div style="color:#2a2a2a;font-size:13px;text-align:center;padding:20px 0">No activity logged yet.</div>';
+    wrap.innerHTML = '<div style="color:#8E9196;font-size:13px;text-align:center;padding:20px 0">No activity logged yet.</div>';
     return;
   }
   days.forEach(day => {
@@ -2219,7 +2674,7 @@ function renderDayList() {
     row.className = 'day-row';
     const d = new Date(day+'T00:00:00');
     const dateStr = d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
-    row.innerHTML = `<div class="day-label" style="color:${isToday?'#606060':'#353535'}">${isToday?'Today — ':''}${dateStr}</div><div class="day-cards" id="daycards-${day}"></div>`;
+    row.innerHTML = `<div class="day-label" style="color:${isToday?'#A3A6AA':'#8E9196'}">${isToday?'Today — ':''}${dateStr}</div><div class="day-cards" id="daycards-${day}"></div>`;
     wrap.appendChild(row);
     const cardsWrap = row.querySelector('.day-cards');
     EX_KEYS.forEach(k => {
@@ -2262,7 +2717,7 @@ function renderShareCard() {
   const ctx = canvas.getContext('2d');
 
   // Background
-  ctx.fillStyle = '#0d0d12';
+  ctx.fillStyle = '#141517';
   ctx.fillRect(0, 0, W, H);
 
   // Subtle grid lines
@@ -2273,20 +2728,20 @@ function renderShareCard() {
 
   // Top accent bar
   const grad = ctx.createLinearGradient(0,0,W,0);
-  grad.addColorStop(0,'#ff4d4d');
-  grad.addColorStop(0.5,'#4d9fff');
-  grad.addColorStop(1,'#4dff9f');
+  grad.addColorStop(0,'#8CC63F');
+  grad.addColorStop(0.5,'#EDE7DA');
+  grad.addColorStop(1,'#6AAEE6');
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, 3);
 
   // App label
-  ctx.font = '500 13px "DM Mono", monospace';
+  ctx.font = '500 13px "Inter", sans-serif';
   ctx.fillStyle = 'rgba(255,255,255,0.2)';
   ctx.fillText('FITTRACK', 40, 40);
 
   // Period label
   ctx.textAlign = 'right';
-  ctx.font = '500 13px "DM Mono", monospace';
+  ctx.font = '500 13px "Inter", sans-serif';
   ctx.fillStyle = 'rgba(255,255,255,0.2)';
   ctx.fillText(periodLabel(sharePeriod).toUpperCase(), W-40, 40);
   ctx.textAlign = 'left';
@@ -2294,13 +2749,14 @@ function renderShareCard() {
   // Date line
   const now = new Date();
   const dateStr = now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
-  ctx.font = '400 11px "DM Mono", monospace';
+  ctx.font = '400 11px "Inter", sans-serif';
   ctx.fillStyle = 'rgba(255,255,255,0.15)';
   ctx.fillText(dateStr.toUpperCase(), 40, 60);
 
-  // Exercise stats — 3 boxes
-  const boxW = 200, boxH = 130, gap = 20;
-  const totalBoxW = 3*boxW + 2*gap;
+  // Exercise stats — one box per exercise
+  const gap = 16, boxH = 130;
+  const boxW = Math.floor((W - 80 - (EX_KEYS.length-1)*gap) / EX_KEYS.length);
+  const totalBoxW = EX_KEYS.length*boxW + (EX_KEYS.length-1)*gap;
   const startX = (W - totalBoxW) / 2;
   const startY = 90;
 
@@ -2330,18 +2786,18 @@ function renderShareCard() {
     // Icon + label
     ctx.font = '22px serif';
     ctx.fillText(ex.icon, bx+16, by+38);
-    ctx.font = '500 11px "DM Mono", monospace';
+    ctx.font = '500 11px "Inter", sans-serif';
     ctx.fillStyle = 'rgba(255,255,255,0.4)';
     ctx.fillText(ex.label.toUpperCase(), bx+46, by+34);
 
     // Big number
-    ctx.font = 'bold 52px "Bebas Neue", sans-serif';
+    ctx.font = '800 52px "Barlow Condensed", sans-serif';
     ctx.fillStyle = total > 0 ? ex.color : 'rgba(255,255,255,0.1)';
     ctx.fillText(total.toString(), bx+16, by+100);
 
     // PB line
     if (pb > 0) {
-      ctx.font = '400 10px "DM Mono", monospace';
+      ctx.font = '400 10px "Inter", sans-serif';
       ctx.fillStyle = 'rgba(255,255,255,0.2)';
       ctx.fillText('PB: '+pb+' in one set', bx+16, by+120);
     }
@@ -2356,7 +2812,7 @@ function renderShareCard() {
     roundRect(ctx, startX, barY, totalBoxW, 52, 8);
     ctx.fill();
 
-    ctx.font = '400 11px "DM Mono", monospace';
+    ctx.font = '400 11px "Inter", sans-serif';
     ctx.fillStyle = 'rgba(255,255,255,0.3)';
     ctx.fillText('🔥 '+s+'-DAY STREAK', startX+16, barY+22);
 
@@ -2366,14 +2822,14 @@ function renderShareCard() {
     ctx.textAlign='left';
 
     // Totals breakdown
-    ctx.font = '400 10px "DM Mono", monospace';
+    ctx.font = '400 10px "Inter", sans-serif';
     ctx.fillStyle = 'rgba(255,255,255,0.18)';
     const breakdown = EX_KEYS.map(k=>EXERCISES[k].icon+' '+periodTotal(k,sharePeriod)).join('   ');
     ctx.fillText(breakdown, startX+16, barY+42);
   }
 
   // Bottom tagline
-  ctx.font = '400 10px "DM Mono", monospace';
+  ctx.font = '400 10px "Inter", sans-serif';
   ctx.fillStyle = 'rgba(255,255,255,0.1)';
   ctx.textAlign = 'center';
   ctx.fillText('Tracked with FitTrack PWA', W/2, H-16);
@@ -2691,7 +3147,7 @@ function renderHyrox() {
   // Recent
   const recent = document.getElementById('hx-recent');
   if (!hxLogs.length) {
-    recent.innerHTML = '<div style="color:#2a2a2a;font-size:13px;text-align:center;padding:30px 0;">Nothing logged yet.<br/><span style="font-size:11px;">Tap a station to start.</span></div>';
+    recent.innerHTML = '<div style="color:#8E9196;font-size:13px;text-align:center;padding:30px 0;">Nothing logged yet.<br/><span style="font-size:11px;">Tap a station to start.</span></div>';
   } else {
     recent.innerHTML = hxLogs.slice(0, 20).map(hxRowHtml).join('');
   }
@@ -2710,10 +3166,10 @@ function hxRowHtml(r) {
   return `<div class="hx-row">
     <div style="font-size:18px;width:24px;text-align:center;">${st.icon}</div>
     <div style="flex:1;min-width:0;">
-      <div style="font-size:12px;color:#ccc;">${st.label}${isAlt ? ` <span style="color:#8a7a4a;font-size:10px;">· ${hxEsc(hxVariantLabel(r.station, r.variant))}</span>` : ''}</div>
-      <div style="font-size:10px;color:#555;margin-top:2px;">${hxEsc(bits.join(' · ') || 'Logged')}${r.notes ? ' — ' + hxEsc(r.notes) : ''}</div>
+      <div style="font-size:12px;color:#EDE7DA;">${st.label}${isAlt ? ` <span style="color:#A3A6AA;font-size:10px;">· ${hxEsc(hxVariantLabel(r.station, r.variant))}</span>` : ''}</div>
+      <div style="font-size:10px;color:#A3A6AA;margin-top:2px;">${hxEsc(bits.join(' · ') || 'Logged')}${r.notes ? ' — ' + hxEsc(r.notes) : ''}</div>
     </div>
-    <div style="font-size:9px;color:#383838;white-space:nowrap;">${dateStr}</div>
+    <div style="font-size:9px;color:#8E9196;white-space:nowrap;">${dateStr}</div>
     <button class="del-btn" title="Delete" onclick="hxDeleteLog('${r.id}')">✕</button>
   </div>`;
 }
@@ -2735,7 +3191,7 @@ function openHyroxStation(key) {
   const hist = hxLogs.filter(r => r.station === key).slice(0, 8);
   document.getElementById('hx-m-history').innerHTML = hist.length
     ? hist.map(hxRowHtml).join('')
-    : '<div style="color:#2a2a2a;font-size:12px;padding:10px 0;">No efforts logged for this station yet.</div>';
+    : '<div style="color:#8E9196;font-size:12px;padding:10px 0;">No efforts logged for this station yet.</div>';
   hxShowOverview();
   document.getElementById('hx-station-modal').classList.remove('hidden');
 }
@@ -2886,14 +3342,307 @@ async function hxSaveSettings() {
 }
 document.getElementById('hx-race').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') openHyroxSettings(); });
 
+// ─── WEIGHTED VEST ────────────────────────────────────────────────────────────
+// One vest setting shared by the Log tab and the Murph screen; every set records
+// the weight worn (logs.vest_lb, null = no vest). The full-Murph form has its own.
+const VEST_KEY = 'fittrack-vest';
+const VEST_STEP_LB = 5;
+let vest = { on: false, lb: 20 };
+try {
+  const saved = JSON.parse(localStorage.getItem(VEST_KEY) || 'null');
+  if (saved) vest = { on: !!saved.on, lb: clampVestLb(saved.lb) || 20 };
+} catch (e) {}
+let muAttemptVest = { on: true, lb: 20 };
+
+function clampVestLb(n) {
+  n = Number(n);
+  return Number.isFinite(n) && n > 0 ? Math.min(100, Math.round(n * 2) / 2) : null;
+}
+function vestState(p) { return p === 'mu-att' ? muAttemptVest : vest; }
+function currentVestLb() { return vest.on ? vest.lb : null; }
+
+function saveVest(p) {
+  if (p !== 'mu-att') try { localStorage.setItem(VEST_KEY, JSON.stringify(vest)); } catch (e) {}
+  renderVestControls();
+}
+function toggleVest(p) { const s = vestState(p); s.on = !s.on; saveVest(p); }
+function setVestLb(p, val) { const lb = clampVestLb(val); if (lb) vestState(p).lb = lb; saveVest(p); }
+function stepVest(p, delta) { setVestLb(p, Math.max(VEST_STEP_LB, vestState(p).lb + delta)); }
+
+function renderVestControls() {
+  ['log', 'mu', 'mu-att'].forEach(p => {
+    const btn = document.getElementById(p + '-vest');
+    if (!btn) return;
+    const s = vestState(p);
+    btn.setAttribute('aria-pressed', s.on ? 'true' : 'false');
+    document.getElementById(p + '-vest-state').textContent = s.on ? 'On' : 'Off';
+    document.getElementById(p + '-vest-lb-wrap').classList.toggle('hidden', !s.on);
+    const inp = document.getElementById(p + '-vest-lb');
+    if (document.activeElement !== inp) inp.value = s.lb;
+  });
+}
+
+// ─── MURPH ────────────────────────────────────────────────────────────────────
+// 1 mi run, 100 pull-ups, 200 push-ups, 300 squats, 1 mi run, in a 20 lb vest.
+// Reps are ordinary `logs` rows so they count toward daily totals, leaderboards
+// and challenges. Runs and full attempts live in `murph_logs`.
+const MURPH_REPS = { pullups: 100, pushups: 200, squats: 300 };
+const MURPH_VEST_LB = 20; // the Murph standard; lighter vests count as "any" in readiness and PRs
+const MU_QUICK = { pullups: [5, 10, 20], pushups: [10, 25, 50], squats: [25, 50, 100] };
+
+let muLogs = [];       // rows from murph_logs (runs + attempts), newest first
+let muLoaded = false;
+let muTried = false;   // a load has been attempted (stops the Train hub retrying a missing table)
+let logsHaveVest = true; // false until supabase/murph.sql has added logs.vest_lb / logs.murph_log_id
+let muKind = 'pullups';  // 'run' | 'pullups' | 'pushups' | 'squats'
+
+// "52:30" → 3150, "1:02:30" → 3750, "9" → 540 (bare number = minutes)
+function muParseTime(s) {
+  const parts = String(s || '').trim().split(':');
+  if (!parts[0] || parts.length > 3) return null;
+  const nums = parts.map(Number);
+  if (nums.some(n => !Number.isFinite(n) || n < 0)) return null;
+  const sec = nums.length === 1 ? nums[0] * 60 : nums.reduce((acc, n) => acc * 60 + n, 0);
+  return sec >= 1 && sec <= 86400 ? Math.round(sec) : null;
+}
+function muIsRx(lb) { return Number(lb) >= MURPH_VEST_LB; }
+
+function muBestDay(k, rxOnly) {
+  let best = 0;
+  Object.values(log).forEach(day => {
+    const total = (day[k] || []).reduce((s, e) => s + (rxOnly && !muIsRx(e.vestLb) ? 0 : e.count), 0);
+    if (total > best) best = total;
+  });
+  return best;
+}
+function muBestPace(rxOnly) { // seconds per mile, runs of a mile or more
+  let best = null;
+  muLogs.forEach(r => {
+    if (r.kind !== 'run' || !r.duration_sec || Number(r.distance_mi) < 1 || (rxOnly && !muIsRx(r.vest_lb))) return;
+    const pace = r.duration_sec / Number(r.distance_mi);
+    if (best == null || pace < best) best = pace;
+  });
+  return best;
+}
+function muBestAttempt(rxOnly) {
+  let best = null;
+  muLogs.forEach(r => {
+    if (r.kind === 'attempt' && (!rxOnly || muIsRx(r.vest_lb)) && (best == null || r.duration_sec < best)) best = r.duration_sec;
+  });
+  return best;
+}
+
+function muSetupMessage() {
+  return 'Murph tables aren\'t set up yet. Run <code>supabase/murph.sql</code> in the Supabase SQL Editor, then reopen this tab. Until then, sets save without a vest weight and squats can\'t be saved.';
+}
+
+async function loadMurph() {
+  if (!currentUser) return;
+  muTried = true;
+  renderMurph(); // show the shell straight away
+  const banner = document.getElementById('mu-setup-banner');
+  try {
+    const { data, error } = await sb
+      .from('murph_logs')
+      .select('id, kind, distance_mi, duration_sec, vest_lb, local_date, logged_at')
+      .eq('profile_id', currentUser.id)
+      .order('logged_at', { ascending: false })
+      .limit(500);
+    if (error) throw error;
+    muLogs = data || [];
+    muLoaded = true;
+    banner.classList.toggle('hidden', logsHaveVest);
+    if (!logsHaveVest) banner.innerHTML = muSetupMessage();
+  } catch (e) {
+    console.error('Murph load failed', e);
+    banner.innerHTML = hxIsMissingTable(e) || /vest_lb/.test(e.message || '')
+      ? muSetupMessage()
+      : 'Could not load Murph data:<br><code>' + hxEsc(hxErrText(e)).replace(/\n/g, '<br>') + '</code>';
+    banner.classList.remove('hidden');
+  }
+  renderMurph();
+}
+
+function renderMurph() {
+  const md = nextMemorialDay();
+  const days = hxDaysBetween(TODAY, md);
+  document.getElementById('mu-days').textContent = days === 0 ? 'TODAY' : days;
+  document.getElementById('mu-date').textContent = 'Memorial Day · ' +
+    new Date(md + 'T00:00:00').toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+
+  // Log form
+  document.querySelectorAll('#mu-kind .seg-btn').forEach(b => b.classList.toggle('active', b.dataset.kind === muKind));
+  renderVestControls();
+  const isRun = muKind === 'run';
+  document.getElementById('mu-reps-fields').classList.toggle('hidden', isRun);
+  document.getElementById('mu-run-fields').classList.toggle('hidden', !isRun);
+  document.getElementById('mu-log-btn').textContent = isRun ? 'Log run' : 'Log set';
+  document.getElementById('mu-log-hint').textContent = isRun
+    ? 'Runs are kept with your Murph training (they aren\'t part of the daily rep counts).'
+    : 'Reps count toward your daily totals, leaderboards and challenges. The vest setting is shared with the Log tab.';
+  if (!isRun) {
+    document.getElementById('mu-quick').innerHTML = MU_QUICK[muKind]
+      .map(n => `<button class="quick-btn" style="color:#EDE7DA;" onclick="muLogReps(${n})">+${n}</button>`).join('');
+  }
+
+  // Readiness: biggest single day so far vs the Murph number, any vs in a 20+ lb vest
+  const rows = Object.keys(MURPH_REPS).map(k => {
+    const target = MURPH_REPS[k], any = muBestDay(k, false), rx = muBestDay(k, true);
+    const pct = n => Math.min(100, Math.round(n / target * 100));
+    return `<div class="mu-ready-row">
+      <div class="mu-ready-top"><span class="mu-ready-name">${EXERCISES[k].label}</span>
+        <span class="mu-ready-num"><b>${any}</b> / ${target} · vest <b>${rx}</b></span></div>
+      <div class="lane" role="img" aria-label="Best day ${any} of ${target}, ${rx} in a ${MURPH_VEST_LB}+ lb vest">
+        <div class="lane-fill lane-fill-them" style="width:${pct(any)}%;"></div><div class="lane-fill" style="width:${pct(rx)}%;"></div>
+      </div></div>`;
+  }).join('');
+  const pace = muBestPace(false), rxPace = muBestPace(true);
+  const runRow = `<div class="mu-ready-row">
+      <div class="mu-ready-top"><span class="mu-ready-name">Mile pace</span>
+        <span class="mu-ready-num">best <b>${pace ? hxFmt(pace) : '—'}</b> · vest <b>${rxPace ? hxFmt(rxPace) : '—'}</b></span></div></div>`;
+  document.getElementById('mu-ready').innerHTML = rows + runRow +
+    `<div class="mu-hint"><span class="mu-key mu-key-any"></span>best day, any &nbsp; <span class="mu-key mu-key-vest"></span>best day in a ${MURPH_VEST_LB}+ lb vest</div>`;
+
+  // Full attempts
+  const pbRx = muBestAttempt(true), pbAny = muBestAttempt(false);
+  const attempts = muLogs.filter(r => r.kind === 'attempt').length;
+  document.getElementById('mu-best').innerHTML =
+    `<div><div class="mu-best-num">${pbRx ? hxFmt(pbRx) : '—'}</div><div class="prog-count-label" style="text-align:left;">Best · ${MURPH_VEST_LB}+ lb vest</div></div>
+     <div><div class="mu-best-num">${pbAny ? hxFmt(pbAny) : '—'}</div><div class="prog-count-label" style="text-align:left;">Best · any</div></div>
+     <div class="mu-hint" style="grid-column:1/-1;">${attempts ? `${attempts} full Murph${attempts === 1 ? '' : 's'} logged` : 'No full attempts yet.'}</div>`;
+
+  // Runs and attempts
+  const recent = muLogs.slice(0, 20);
+  document.getElementById('mu-recent').innerHTML = recent.length ? recent.map(r => {
+    const date = new Date(r.local_date + 'T00:00:00').toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+    const what = r.kind === 'attempt'
+      ? `Full Murph · <b>${hxFmt(r.duration_sec)}</b>`
+      : `Run · <b>${Number(r.distance_mi)} mi</b>${r.duration_sec ? ` · ${hxFmt(r.duration_sec)} (${hxFmt(r.duration_sec / Number(r.distance_mi))}/mi)` : ''}`;
+    return `<div class="mu-row"><div style="flex:1;min-width:0;">${what}${r.vest_lb ? ` <span class="pill-vest">${Number(r.vest_lb)} lb</span>` : ''}
+      <div class="mu-hint">${date}</div></div>
+      <button class="del-btn" aria-label="Delete" onclick="muDelete('${r.id}')">×</button></div>`;
+  }).join('') : '<div class="mu-hint">No runs or attempts yet. Your rep sets show in Readiness and on the Log tab.</div>';
+}
+
+function muSetKind(k) {
+  muKind = k;
+  renderMurph();
+}
+
+function muSaveTraining() {
+  if (muKind === 'run') return muSaveRun();
+  const inp = document.getElementById('mu-reps');
+  const count = parseInt(inp.value);
+  if (!count || count <= 0 || count > 9999) { showToast('Enter a number between 1–9999', false); return; }
+  if (muLogReps(count)) inp.value = '';
+}
+
+function muLogReps(count) {
+  if (muKind === 'squats' && !logsHaveVest) { showToast('Run supabase/murph.sql to save squats', false); return false; }
+  return logSet(muKind, count);
+}
+
+async function muSaveRun() {
+  const dist = parseFloat(document.getElementById('mu-dist').value);
+  if (!dist || dist <= 0 || dist > 50) { showToast('Enter miles between 0.01 and 50', false); return; }
+  const timeVal = document.getElementById('mu-time').value;
+  const sec = timeVal.trim() ? muParseTime(timeVal) : null;
+  if (timeVal.trim() && !sec) { showToast('Enter time as mm:ss, e.g. 8:30', false); return; }
+  const vestLb = currentVestLb();
+  try {
+    const { data, error } = await sb.from('murph_logs')
+      .insert({ profile_id: currentUser.id, kind: 'run', distance_mi: dist, duration_sec: sec, vest_lb: vestLb, local_date: TODAY })
+      .select('id, kind, distance_mi, duration_sec, vest_lb, local_date, logged_at')
+      .single();
+    if (error) throw error;
+    muLogs.unshift(data);
+    document.getElementById('mu-time').value = '';
+    renderMurph();
+    showToast(`Run logged · ${dist} mi${vestLb ? ` · ${vestLb} lb vest` : ''}`, true);
+  } catch (e) {
+    console.error('Murph run save failed', e);
+    showToast(hxIsMissingTable(e) ? 'Run supabase/murph.sql first' : 'Could not save run', false);
+  }
+}
+
+function muOpenAttempt() {
+  document.getElementById('mu-attempt-open').classList.add('hidden');
+  document.getElementById('mu-attempt-form').classList.remove('hidden');
+  renderVestControls();
+  document.getElementById('mu-att-time').focus();
+}
+function muCloseAttempt() {
+  document.getElementById('mu-attempt-form').classList.add('hidden');
+  document.getElementById('mu-attempt-open').classList.remove('hidden');
+  document.getElementById('mu-att-time').value = '';
+}
+
+// A full Murph: one murph_logs row for the time, plus its 100/200/300 reps as
+// logs rows (linked to the attempt) so they land in today's totals
+async function muSaveAttempt() {
+  const sec = muParseTime(document.getElementById('mu-att-time').value);
+  if (!sec) { showToast('Enter your time as mm:ss or h:mm:ss', false); return; }
+  if (!logsHaveVest) { showToast('Run supabase/murph.sql first', false); return; }
+  const vestLb = muAttemptVest.on ? muAttemptVest.lb : null;
+  let attempt = null;
+  try {
+    const { data, error } = await sb.from('murph_logs')
+      .insert({ profile_id: currentUser.id, kind: 'attempt', duration_sec: sec, vest_lb: vestLb, local_date: TODAY })
+      .select('id, kind, distance_mi, duration_sec, vest_lb, local_date, logged_at')
+      .single();
+    if (error) throw error;
+    attempt = data;
+    const reps = Object.entries(MURPH_REPS).map(([exercise, count]) =>
+      ({ profile_id: currentUser.id, exercise, count, local_date: TODAY, vest_lb: vestLb, murph_log_id: attempt.id }));
+    const { data: saved, error: repErr } = await sb.from('logs').insert(reps).select('id, exercise, count');
+    if (repErr) throw repErr;
+
+    const timeStr = new Date().toLocaleTimeString('en-US', { hour:'2-digit', minute:'2-digit' });
+    if (!log[TODAY]) log[TODAY] = {};
+    saved.forEach(r => {
+      if (!log[TODAY][r.exercise]) log[TODAY][r.exercise] = [];
+      log[TODAY][r.exercise].push({ count: r.count, time: timeStr, id: r.id, vestLb, murphLogId: attempt.id });
+    });
+    muLogs.unshift(attempt);
+    muCloseAttempt();
+    renderAll();
+    showToast(`Murph logged · ${hxFmt(sec)}${vestLb ? ` · ${vestLb} lb vest` : ''}`, true);
+  } catch (e) {
+    console.error('Murph attempt save failed', e);
+    // The reps didn't save, so don't keep a time with nothing behind it
+    if (attempt) await sb.from('murph_logs').delete().eq('id', attempt.id);
+    showToast(hxIsMissingTable(e) ? 'Run supabase/murph.sql first' : 'Could not save your Murph', false);
+  }
+}
+
+// Deleting a run or attempt removes only that record. An attempt's reps were
+// really done, so they stay in the daily log (the database just clears the link).
+async function muDelete(id) {
+  const row = muLogs.find(r => r.id === id);
+  if (!row) return;
+  try {
+    const { error } = await sb.from('murph_logs').delete().eq('id', id);
+    if (error) throw error;
+    muLogs = muLogs.filter(r => r.id !== id);
+    Object.values(log).forEach(day => EX_KEYS.forEach(k => (day[k] || []).forEach(e => {
+      if (e.murphLogId === id) e.murphLogId = null;
+    })));
+    renderMurph();
+    if (row.kind === 'attempt') showToast('Murph time deleted · its reps stay in your log', true);
+  } catch (e) {
+    console.error('Murph delete failed', e);
+    showToast('Could not delete', false);
+  }
+}
+
 // ─── TOAST ────────────────────────────────────────────────────────────────────
 function showToast(msg, success) {
   if (toastTimer) clearTimeout(toastTimer);
   const t = document.getElementById('toast');
   t.textContent = msg;
-  t.style.background = success ? '#0f1f0f' : '#1f0f0f';
-  t.style.border = '1px solid '+(success?'#1a4a1a':'#4a1a1a');
-  t.style.color = success ? '#7dff9f' : '#ff9999';
+  t.style.background = success ? '#1C2612' : '#2A1A12';
+  t.style.border = '1px solid '+(success?'#3F5A1D':'#6B2E12');
+  t.style.color = success ? '#A6DB5C' : '#FF8A5C';
   t.classList.remove('hidden');
   toastTimer = setTimeout(() => t.classList.add('hidden'), 3000);
 }
